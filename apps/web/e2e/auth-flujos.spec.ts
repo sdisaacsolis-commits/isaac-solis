@@ -12,6 +12,9 @@ const habilitado = process.env.E2E_AUTH === "1";
 
 test.describe("Flujos de autenticación (Supabase local)", () => {
   test.skip(!habilitado, "Requiere Supabase local y E2E_AUTH=1");
+  // Flujo progresivo: la invitación reutiliza la cuenta creada en el registro.
+  // En serie, todo corre en el mismo worker (mismo `sello`) aun con reintentos.
+  test.describe.configure({ mode: "serial" });
 
   const sello = Date.now();
   const correo = `e2e.duena.${sello}@ejemplo.mx`;
