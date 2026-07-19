@@ -61,7 +61,10 @@ curl -s "http://127.0.0.1:18080/generators/typescript?included_schemas=public" \
 
 Nota: la versión de `@supabase/postgres-meta` puede diferir de la embebida en la CLI y
 producir diferencias cosméticas; el job de CI compara contra la CLI y es la referencia.
-Si CI reporta drift, regenera con `pnpm db:types` (opción A) y commitea.
+Si CI reporta drift, regenera con `pnpm db:types` (opción A) y commitea. Sin Docker,
+el propio job imprime el archivo canónico como `gzip | base64` entre los marcadores
+`___TYPES_CANONICOS_B64_INICIO___`/`___FIN___`: decodifícalo y adóptalo byte a byte
+(el archivo está en `.prettierignore` justamente para que nada lo reformatee).
 
 ## Dónde viven las cosas
 

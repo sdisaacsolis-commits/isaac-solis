@@ -8,3 +8,5 @@ playwright-report/
 test-results/
 supabase/.temp/
 next-env.d.ts
+# Generado por Supabase CLI (byte a byte; el CI verifica drift):
+packages/types/src/database.types.ts

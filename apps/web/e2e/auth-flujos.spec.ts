@@ -32,7 +32,10 @@ test.describe("Flujos de autenticación (Supabase local)", () => {
     // Confirmación deshabilitada en local → directo al onboarding
     await expect(page).toHaveURL(/\/app\/onboarding/);
 
-    // Paso 1: perfil
+    // Paso 1: perfil (nombre y apellidos NO se copian del registro: el paso
+    // de onboarding es justamente donde se completan)
+    await page.getByRole("textbox", { name: "Nombre", exact: true }).fill("Elena");
+    await page.getByLabel("Apellidos").fill("Prueba");
     await page.getByLabel("Nombre para mostrar").fill("Dra. Elena Prueba");
     await page.getByRole("button", { name: "Continuar" }).click();
 

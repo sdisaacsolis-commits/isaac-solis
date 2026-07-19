@@ -31,6 +31,8 @@ test.describe("Propietarios y mascotas (Supabase local)", () => {
     await page.getByLabel(/Acepto los términos/).check();
     await page.getByRole("button", { name: "Crear cuenta" }).click();
     await expect(page).toHaveURL(/\/app\/onboarding/);
+    await page.getByRole("textbox", { name: "Nombre", exact: true }).fill("Rebeca");
+    await page.getByLabel("Apellidos").fill("Prueba");
     await page.getByLabel("Nombre para mostrar").fill("Rebeca Prueba");
     await page.getByRole("button", { name: "Continuar" }).click();
     await page.getByLabel("Nombre comercial").fill(`Vet E2E Pacientes ${sello}`);
