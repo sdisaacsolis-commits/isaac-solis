@@ -3,6 +3,7 @@
 -- ============================================================================
 begin;
 set search_path = public, extensions;
+create extension if not exists pgtap with schema extensions;
 select * from no_plan();
 
 -- Utilidades de suplantación de sesión (solo pruebas) -------------------------

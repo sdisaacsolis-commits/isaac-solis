@@ -81,8 +81,15 @@ jobs:
       - name: Verificar que los tipos generados no tienen drift
         run: |
           pnpm exec supabase gen types typescript --local --schema public > /tmp/database.types.ts
-          diff -u packages/types/src/database.types.ts /tmp/database.types.ts \
-            || (echo "::error::packages/types/src/database.types.ts está desactualizado; ejecuta pnpm db:types" && exit 1)
+          if ! diff -u packages/types/src/database.types.ts /tmp/database.types.ts; then
+            echo "::error::packages/types/src/database.types.ts difiere del canónico (pnpm db:types)."
+            # Volcado del archivo canónico para poder corregirlo desde entornos sin Docker:
+            echo "___TYPES_CANONICOS_B64_INICIO___"
+            gzip -c /tmp/database.types.ts | base64 -w0
+            echo ""
+            echo "___TYPES_CANONICOS_B64_FIN___"
+            exit 1
+          fi
 
   e2e:
     name: Pruebas E2E (Playwright)
@@ -107,4 +114,39 @@ jobs:
         run: pnpm --filter @dogtoralia/web exec playwright install --with-deps chromium
 
       - name: Ejecutar pruebas E2E
+        run: pnpm test:e2e
+
+  e2e-auth:
+    name: Flujos E2E con Supabase real
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Iniciar Supabase local completo
+        run: pnpm exec supabase start
+
+      - name: Exportar credenciales locales (no son secretos)
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=$(pnpm exec supabase status -o json | node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>{const j=JSON.parse(d);console.log(j.API_URL)})')" >> "$GITHUB_ENV"
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$(pnpm exec supabase status -o json | node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>{const j=JSON.parse(d);console.log(j.ANON_KEY)})')" >> "$GITHUB_ENV"
+
+      - name: Instalar navegador de Playwright
+        run: pnpm --filter @dogtoralia/web exec playwright install --with-deps chromium
+
+      - name: Ejecutar flujos completos (auth + pacientes)
+        env:
+          E2E_AUTH: "1"
         run: pnpm test:e2e
