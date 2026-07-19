@@ -1,6 +1,11 @@
 import { redactSensitive } from "@/lib/log";
 
-import type { EmailProvider, EmailSendResult, InvitationEmailInput } from "./types";
+import type {
+  AppointmentEmailInput,
+  EmailProvider,
+  EmailSendResult,
+  InvitationEmailInput,
+} from "./types";
 
 type Sink = (line: string) => void;
 
@@ -22,6 +27,19 @@ export function createDevEmailProvider(sink: Sink = (line) => console.warn(line)
           rol: input.roleLabel,
           vence: input.expiresAtText,
           enlace: redactSensitive(input.acceptUrl),
+        }),
+      );
+      return Promise.resolve({
+        sent: false,
+        reason: "Modo desarrollo (EMAIL_MODE=dev): el correo no se envía realmente.",
+      });
+    },
+    sendAppointmentEmail(input: AppointmentEmailInput): Promise<EmailSendResult> {
+      sink(
+        JSON.stringify({
+          scope: "dogtoralia.email.dev",
+          para: input.to,
+          asunto: redactSensitive(input.subject),
         }),
       );
       return Promise.resolve({

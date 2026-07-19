@@ -11,6 +11,7 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { metricasAgenda } from "@/lib/agenda/queries";
 import { mensajes } from "@/lib/i18n/es-mx";
 import { metricasPacientes } from "@/lib/pets/queries";
 import { etiquetasEstadoClinica } from "@/lib/roles";
@@ -44,6 +45,7 @@ export default async function PaginaInicioPanel({
 
   const clinica = context.activeClinic;
   const pacientes = clinica ? await metricasPacientes(clinica.id) : null;
+  const agenda = clinica ? await metricasAgenda(clinica.id, clinica.timezone) : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -141,16 +143,31 @@ export default async function PaginaInicioPanel({
         </div>
       ) : null}
 
+      {agenda ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {(
+            [
+              [mensajes.agenda.metricas.citasHoy, agenda.citasHoy],
+              [mensajes.agenda.metricas.proximasSiete, agenda.proximasSiete],
+              [mensajes.agenda.metricas.completadasMes, agenda.completadasMes],
+              [mensajes.agenda.metricas.canceladasMes, agenda.canceladasMes],
+            ] as const
+          ).map(([titulo, valor]) => (
+            <Card key={titulo}>
+              <CardHeader className="p-4">
+                <CardDescription>{titulo}</CardDescription>
+                <CardTitle className="text-2xl">
+                  <Link className="hover:text-brand-700" href="/app/agenda">
+                    {valor}
+                  </Link>
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      ) : null}
+
       <div className="grid gap-4 sm:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              {t.proximamenteAgenda.titulo}
-              <Badge variant="brand">{mensajes.comun.proximamente}</Badge>
-            </CardTitle>
-            <CardDescription>{t.proximamenteAgenda.texto}</CardDescription>
-          </CardHeader>
-        </Card>
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">

@@ -17,7 +17,17 @@ export interface InvitationEmailInput {
 
 export type EmailSendResult = { sent: true; providerId?: string } | { sent: false; reason: string };
 
+/** Correo operativo de cita (confirmación, recordatorio, cancelación, cambio). */
+export interface AppointmentEmailInput {
+  to: string;
+  /** Asunto y cuerpos YA armados por la plantilla del dominio (sin datos clínicos). */
+  subject: string;
+  text: string;
+  html: string;
+}
+
 export interface EmailProvider {
   readonly name: string;
   sendInvitation(input: InvitationEmailInput): Promise<EmailSendResult>;
+  sendAppointmentEmail(input: AppointmentEmailInput): Promise<EmailSendResult>;
 }

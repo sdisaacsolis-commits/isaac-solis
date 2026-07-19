@@ -20,6 +20,10 @@ export const env = createEnv({
     EMAIL_REPLY_TO: z.string().email().optional(),
     // "resend" envía correos reales; "dev" solo registra una versión redactada.
     EMAIL_MODE: z.enum(["resend", "dev"]).default("dev"),
+    // Secreto para el procesador programado de recordatorios (Edge Function /
+    // cron; reservado, ver docs/appointments/notifications.md). Sin valor, el
+    // outbox se procesa de forma oportunista desde el panel.
+    CRON_SECRET: z.string().min(16).optional(),
     // Duración (segundos) de las URLs firmadas de fotografías de mascotas.
     PET_PHOTO_SIGNED_URL_SECONDS: z.coerce.number().int().min(30).max(3600).default(300),
   },
@@ -35,6 +39,7 @@ export const env = createEnv({
     EMAIL_FROM: process.env.EMAIL_FROM,
     EMAIL_REPLY_TO: process.env.EMAIL_REPLY_TO,
     EMAIL_MODE: process.env.EMAIL_MODE,
+    CRON_SECRET: process.env.CRON_SECRET,
     PET_PHOTO_SIGNED_URL_SECONDS: process.env.PET_PHOTO_SIGNED_URL_SECONDS,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,

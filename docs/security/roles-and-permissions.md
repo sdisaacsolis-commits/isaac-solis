@@ -91,3 +91,14 @@ Ajustes documentados respecto a la propuesta inicial: los veterinarios SÍ edita
 básicos de mascotas y crean alertas de manejo (operación clínica cotidiana), pero NO
 gestionan propietarios ni consentimientos; los asistentes son estrictamente de lectura en
 esta fase. La autoridad sigue siendo PostgreSQL (funciones `can_access_*`/`can_manage_*`).
+
+## 10. Matriz del dominio de agenda (Fase 5)
+
+La matriz completa de permisos de agenda (catálogo, horarios, citas,
+transiciones y outbox) vive en
+[`docs/appointments/rls-and-permissions.md`](../appointments/rls-and-permissions.md).
+Resumen: el personal operativo (administración, veterinarios, recepción)
+agenda y gestiona citas; iniciar/completar la atención es acto clínico
+(veterinario o administración); el personal asistente solo consulta; la
+configuración de catálogo y horarios es de administración. Todas las
+escrituras con invariantes son RPCs SECURITY DEFINER.

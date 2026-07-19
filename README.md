@@ -4,7 +4,7 @@ Plataforma SaaS mexicana para clínicas veterinarias, médicos veterinarios y pr
 mascotas: agenda de citas, expedientes clínicos, recetas y recordatorios — con aislamiento
 total de datos entre clínicas.
 
-> **Estado actual: Fase 4 (propietarios, mascotas, relaciones clínicas y fotos privadas).**
+> **Estado actual: Fase 5 (servicios veterinarios, horarios y agenda de citas).**
 > Núcleo de pacientes con identidad global de mascotas, relaciones multi-propietario y
 > multi-clínica, alertas administrativas, consentimientos versionados y fotografías en
 > bucket privado. Aislamiento RLS validado con 241 pruebas pgTAP sobre PostgreSQL local

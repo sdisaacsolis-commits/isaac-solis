@@ -76,3 +76,51 @@ export type ContactMethod = Enums<"contact_method">;
 
 export const CONSENT_TYPES = Constants.public.Enums.consent_type;
 export type ConsentType = Enums<"consent_type">;
+
+// ---------------------------------------------------------------------------
+// Enums del dominio de agenda (Fase 5), derivados de la base de datos
+// ---------------------------------------------------------------------------
+export const SERVICE_CATEGORIES = Constants.public.Enums.service_category;
+export type ServiceCategory = Enums<"service_category">;
+
+export const SCHEDULE_EXCEPTION_TYPES = Constants.public.Enums.schedule_exception_type;
+export type ScheduleExceptionType = Enums<"schedule_exception_type">;
+
+export const APPOINTMENT_STATUSES = Constants.public.Enums.appointment_status;
+export type AppointmentStatus = Enums<"appointment_status">;
+
+export const APPOINTMENT_SOURCES = Constants.public.Enums.appointment_source;
+export type AppointmentSource = Enums<"appointment_source">;
+
+export const NOTIFICATION_CHANNELS = Constants.public.Enums.notification_channel;
+export type NotificationChannel = Enums<"notification_channel">;
+
+export const APPOINTMENT_NOTIFICATION_TYPES = Constants.public.Enums.appointment_notification_type;
+export type AppointmentNotificationType = Enums<"appointment_notification_type">;
+
+export const NOTIFICATION_STATUSES = Constants.public.Enums.notification_status;
+export type NotificationStatus = Enums<"notification_status">;
+
+/**
+ * Máquina de estados de citas (espejo de appointment_transition_allowed en
+ * SQL, que es la autoridad). La UI la usa para mostrar solo acciones válidas;
+ * la base rechaza cualquier transición inválida aunque la UI falle.
+ */
+export const APPOINTMENT_TRANSITIONS: Record<AppointmentStatus, readonly AppointmentStatus[]> = {
+  requested: ["pending_confirmation", "confirmed", "cancelled"],
+  pending_confirmation: ["confirmed", "cancelled"],
+  confirmed: ["checked_in", "cancelled", "no_show"],
+  checked_in: ["in_progress", "cancelled"],
+  in_progress: ["completed"],
+  completed: [],
+  cancelled: [],
+  no_show: [],
+} as const;
+
+/** Estados que ocupan agenda (espejo del WHERE del EXCLUDE anti-traslape). */
+export const OCCUPYING_APPOINTMENT_STATUSES = [
+  "pending_confirmation",
+  "confirmed",
+  "checked_in",
+  "in_progress",
+] as const satisfies readonly AppointmentStatus[];

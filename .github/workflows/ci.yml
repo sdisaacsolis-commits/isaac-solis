@@ -149,12 +149,15 @@ jobs:
               const m = d.match(/\{[\s\S]*\}/);
               if (!m) throw new Error("supabase status no devolvió JSON: " + d.slice(0, 200));
               const j = JSON.parse(m[0]);
-              if (!j.API_URL || !j.ANON_KEY)
+              if (!j.API_URL || !j.ANON_KEY || !j.SERVICE_ROLE_KEY)
                 throw new Error("claves faltantes; disponibles: " + Object.keys(j).join(", "));
+              // SERVICE_ROLE_KEY: llave LOCAL efímera, solo para fixtures E2E
+              // (crear el veterinario); permitida en CI por CLAUDE.md §2.
               require("fs").appendFileSync(
                 process.env.GITHUB_ENV,
                 "NEXT_PUBLIC_SUPABASE_URL=" + j.API_URL + "\n" +
-                  "NEXT_PUBLIC_SUPABASE_ANON_KEY=" + j.ANON_KEY + "\n",
+                  "NEXT_PUBLIC_SUPABASE_ANON_KEY=" + j.ANON_KEY + "\n" +
+                  "SUPABASE_SERVICE_ROLE_KEY=" + j.SERVICE_ROLE_KEY + "\n",
               );
               console.log("Supabase local disponible en " + j.API_URL);
             });

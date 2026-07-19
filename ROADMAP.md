@@ -89,7 +89,7 @@
   docs/pets/testing.md).
 - Documentación: `docs/pets/` (7 documentos).
 
-## Fase 5 — Agenda de citas
+## Fase 5 — Agenda de citas ✅ (2026-07-19)
 
 - Función `book_appointment` con validación de disponibilidad y restricción anti-traslape.
 - Vista de agenda (día/semana) por veterinario; crear, confirmar, cancelar, reprogramar,
@@ -97,6 +97,19 @@
 - Notificaciones internas de cambios de estado (tabla `notifications`, correo vía Resend).
 - **Criterio de salida**: imposible crear traslape (prueba de concurrencia); flujo completo de
   estados operando con auditoría.
+- **Entregado**: catálogo `clinic_services` (9 categorías, precios en centavos, colchones),
+  horarios semanales + excepciones (8 tipos, `special_hours` agrega disponibilidad),
+  `get_available_slots` (≤31 días), citas con folio `CIT-AAAA-NNNNNN` concurrencia-seguro,
+  `EXCLUDE USING gist` sobre la ventana ocupada (colchones incluidos) en estados que ocupan
+  agenda, máquina de estados en SQL (+ espejo TS), historial append-only por trigger, outbox
+  de notificaciones idempotente (confirmación/recordatorios 24h-2h/cancelación/reagendado;
+  email activo, whatsapp/push/sms preparados), walk-ins y urgencias auditadas, UI
+  (`/app/agenda*`, `/app/configuracion/servicios*`, `/app/configuracion/horarios`),
+  métricas reales en dashboard y 70 aserciones pgTAP nuevas (suites 09–10; 311 totales).
+  Documentación en `docs/appointments/`. La garantía anti-traslape es estructural
+  (`EXCLUDE`); ver nota de concurrencia en `docs/appointments/testing.md`. El disparador
+  programado de recordatorios queda preparado (Edge Function + `CRON_SECRET`, fase
+  posterior): hoy el outbox se procesa al operar el panel.
 
 ## Fase 6 — Expediente clínico
 
