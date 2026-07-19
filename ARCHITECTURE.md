@@ -150,7 +150,8 @@ dogtoralia/
 1. **Nivel plataforma**: `profiles.is_superadmin` (booleano, solo modificable por superadmin).
 2. **Nivel organización**: tabla `organization_members (user_id, organization_id, role)`.
    Una organización (empresa) agrupa una o varias clínicas/sucursales y es el sujeto comercial
-   de la suscripción (decisión confirmada §7.4 del PRD). El rol `org_owner` administra la
+   de la suscripción (decisión confirmada §7.4 del PRD). Roles: `owner`, `admin`,
+   `billing` (reservado para facturación) y `member`. El rol `owner` administra la
    organización y su facturación futura.
 3. **Nivel clínica**: tabla `clinic_members (user_id, clinic_id, role)` con roles
    `clinic_admin | veterinarian | receptionist`. Un usuario puede pertenecer a varias clínicas

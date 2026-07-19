@@ -1,31 +1,51 @@
 /**
- * Tipos de dominio compartidos de Dogtoralia.
+ * Tipos compartidos de Dogtoralia.
  *
- * Regla (CLAUDE.md §18): tras cada cambio de esquema en `supabase/migrations/`,
- * regenerar `database.types.ts` con `pnpm db:types` en el mismo PR.
+ * `database.types.ts` se GENERA desde PostgreSQL (`pnpm db:types`); nunca se
+ * edita a mano y se regenera en el mismo PR que cambie el esquema
+ * (CLAUDE.md §18). Los enums de dominio se derivan del archivo generado para
+ * no duplicar literales.
  */
+import { Constants, type Database } from "./database.types";
 
-export type { Database } from "./database.types";
+export type { Database, Json } from "./database.types";
+export { Constants } from "./database.types";
 
-/** Roles de plataforma y de clínica (ver DATABASE_DESIGN.md §3.1 y §5). */
-export const CLINIC_ROLES = ["clinic_admin", "veterinarian", "receptionist"] as const;
-export type ClinicRole = (typeof CLINIC_ROLES)[number];
+// ---------------------------------------------------------------------------
+// Tipos auxiliares de acceso al esquema
+// ---------------------------------------------------------------------------
+export type Tables<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Row"];
+export type TablesInsert<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Insert"];
+export type TablesUpdate<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Update"];
+export type Enums<T extends keyof Database["public"]["Enums"]> = Database["public"]["Enums"][T];
 
-export const ORGANIZATION_ROLES = ["org_owner", "org_admin"] as const;
-export type OrganizationRole = (typeof ORGANIZATION_ROLES)[number];
+// ---------------------------------------------------------------------------
+// Enums de dominio (derivados de la base de datos, no duplicados)
+// ---------------------------------------------------------------------------
+export const ORGANIZATION_STATUSES = Constants.public.Enums.organization_status;
+export type OrganizationStatus = Enums<"organization_status">;
 
-/** Ciclo de vida comercial de una clínica (decisión confirmada, PRD §7.3). */
-export const CLINIC_STATUSES = [
-  "trial",
-  "active",
-  "past_due",
-  "suspended",
-  "cancelled",
-  "archived",
-] as const;
-export type ClinicStatus = (typeof CLINIC_STATUSES)[number];
+export const ORGANIZATION_ROLES = Constants.public.Enums.organization_role;
+export type OrganizationRole = Enums<"organization_role">;
 
-/** Constantes de localización del producto (PRD §1). */
+export const MEMBERSHIP_STATUSES = Constants.public.Enums.membership_status;
+export type MembershipStatus = Enums<"membership_status">;
+
+export const CLINIC_STATUSES = Constants.public.Enums.clinic_status;
+export type ClinicStatus = Enums<"clinic_status">;
+
+export const CLINIC_ROLES = Constants.public.Enums.clinic_role;
+export type ClinicRole = Enums<"clinic_role">;
+
+export const INVITATION_STATUSES = Constants.public.Enums.invitation_status;
+export type InvitationStatus = Enums<"invitation_status">;
+
+// ---------------------------------------------------------------------------
+// Constantes de localización del producto (PRD §1)
+// ---------------------------------------------------------------------------
 export const DEFAULT_LOCALE = "es-MX" as const;
 export const DEFAULT_TIMEZONE = "America/Mexico_City" as const;
 export const DEFAULT_CURRENCY = "MXN" as const;

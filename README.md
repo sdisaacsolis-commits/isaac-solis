@@ -4,8 +4,10 @@ Plataforma SaaS mexicana para clínicas veterinarias, médicos veterinarios y pr
 mascotas: agenda de citas, expedientes clínicos, recetas y recordatorios — con aislamiento
 total de datos entre clínicas.
 
-> **Estado actual: Fase 1 completada (fundación del monorepo).** Existe la base técnica y una
-> página inicial; la lógica de negocio comienza en la Fase 2 (ver [ROADMAP.md](./ROADMAP.md)).
+> **Estado actual: Fase 2 (identidad, organizaciones, clínicas y aislamiento RLS).**
+> El esquema de tenancy está implementado y validado con 153 pruebas pgTAP sobre
+> PostgreSQL local; la confirmación en Supabase CLI + Docker corre en CI
+> (ver [ROADMAP.md](./ROADMAP.md) y [docs/security/rls-model.md](./docs/security/rls-model.md)).
 
 ## Documentación
 
@@ -52,28 +54,31 @@ Todas documentadas en [`.env.example`](./.env.example), agrupadas por servicio y
 ```bash
 pnpm db:start    # levanta PostgreSQL + Auth + Storage en Docker (imprime URLs y llaves)
 pnpm db:reset    # aplica supabase/migrations/ + seed.sql desde cero
+pnpm db:test     # pruebas pgTAP (aislamiento RLS) con Supabase CLI
 pnpm db:types    # regenera packages/types/src/database.types.ts desde el esquema
 pnpm db:stop     # detiene los contenedores
 ```
 
 - La configuración vive en `supabase/config.toml` (`project_id = "dogtoralia"`).
-- Todo cambio de esquema es una migración nueva en `supabase/migrations/` (CLAUDE.md §15).
-- **Limitación conocida**: `pnpm db:start` requiere el daemon de Docker. En entornos sin
-  Docker (algunos sandboxes/CI) los comandos `db:*` no funcionan; el resto del monorepo
-  (dev, build, pruebas) no depende de Supabase en esta fase.
+- Todo cambio de esquema es una migración nueva en `supabase/migrations/` (CLAUDE.md §15)
+  acompañada de pruebas pgTAP y de la regeneración de tipos en el mismo PR.
+- **Sin Docker**: usa `pnpm db:test:pg` (PostgreSQL 16 local + pgTAP con un shim del
+  entorno Supabase). Guía completa: [docs/database/local-testing.md](./docs/database/local-testing.md).
 
 ## Comandos disponibles
 
-| Comando          | Qué hace                                                          |
-| ---------------- | ----------------------------------------------------------------- |
-| `pnpm dev`       | Servidor de desarrollo (web en http://localhost:3000)             |
-| `pnpm build`     | Build de producción de todos los paquetes                         |
-| `pnpm lint`      | ESLint en todo el monorepo                                        |
-| `pnpm typecheck` | `tsc --noEmit` en todos los paquetes                              |
-| `pnpm test`      | Pruebas unitarias (Vitest)                                        |
-| `pnpm test:e2e`  | Prueba E2E de la página (Playwright; requiere Chromium, ver §E2E) |
-| `pnpm format`    | Prettier en todo el repo (`format:check` solo verifica)           |
-| `pnpm db:*`      | Supabase local (ver sección anterior)                             |
+| Comando           | Qué hace                                                          |
+| ----------------- | ----------------------------------------------------------------- |
+| `pnpm dev`        | Servidor de desarrollo (web en http://localhost:3000)             |
+| `pnpm build`      | Build de producción de todos los paquetes                         |
+| `pnpm lint`       | ESLint en todo el monorepo                                        |
+| `pnpm typecheck`  | `tsc --noEmit` en todos los paquetes                              |
+| `pnpm test`       | Pruebas unitarias (Vitest)                                        |
+| `pnpm test:e2e`   | Prueba E2E de la página (Playwright; requiere Chromium, ver §E2E) |
+| `pnpm db:test`    | Pruebas de base de datos (pgTAP) vía Supabase CLI + Docker        |
+| `pnpm db:test:pg` | Pruebas de base de datos sin Docker (PostgreSQL 16 local)         |
+| `pnpm format`     | Prettier en todo el repo (`format:check` solo verifica)           |
+| `pnpm db:*`       | Supabase local (ver sección anterior)                             |
 
 ### Pruebas
 
@@ -101,9 +106,11 @@ dogtoralia/
 │   └── validation/           # esquemas Zod compartidos
 ├── supabase/
 │   ├── migrations/           # SQL versionado (fuente de verdad del esquema)
+│   ├── tests/database/       # pruebas pgTAP (aislamiento RLS)
 │   ├── seed.sql              # datos de desarrollo (ficticios)
 │   └── config.toml           # configuración de Supabase local
-├── docs/                     # ADRs y guías
+├── scripts/db/               # shim y runner para probar la BD sin Docker
+├── docs/                     # ADRs, seguridad (RLS, roles) y guías de BD
 ├── .github/workflows/ci.yml  # lint + formato + typecheck + pruebas + build + E2E
 └── .env.example              # plantilla documentada de variables de entorno
 ```

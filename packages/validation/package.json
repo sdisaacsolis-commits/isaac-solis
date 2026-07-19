@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@dogtoralia/types": "workspace:*",
     "zod": "^3.25.0"
   }
 }

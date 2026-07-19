@@ -45,6 +45,42 @@ jobs:
       - name: Build
         run: pnpm build
 
+  base-de-datos:
+    name: Migraciones y pruebas RLS (pgTAP)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      # Supabase CLI + Docker: el entorno que mejor representa producción
+      # (imagen real de Postgres de Supabase, con auth, pgtap y roles).
+      - name: Iniciar PostgreSQL de Supabase
+        run: pnpm exec supabase db start
+
+      - name: Aplicar migraciones desde una base limpia
+        run: pnpm exec supabase db reset
+
+      - name: Pruebas pgTAP (aislamiento RLS)
+        run: pnpm exec supabase test db
+
+      - name: Verificar que los tipos generados no tienen drift
+        run: |
+          pnpm exec supabase gen types typescript --local --schema public > /tmp/database.types.ts
+          diff -u packages/types/src/database.types.ts /tmp/database.types.ts \
+            || (echo "::error::packages/types/src/database.types.ts está desactualizado; ejecuta pnpm db:types" && exit 1)
+
   e2e:
     name: Pruebas E2E (Playwright)
     runs-on: ubuntu-latest

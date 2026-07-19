@@ -60,55 +60,76 @@ audit_log  (global, append-only)
 **`organizations`** — sujeto comercial (decisión confirmada PRD §7.4). Una empresa o grupo
 veterinario que agrupa una o varias clínicas/sucursales.
 
-| Columna          | Tipo          | Notas          |
-| ---------------- | ------------- | -------------- |
-| id               | uuid PK       |                |
-| name             | text NOT NULL |                |
-| legal_name / rfc | text          | opcionales     |
-| deleted_at       | timestamptz   | borrado lógico |
+| Columna                       | Tipo                                                      | Notas                             |
+| ----------------------------- | --------------------------------------------------------- | --------------------------------- |
+| id                            | uuid PK                                                   |                                   |
+| name                          | text NOT NULL                                             | 2–120 caracteres                  |
+| legal_name / tax_id           | text                                                      | opcionales; tax_id = RFC (CHECK)  |
+| slug                          | text UNIQUE nullable                                      | normalizado; sin slugs reservados |
+| status                        | enum `organization_status`: `active, suspended, archived` | gestionado por backend            |
+| plan_code                     | text DEFAULT 'beta'                                       | se liga a `plans` en Fase 11      |
+| included_active_veterinarians | int DEFAULT 1                                             | límite del plan (PRD §7.4)        |
+| created_by                    | uuid FK → profiles                                        |                                   |
+| deleted_at                    | timestamptz                                               | borrado lógico                    |
+
+Las organizaciones se crean SOLO con la RPC `create_organization_with_owner` (transacción
+organización + primer owner). Sin INSERT directo de clientes.
 
 **`organization_members`** — usuarios asociados a la organización.
-`organization_id FK, user_id FK profiles, role enum org_role: org_owner, org_admin`,
-`UNIQUE (organization_id, user_id)`. En el caso simple (una clínica independiente) la
-organización se crea automáticamente con la clínica y su creador es `org_owner`.
+`organization_id FK, user_id FK profiles, role enum organization_role: owner, admin,
+billing, member`, `status enum membership_status: invited, active, suspended, removed`,
+`joined_at, created_by, deleted_at`. Índice único parcial: una sola membresía viva
+(no `removed`, no borrada) por usuario y organización. Un trigger garantiza que toda
+organización conserve al menos un `owner` activo.
 
 **`clinics`**
 
-| Columna                           | Tipo                                                                            | Notas                                                                                                     |
-| --------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| id                                | uuid PK                                                                         |                                                                                                           |
-| organization_id                   | uuid FK → organizations NOT NULL                                                |                                                                                                           |
-| name                              | text NOT NULL                                                                   |                                                                                                           |
-| slug                              | text UNIQUE nullable                                                            | reservado para perfil público `/clinicas/[slug]` (fase posterior)                                         |
-| legal_name / rfc                  | text                                                                            | opcionales                                                                                                |
-| address, city, state, postal_code | text                                                                            |                                                                                                           |
-| phone, email                      | text                                                                            |                                                                                                           |
-| logo_url                          | text                                                                            |                                                                                                           |
-| timezone                          | text DEFAULT 'America/Mexico_City'                                              |                                                                                                           |
-| status                            | enum `clinic_status`: `trial, active, past_due, suspended, cancelled, archived` | ciclo de vida confirmado (PRD §7.3); una clínica nueva entra en `trial` al ser aprobada por el superadmin |
-| deleted_at                        | timestamptz                                                                     | borrado lógico; **los expedientes nunca se eliminan automáticamente**                                     |
+| Columna                           | Tipo                                                                            | Notas                                                                                               |
+| --------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| id                                | uuid PK                                                                         |                                                                                                     |
+| organization_id                   | uuid FK → organizations NOT NULL                                                |                                                                                                     |
+| name                              | text NOT NULL                                                                   |                                                                                                     |
+| slug                              | text UNIQUE nullable                                                            | reservado para perfil público `/clinicas/[slug]` (fase posterior)                                   |
+| legal_name / rfc                  | text                                                                            | opcionales                                                                                          |
+| address, city, state, postal_code | text                                                                            |                                                                                                     |
+| phone, email                      | text                                                                            |                                                                                                     |
+| logo_url                          | text                                                                            |                                                                                                     |
+| timezone                          | text DEFAULT 'America/Mexico_City'                                              |                                                                                                     |
+| status                            | enum `clinic_status`: `trial, active, past_due, suspended, cancelled, archived` | ciclo de vida confirmado (PRD §7.3); toda clínica nace en `trial`; el estado lo gestiona el backend |
+| deleted_at                        | timestamptz                                                                     | borrado lógico; **los expedientes nunca se eliminan automáticamente**                               |
 
-Transiciones de `clinic_status` (validadas por función SQL): `trial → active`,
-`active ⇄ past_due`, `past_due → suspended`, `active/suspended → cancelled`,
-`cancelled → archived` (y reactivaciones `suspended/cancelled → active`). En `suspended` y
-`cancelled` el acceso se restringe según políticas futuras; los datos clínicos se conservan
-(plazo de retención definitivo pendiente de revisión legal).
+Transiciones de `clinic_status` (trigger `clinics_validate_status_transition`, aplica a
+todos los roles incluido backend): `trial → active|cancelled`,
+`active → past_due|suspended|cancelled`, `past_due → active|suspended|cancelled`,
+`suspended → active|cancelled`, `cancelled → active|archived`; `archived` es terminal.
+En `suspended` y `cancelled` el acceso se restringe según políticas futuras; los datos
+clínicos se conservan (plazo de retención definitivo pendiente de revisión legal).
+El campo `status` no es modificable por clientes (sin GRANT de columna).
 
 **`clinic_members`** — corazón de la autorización por clínica.
 
-| Columna                     | Tipo                                                           | Notas                                                   |
-| --------------------------- | -------------------------------------------------------------- | ------------------------------------------------------- |
-| id                          | uuid PK                                                        |                                                         |
-| clinic_id                   | uuid FK → clinics                                              |                                                         |
-| user_id                     | uuid FK → profiles                                             |                                                         |
-| role                        | enum `clinic_role`: `clinic_admin, veterinarian, receptionist` |                                                         |
-| license_number              | text                                                           | cédula profesional (obligatoria si role = veterinarian) |
-| specialty, bio              | text                                                           | datos profesionales del veterinario                     |
-| is_active                   | boolean DEFAULT true                                           | baja lógica del personal                                |
-| UNIQUE (clinic_id, user_id) |                                                                | un rol por usuario por clínica                          |
+| Columna                         | Tipo                                                                      | Notas                                                  |
+| ------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------ |
+| id                              | uuid PK                                                                   |                                                        |
+| clinic_id                       | uuid FK → clinics                                                         |                                                        |
+| user_id                         | uuid FK → profiles                                                        |                                                        |
+| role                            | enum `clinic_role`: `clinic_admin, veterinarian, receptionist, assistant` |                                                        |
+| status                          | enum `membership_status`: `invited, active, suspended, removed`           | solo `active` da acceso                                |
+| professional_license            | text                                                                      | cédula; se exigirá a veterinarios al activar la agenda |
+| job_title                       | text                                                                      |                                                        |
+| joined_at/created_by/deleted_at | —                                                                         | índice único parcial: una membresía viva por usuario   |
+
+Trigger `clinic_members_require_org_membership`: solo miembros ACTIVOS de la organización
+dueña pueden tener membresía viva en la clínica. (Los datos profesionales extendidos —
+especialidad, biografía — se agregarán con los perfiles públicos.)
 
 **`clinic_invitations`**
-Invitaciones de personal: `clinic_id, email, role, token_hash, expires_at, accepted_at, invited_by`.
+`clinic_id, email (normalizado a minúsculas), role clinic_role, token_hash (SHA-256, ÚNICO
+dato persistido del token; columna sin GRANT de lectura para clientes), status enum
+invitation_status: pending, accepted, expired, revoked, expires_at, accepted_at,
+accepted_by, invited_by`. Índice único parcial: sin invitaciones `pending` duplicadas por
+(clínica, correo, rol). Creación solo vía RPC `invite_clinic_member`; aceptación vía
+`accept_clinic_invitation`; los clientes solo pueden revocar.
 
 ### 3.2 Mascotas
 
@@ -315,3 +336,22 @@ Notas:
   de definición legal, ver ARCHITECTURE.md §10).
 - Exportación de datos del propietario (ARCO): función que compila sus datos y expedientes
   de sus mascotas en JSON/PDF **[Propuesta de implementación en fase de app móvil]**.
+
+## 8. Estado de implementación
+
+| Fase                | Qué está implementado                                                                                                                                                                                                                                                                                                 |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fase 2 (2026-07-19) | `profiles`, `reserved_slugs`, `organizations`, `organization_members`, `clinics`, `clinic_members`, `clinic_invitations`, `audit_log`; 6 enums; 8 funciones auxiliares de seguridad; 3 RPCs transaccionales; RLS habilitado y forzado con políticas por operación; 153 aserciones pgTAP. Migraciones `202607191000*`. |
+
+Decisiones aplicadas en la Fase 2:
+
+- **Enums de PostgreSQL** para vocabularios cerrados (roles, estados) — tipado fuerte y
+  tipos TS generados; **tabla** (`reserved_slugs`) para catálogos extensibles sin
+  migración. Criterio documentado en la migración `..._enums_y_slugs.sql`.
+- **Slug de clínica único GLOBALMENTE** (no por organización): la ruta pública futura
+  `/clinicas/[slug]` no incluye organización; unicidad global evita renombres al publicar.
+- **`audit_log` con id `bigint identity`** (no uuid): tabla de log de alto volumen con
+  orden natural; el resto de tablas de negocio usa uuid.
+- Los detalles operativos del modelo de seguridad viven en `docs/security/rls-model.md` y
+  `docs/security/roles-and-permissions.md`; las guías de prueba en
+  `docs/database/local-testing.md`.

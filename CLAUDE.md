@@ -94,6 +94,8 @@ pnpm test          # pruebas unitarias (Vitest, desde la raíz)
 pnpm test:e2e      # Playwright (levanta next dev solo; PLAYWRIGHT_CHROMIUM_PATH opcional)
 pnpm db:start      # Supabase local (requiere Docker)
 pnpm db:reset      # aplica migraciones + seed
+pnpm db:test       # pruebas pgTAP vía Supabase CLI (supabase/tests/database/)
+pnpm db:test:pg    # pruebas pgTAP sin Docker (PostgreSQL 16 + scripts/db/supabase-shim.sql)
 pnpm db:types      # regenera packages/types/src/database.types.ts
 ```
 

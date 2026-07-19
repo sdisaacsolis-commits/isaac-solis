@@ -28,16 +28,26 @@
   fase no hay daemon disponible, por lo que el stack local se verificará en máquina del equipo
   (la configuración ya está lista y versionada).
 
-## Fase 2 — Esquema base, identidad y tenancy
+## Fase 2 — Esquema base, identidad y tenancy ✅ (2026-07-19; confirmación CI/Docker pendiente)
 
-- Migraciones: `profiles`, `organizations`, `organization_members`, `clinics` (con ciclo de
-  vida `trial/active/past_due/suspended/cancelled/archived` y `slug` reservado),
-  `clinic_members`, `clinic_invitations`, `audit_log`, funciones auxiliares de RLS y triggers
-  de auditoría/`updated_at`.
-- Supabase Auth (correo/contraseña) + creación automática de perfil.
-- **Pruebas de RLS de aislamiento entre clínicas (pgTAP) — bloqueantes.**
-- **Criterio de salida**: usuario de clínica A no puede leer/escribir nada de clínica B
-  (demostrado por pruebas automatizadas).
+- Entregado: 9 migraciones (`profiles` + trigger sobre `auth.users`, `reserved_slugs`,
+  `organizations` + `organization_members` con protección de último owner,
+  `clinics` con ciclo de vida `trial/active/past_due/suspended/cancelled/archived` y slug
+  global, `clinic_members` con pertenencia obligatoria a la organización,
+  `clinic_invitations` con tokens SHA-256, `audit_log` append-only, 8 funciones de
+  seguridad y políticas RLS explícitas por operación, 3 RPCs transaccionales).
+- Pruebas: 153 aserciones pgTAP en 5 suites (`supabase/tests/database/`), incluidas las
+  12 pruebas de aislamiento exigidas; tipos generados desde el esquema real; validación
+  Zod de tenancy con 38 pruebas unitarias; job de CI de base de datos.
+- Documentación: `docs/security/rls-model.md`, `docs/security/roles-and-permissions.md`,
+  `docs/database/local-testing.md`.
+- **Criterio de salida**: CUMPLIDO en PostgreSQL 16 local (clúster efímero + shim de
+  Supabase, `pnpm db:test:pg`): migraciones desde base limpia y 153/153 pruebas en verde.
+  **Pendiente**: confirmar la misma suite sobre Supabase CLI + Docker (job de CI
+  "Migraciones y pruebas RLS"), no disponible en el entorno de desarrollo usado.
+- _Alcance movido_: la configuración de Supabase Auth (proveedores, flujo de registro en
+  la app web) se hará con el flujo de alta de clínicas en la Fase 3; el trigger de
+  creación automática de perfil ya está listo y probado.
 
 ## Fase 3 — Registro de clínicas y personal
 
