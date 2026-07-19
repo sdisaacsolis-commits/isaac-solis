@@ -19,10 +19,12 @@ test.describe("Flujos de autenticación (Supabase local)", () => {
 
   test("registro → onboarding → dashboard", async ({ page }) => {
     await page.goto("/registro");
-    await page.getByLabel("Nombre", { exact: true }).fill("Elena");
+    // Nota: con getByLabel exacto el asterisco de "campo obligatorio" rompe la
+    // coincidencia; getByRole usa el nombre accesible (sin decoración).
+    await page.getByRole("textbox", { name: "Nombre", exact: true }).fill("Elena");
     await page.getByLabel("Apellidos").fill("Prueba");
     await page.getByLabel("Correo electrónico").fill(correo);
-    await page.getByLabel("Contraseña", { exact: true }).fill(contrasena);
+    await page.getByRole("textbox", { name: "Contraseña", exact: true }).fill(contrasena);
     await page.getByLabel("Confirma tu contraseña").fill(contrasena);
     await page.getByLabel(/Acepto los términos/).check();
     await page.getByRole("button", { name: "Crear cuenta" }).click();

@@ -22,10 +22,11 @@ test.describe("Propietarios y mascotas (Supabase local)", () => {
   }) => {
     // Cuenta nueva con organización y clínica propias (rol owner ⇒ puede registrar)
     await page.goto("/registro");
-    await page.getByLabel("Nombre", { exact: true }).fill("Rebeca");
+    // getByRole usa el nombre accesible (el asterisco de obligatorio no cuenta).
+    await page.getByRole("textbox", { name: "Nombre", exact: true }).fill("Rebeca");
     await page.getByLabel("Apellidos").fill("Prueba");
     await page.getByLabel("Correo electrónico").fill(correo);
-    await page.getByLabel("Contraseña", { exact: true }).fill(contrasena);
+    await page.getByRole("textbox", { name: "Contraseña", exact: true }).fill(contrasena);
     await page.getByLabel("Confirma tu contraseña").fill(contrasena);
     await page.getByLabel(/Acepto los términos/).check();
     await page.getByRole("button", { name: "Crear cuenta" }).click();
@@ -40,9 +41,9 @@ test.describe("Propietarios y mascotas (Supabase local)", () => {
 
     // Propietario
     await page.goto("/app/propietarios/nuevo");
-    await page.getByLabel("Nombre", { exact: true }).fill("Laura");
+    await page.getByRole("textbox", { name: "Nombre", exact: true }).fill("Laura");
     await page.getByLabel("Apellidos").fill("Ramírez");
-    await page.getByLabel("Teléfono", { exact: true }).fill("+52 55 1111 2222");
+    await page.getByRole("textbox", { name: "Teléfono", exact: true }).fill("+52 55 1111 2222");
     await page.getByRole("button", { name: "Registrar propietario" }).click();
     await expect(page).toHaveURL(/\/app\/propietarios\/[0-9a-f-]{36}/);
 
@@ -68,7 +69,7 @@ test.describe("Propietarios y mascotas (Supabase local)", () => {
 
     // Segundo propietario + transferir principal
     await page.goto("/app/propietarios/nuevo");
-    await page.getByLabel("Nombre", { exact: true }).fill("Pedro");
+    await page.getByRole("textbox", { name: "Nombre", exact: true }).fill("Pedro");
     await page.getByLabel("Apellidos").fill("Ramírez");
     await page.getByRole("button", { name: "Registrar propietario" }).click();
 

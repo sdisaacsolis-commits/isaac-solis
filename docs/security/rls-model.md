@@ -23,6 +23,10 @@
    (`*_select_superadmin`); su acceso de escritura fuera de su perfil es vía backend.
 7. **service_role** (BYPASSRLS) solo existe en backend/Edge Functions; jamás en clientes.
    Aún así, `audit_log` le tiene revocados `UPDATE/DELETE`: la bitácora no se edita.
+   Sus privilegios de tabla se otorgan de forma **explícita** por migración
+   (`20260719300008_grants_service_role.sql`): en el entorno canónico de Supabase las
+   tablas creadas por migraciones no heredan permisos para `service_role`, así que no
+   dependemos de default privileges del entorno.
 
 ## 2. Jerarquía de tenancy
 
