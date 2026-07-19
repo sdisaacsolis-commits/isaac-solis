@@ -70,12 +70,24 @@
 - _Alcance movido a fases siguientes_: activación de clínicas por superadmin (panel
   `(admin)`, Fase 10), servicios y horarios de veterinarios (Fase 5).
 
-## Fase 4 — Propietarios y mascotas (web)
+## Fase 4 — Propietarios y mascotas ✅ (2026-07-19; validación Supabase CLI/Storage real pendiente)
 
-- Registro de propietario desde recepción; perfil de mascota completo con fotografía
-  (Storage privado).
-- Búsqueda de mascotas/propietarios dentro de la clínica.
-- **Criterio de salida**: recepción registra propietario + mascota en menos de 2 minutos.
+- Entregado: identidad global de mascotas y propietarios con TRES relaciones
+  (propietario–mascota con contacto principal único, clínica–mascota con datos privados
+  por clínica, propietario–clínica), alertas administrativas, consentimientos
+  versionados, 7 migraciones (`202607193000*`), 8 funciones de acceso, 5 RPCs
+  transaccionales, bucket privado `pet-photos` con políticas de Storage y procesamiento
+  de imagen (sharp → WebP sin EXIF).
+- Web: `/app/propietarios*` y `/app/mascotas*` (listados con búsqueda/paginación/filtros,
+  altas con detección de duplicados advertida, fichas completas con foto firmada,
+  propietarios múltiples, alertas) + métricas reales en el dashboard.
+- Pruebas: 70 aserciones pgTAP nuevas (241 totales, incluidos los 23 casos exigidos),
+  108 unitarias, E2E en dos niveles.
+- **Criterio de salida**: cumplido en lo verificable localmente (241/241 pgTAP sobre
+  PostgreSQL + shim con storage mínimo). **Pendiente**: suite sobre Supabase CLI/Docker
+  y subida real de fotografías a Supabase Storage (procedimiento en
+  docs/pets/testing.md).
+- Documentación: `docs/pets/` (7 documentos).
 
 ## Fase 5 — Agenda de citas
 

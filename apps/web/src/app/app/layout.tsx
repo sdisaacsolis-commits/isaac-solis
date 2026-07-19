@@ -12,6 +12,8 @@ const nav = mensajes.panel.nav;
 
 const enlaces = [
   { href: "/app/inicio", etiqueta: nav.inicio },
+  { href: "/app/propietarios", etiqueta: nav.propietarios },
+  { href: "/app/mascotas", etiqueta: nav.mascotas },
   { href: "/app/organizacion", etiqueta: nav.organizacion },
   { href: "/app/clinicas", etiqueta: nav.clinicas },
   { href: "/app/personal", etiqueta: nav.personal },

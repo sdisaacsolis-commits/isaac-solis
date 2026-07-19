@@ -49,3 +49,30 @@ export type InvitationStatus = Enums<"invitation_status">;
 export const DEFAULT_LOCALE = "es-MX" as const;
 export const DEFAULT_TIMEZONE = "America/Mexico_City" as const;
 export const DEFAULT_CURRENCY = "MXN" as const;
+
+// ---------------------------------------------------------------------------
+// Enums del dominio de pacientes (Fase 4), derivados de la base de datos
+// ---------------------------------------------------------------------------
+export const PET_SPECIES = Constants.public.Enums.pet_species;
+export type PetSpecies = Enums<"pet_species">;
+
+export const PET_SEXES = Constants.public.Enums.pet_sex;
+export type PetSex = Enums<"pet_sex">;
+
+export const OWNER_PET_RELATIONSHIP_TYPES = Constants.public.Enums.owner_pet_relationship_type;
+export type OwnerPetRelationshipType = Enums<"owner_pet_relationship_type">;
+
+export const CLINIC_PET_STATUSES = Constants.public.Enums.clinic_pet_status;
+export type ClinicPetStatus = Enums<"clinic_pet_status">;
+
+export const PET_ALERT_TYPES = Constants.public.Enums.pet_alert_type;
+export type PetAlertType = Enums<"pet_alert_type">;
+
+export const PET_ALERT_SEVERITIES = Constants.public.Enums.pet_alert_severity;
+export type PetAlertSeverity = Enums<"pet_alert_severity">;
+
+export const CONTACT_METHODS = Constants.public.Enums.contact_method;
+export type ContactMethod = Enums<"contact_method">;
+
+export const CONSENT_TYPES = Constants.public.Enums.consent_type;
+export type ConsentType = Enums<"consent_type">;

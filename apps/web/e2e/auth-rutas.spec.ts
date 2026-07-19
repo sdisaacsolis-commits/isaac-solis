@@ -11,7 +11,15 @@ test.describe("Protección de rutas y páginas de autenticación", () => {
   });
 
   test("todas las rutas privadas están protegidas", async ({ page }) => {
-    for (const ruta of ["/app", "/app/personal", "/app/organizacion", "/app/configuracion"]) {
+    for (const ruta of [
+      "/app",
+      "/app/personal",
+      "/app/organizacion",
+      "/app/configuracion",
+      "/app/propietarios",
+      "/app/mascotas",
+      "/app/mascotas/nueva",
+    ]) {
       await page.goto(ruta);
       await expect(page).toHaveURL(/\/iniciar-sesion/);
     }

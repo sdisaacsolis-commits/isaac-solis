@@ -4,10 +4,11 @@ Plataforma SaaS mexicana para clínicas veterinarias, médicos veterinarios y pr
 mascotas: agenda de citas, expedientes clínicos, recetas y recordatorios — con aislamiento
 total de datos entre clínicas.
 
-> **Estado actual: Fase 3 (autenticación, onboarding, clínicas, personal e invitaciones).**
-> Panel web funcional con Supabase Auth, onboarding por RPCs transaccionales, invitaciones
-> con tokens hasheados y correo desacoplado (Resend/dev). Aislamiento RLS validado con 171
-> pruebas pgTAP sobre PostgreSQL local (ver [ROADMAP.md](./ROADMAP.md), `docs/auth/` y
+> **Estado actual: Fase 4 (propietarios, mascotas, relaciones clínicas y fotos privadas).**
+> Núcleo de pacientes con identidad global de mascotas, relaciones multi-propietario y
+> multi-clínica, alertas administrativas, consentimientos versionados y fotografías en
+> bucket privado. Aislamiento RLS validado con 241 pruebas pgTAP sobre PostgreSQL local
+> (ver [ROADMAP.md](./ROADMAP.md), `docs/pets/` y
 > [docs/security/rls-model.md](./docs/security/rls-model.md)).
 
 ## Documentación

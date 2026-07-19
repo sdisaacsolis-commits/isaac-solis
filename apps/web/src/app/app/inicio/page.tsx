@@ -12,6 +12,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { mensajes } from "@/lib/i18n/es-mx";
+import { metricasPacientes } from "@/lib/pets/queries";
 import { etiquetasEstadoClinica } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 import { requireTenancyContext } from "@/lib/tenancy/queries";
@@ -42,6 +43,7 @@ export default async function PaginaInicioPanel({
   ]);
 
   const clinica = context.activeClinic;
+  const pacientes = clinica ? await metricasPacientes(clinica.id) : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -108,6 +110,36 @@ export default async function PaginaInicioPanel({
           </CardContent>
         </Card>
       </div>
+
+      {pacientes ? (
+        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          {(
+            [
+              [
+                mensajes.pacientes.dashboard.propietarios,
+                pacientes.propietarios,
+                "/app/propietarios",
+              ],
+              [mensajes.pacientes.dashboard.mascotasActivas, pacientes.mascotas, "/app/mascotas"],
+              [mensajes.pacientes.dashboard.perros, pacientes.perros, "/app/mascotas?species=dog"],
+              [mensajes.pacientes.dashboard.gatos, pacientes.gatos, "/app/mascotas?species=cat"],
+              [mensajes.pacientes.dashboard.esteMes, pacientes.delMes, "/app/mascotas"],
+              [mensajes.pacientes.dashboard.alertas, pacientes.alertas, "/app/mascotas"],
+            ] as const
+          ).map(([titulo, valor, href]) => (
+            <Card key={titulo}>
+              <CardHeader className="p-4">
+                <CardDescription>{titulo}</CardDescription>
+                <CardTitle className="text-2xl">
+                  <Link className="hover:text-brand-700" href={href}>
+                    {valor}
+                  </Link>
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>

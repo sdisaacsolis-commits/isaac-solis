@@ -20,6 +20,8 @@ export const env = createEnv({
     EMAIL_REPLY_TO: z.string().email().optional(),
     // "resend" envía correos reales; "dev" solo registra una versión redactada.
     EMAIL_MODE: z.enum(["resend", "dev"]).default("dev"),
+    // Duración (segundos) de las URLs firmadas de fotografías de mascotas.
+    PET_PHOTO_SIGNED_URL_SECONDS: z.coerce.number().int().min(30).max(3600).default(300),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
@@ -33,6 +35,7 @@ export const env = createEnv({
     EMAIL_FROM: process.env.EMAIL_FROM,
     EMAIL_REPLY_TO: process.env.EMAIL_REPLY_TO,
     EMAIL_MODE: process.env.EMAIL_MODE,
+    PET_PHOTO_SIGNED_URL_SECONDS: process.env.PET_PHOTO_SIGNED_URL_SECONDS,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,

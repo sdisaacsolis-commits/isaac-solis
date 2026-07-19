@@ -59,6 +59,39 @@ $$;
 
 grant execute on function auth.uid(), auth.jwt() to public;
 
+-- Esquema storage mínimo (buckets/objects + foldername), como en Supabase.
+create schema if not exists storage;
+grant usage on schema storage to public;
+
+create table if not exists storage.buckets (
+  id text primary key,
+  name text not null,
+  public boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists storage.objects (
+  id uuid primary key default gen_random_uuid(),
+  bucket_id text references storage.buckets (id),
+  name text,
+  owner uuid,
+  metadata jsonb,
+  created_at timestamptz not null default now()
+);
+
+alter table storage.objects enable row level security;
+
+create or replace function storage.foldername(name text)
+returns text[]
+language sql
+immutable
+as $$
+  select (string_to_array(name, '/'))[1 : array_upper(string_to_array(name, '/'), 1) - 1];
+$$;
+
+grant all on storage.buckets, storage.objects to anon, authenticated, service_role;
+grant execute on function storage.foldername(text) to public;
+
 -- Privilegios por defecto equivalentes a los de Supabase en public: los
 -- objetos nuevos reciben permisos amplios y cada migración los recorta
 -- explícitamente (igual que en el entorno real).

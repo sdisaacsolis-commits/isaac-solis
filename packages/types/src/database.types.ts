@@ -203,6 +203,97 @@ export type Database = {
           },
         ];
       };
+      clinic_pet_relationships: {
+        Row: {
+          administrative_notes: string | null;
+          clinic_id: string;
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          first_visit_at: string | null;
+          id: string;
+          internal_patient_number: string | null;
+          last_visit_at: string | null;
+          organization_id: string;
+          pet_id: string;
+          referred_by_clinic_id: string | null;
+          source: Database["public"]["Enums"]["clinic_pet_source"];
+          status: Database["public"]["Enums"]["clinic_pet_status"];
+          updated_at: string;
+        };
+        Insert: {
+          administrative_notes?: string | null;
+          clinic_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          first_visit_at?: string | null;
+          id?: string;
+          internal_patient_number?: string | null;
+          last_visit_at?: string | null;
+          organization_id: string;
+          pet_id: string;
+          referred_by_clinic_id?: string | null;
+          source?: Database["public"]["Enums"]["clinic_pet_source"];
+          status?: Database["public"]["Enums"]["clinic_pet_status"];
+          updated_at?: string;
+        };
+        Update: {
+          administrative_notes?: string | null;
+          clinic_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          first_visit_at?: string | null;
+          id?: string;
+          internal_patient_number?: string | null;
+          last_visit_at?: string | null;
+          organization_id?: string;
+          pet_id?: string;
+          referred_by_clinic_id?: string | null;
+          source?: Database["public"]["Enums"]["clinic_pet_source"];
+          status?: Database["public"]["Enums"]["clinic_pet_status"];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "clinic_pet_relationships_clinic_id_fkey";
+            columns: ["clinic_id"];
+            referencedRelation: "clinics";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "clinic_pet_relationships_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "clinic_pet_relationships_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "clinic_pet_relationships_organization_id_fkey";
+            columns: ["organization_id"];
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "clinic_pet_relationships_pet_id_fkey";
+            columns: ["pet_id"];
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "clinic_pet_relationships_referred_by_clinic_id_fkey";
+            columns: ["referred_by_clinic_id"];
+            referencedRelation: "clinics";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       clinics: {
         Row: {
           accepts_online_booking: boolean;
@@ -428,6 +519,513 @@ export type Database = {
           },
         ];
       };
+      owner_clinic_relationships: {
+        Row: {
+          administrative_notes: string | null;
+          clinic_id: string;
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          id: string;
+          internal_customer_number: string | null;
+          organization_id: string;
+          owner_id: string;
+          status: Database["public"]["Enums"]["clinic_pet_status"];
+          updated_at: string;
+        };
+        Insert: {
+          administrative_notes?: string | null;
+          clinic_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          internal_customer_number?: string | null;
+          organization_id: string;
+          owner_id: string;
+          status?: Database["public"]["Enums"]["clinic_pet_status"];
+          updated_at?: string;
+        };
+        Update: {
+          administrative_notes?: string | null;
+          clinic_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          internal_customer_number?: string | null;
+          organization_id?: string;
+          owner_id?: string;
+          status?: Database["public"]["Enums"]["clinic_pet_status"];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "owner_clinic_relationships_clinic_id_fkey";
+            columns: ["clinic_id"];
+            referencedRelation: "clinics";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "owner_clinic_relationships_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "owner_clinic_relationships_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "owner_clinic_relationships_organization_id_fkey";
+            columns: ["organization_id"];
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "owner_clinic_relationships_owner_id_fkey";
+            columns: ["owner_id"];
+            referencedRelation: "pet_owners";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      owner_consents: {
+        Row: {
+          clinic_id: string | null;
+          created_at: string;
+          document_version: string;
+          granted_at: string;
+          id: string;
+          medium: Database["public"]["Enums"]["consent_medium"];
+          metadata: Json | null;
+          organization_id: string | null;
+          owner_id: string;
+          recorded_by: string | null;
+          revoked_at: string | null;
+          revoked_by: string | null;
+          type: Database["public"]["Enums"]["consent_type"];
+          updated_at: string;
+        };
+        Insert: {
+          clinic_id?: string | null;
+          created_at?: string;
+          document_version: string;
+          granted_at?: string;
+          id?: string;
+          medium?: Database["public"]["Enums"]["consent_medium"];
+          metadata?: Json | null;
+          organization_id?: string | null;
+          owner_id: string;
+          recorded_by?: string | null;
+          revoked_at?: string | null;
+          revoked_by?: string | null;
+          type: Database["public"]["Enums"]["consent_type"];
+          updated_at?: string;
+        };
+        Update: {
+          clinic_id?: string | null;
+          created_at?: string;
+          document_version?: string;
+          granted_at?: string;
+          id?: string;
+          medium?: Database["public"]["Enums"]["consent_medium"];
+          metadata?: Json | null;
+          organization_id?: string | null;
+          owner_id?: string;
+          recorded_by?: string | null;
+          revoked_at?: string | null;
+          revoked_by?: string | null;
+          type?: Database["public"]["Enums"]["consent_type"];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "owner_consents_clinic_id_fkey";
+            columns: ["clinic_id"];
+            referencedRelation: "clinics";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "owner_consents_organization_id_fkey";
+            columns: ["organization_id"];
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "owner_consents_owner_id_fkey";
+            columns: ["owner_id"];
+            referencedRelation: "pet_owners";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "owner_consents_recorded_by_fkey";
+            columns: ["recorded_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "owner_consents_recorded_by_fkey";
+            columns: ["recorded_by"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "owner_consents_revoked_by_fkey";
+            columns: ["revoked_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "owner_consents_revoked_by_fkey";
+            columns: ["revoked_by"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pet_alerts: {
+        Row: {
+          active: boolean;
+          clinic_id: string;
+          created_at: string;
+          created_by: string | null;
+          description: string | null;
+          id: string;
+          organization_id: string;
+          pet_id: string;
+          resolved_at: string | null;
+          resolved_by: string | null;
+          severity: Database["public"]["Enums"]["pet_alert_severity"];
+          title: string;
+          type: Database["public"]["Enums"]["pet_alert_type"];
+          updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          clinic_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          id?: string;
+          organization_id: string;
+          pet_id: string;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          severity?: Database["public"]["Enums"]["pet_alert_severity"];
+          title: string;
+          type: Database["public"]["Enums"]["pet_alert_type"];
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          clinic_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          id?: string;
+          organization_id?: string;
+          pet_id?: string;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          severity?: Database["public"]["Enums"]["pet_alert_severity"];
+          title?: string;
+          type?: Database["public"]["Enums"]["pet_alert_type"];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pet_alerts_clinic_id_fkey";
+            columns: ["clinic_id"];
+            referencedRelation: "clinics";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pet_alerts_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pet_alerts_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pet_alerts_organization_id_fkey";
+            columns: ["organization_id"];
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pet_alerts_pet_id_fkey";
+            columns: ["pet_id"];
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pet_alerts_resolved_by_fkey";
+            columns: ["resolved_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pet_alerts_resolved_by_fkey";
+            columns: ["resolved_by"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pet_owner_relationships: {
+        Row: {
+          can_access_portal: boolean;
+          can_make_medical_decisions: boolean;
+          can_receive_notifications: boolean;
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          ended_at: string | null;
+          id: string;
+          is_primary: boolean;
+          owner_id: string;
+          pet_id: string;
+          relationship_type: Database["public"]["Enums"]["owner_pet_relationship_type"];
+          started_at: string;
+          status: Database["public"]["Enums"]["owner_pet_relationship_status"];
+          updated_at: string;
+        };
+        Insert: {
+          can_access_portal?: boolean;
+          can_make_medical_decisions?: boolean;
+          can_receive_notifications?: boolean;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          ended_at?: string | null;
+          id?: string;
+          is_primary?: boolean;
+          owner_id: string;
+          pet_id: string;
+          relationship_type?: Database["public"]["Enums"]["owner_pet_relationship_type"];
+          started_at?: string;
+          status?: Database["public"]["Enums"]["owner_pet_relationship_status"];
+          updated_at?: string;
+        };
+        Update: {
+          can_access_portal?: boolean;
+          can_make_medical_decisions?: boolean;
+          can_receive_notifications?: boolean;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          ended_at?: string | null;
+          id?: string;
+          is_primary?: boolean;
+          owner_id?: string;
+          pet_id?: string;
+          relationship_type?: Database["public"]["Enums"]["owner_pet_relationship_type"];
+          started_at?: string;
+          status?: Database["public"]["Enums"]["owner_pet_relationship_status"];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pet_owner_relationships_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pet_owner_relationships_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pet_owner_relationships_owner_id_fkey";
+            columns: ["owner_id"];
+            referencedRelation: "pet_owners";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pet_owner_relationships_pet_id_fkey";
+            columns: ["pet_id"];
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pet_owners: {
+        Row: {
+          address_line_1: string | null;
+          address_line_2: string | null;
+          city: string | null;
+          country_code: string;
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          display_name: string | null;
+          email: string | null;
+          first_name: string;
+          id: string;
+          last_name: string;
+          neighborhood: string | null;
+          phone: string | null;
+          postal_code: string | null;
+          preferred_contact_method: Database["public"]["Enums"]["contact_method"];
+          secondary_phone: string | null;
+          state: string | null;
+          updated_at: string;
+          user_id: string | null;
+        };
+        Insert: {
+          address_line_1?: string | null;
+          address_line_2?: string | null;
+          city?: string | null;
+          country_code?: string;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          display_name?: string | null;
+          email?: string | null;
+          first_name: string;
+          id?: string;
+          last_name: string;
+          neighborhood?: string | null;
+          phone?: string | null;
+          postal_code?: string | null;
+          preferred_contact_method?: Database["public"]["Enums"]["contact_method"];
+          secondary_phone?: string | null;
+          state?: string | null;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          address_line_1?: string | null;
+          address_line_2?: string | null;
+          city?: string | null;
+          country_code?: string;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          display_name?: string | null;
+          email?: string | null;
+          first_name?: string;
+          id?: string;
+          last_name?: string;
+          neighborhood?: string | null;
+          phone?: string | null;
+          postal_code?: string | null;
+          preferred_contact_method?: Database["public"]["Enums"]["contact_method"];
+          secondary_phone?: string | null;
+          state?: string | null;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pet_owners_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pet_owners_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pet_owners_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pet_owners_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pets: {
+        Row: {
+          approximate_birth_date: boolean;
+          birth_date: string | null;
+          breed: string | null;
+          color: string | null;
+          created_at: string;
+          created_by: string | null;
+          deceased_at: string | null;
+          deleted_at: string | null;
+          id: string;
+          identifying_marks: string | null;
+          microchip_number: string | null;
+          name: string;
+          photo_path: string | null;
+          sex: Database["public"]["Enums"]["pet_sex"];
+          species: Database["public"]["Enums"]["pet_species"];
+          sterilized: boolean | null;
+          updated_at: string;
+        };
+        Insert: {
+          approximate_birth_date?: boolean;
+          birth_date?: string | null;
+          breed?: string | null;
+          color?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          deceased_at?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          identifying_marks?: string | null;
+          microchip_number?: string | null;
+          name: string;
+          photo_path?: string | null;
+          sex?: Database["public"]["Enums"]["pet_sex"];
+          species: Database["public"]["Enums"]["pet_species"];
+          sterilized?: boolean | null;
+          updated_at?: string;
+        };
+        Update: {
+          approximate_birth_date?: boolean;
+          birth_date?: string | null;
+          breed?: string | null;
+          color?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          deceased_at?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          identifying_marks?: string | null;
+          microchip_number?: string | null;
+          name?: string;
+          photo_path?: string | null;
+          sex?: Database["public"]["Enums"]["pet_sex"];
+          species?: Database["public"]["Enums"]["pet_species"];
+          sterilized?: boolean | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pets_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pets_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       profiles: {
         Row: {
           avatar_url: string | null;
@@ -520,6 +1118,18 @@ export type Database = {
     };
     Functions: {
       accept_clinic_invitation: { Args: { p_token: string }; Returns: string };
+      add_pet_owner: {
+        Args: {
+          p_owner_id: string;
+          p_pet_id: string;
+          p_relationship_type?: Database["public"]["Enums"]["owner_pet_relationship_type"];
+        };
+        Returns: string;
+      };
+      can_access_owner: { Args: { p_owner_id: string }; Returns: boolean };
+      can_access_pet: { Args: { p_pet_id: string }; Returns: boolean };
+      can_manage_owner: { Args: { p_owner_id: string }; Returns: boolean };
+      can_manage_pet: { Args: { p_pet_id: string }; Returns: boolean };
       clinic_belongs_to_organization: {
         Args: { p_clinic_id: string; p_organization_id: string };
         Returns: boolean;
@@ -552,6 +1162,14 @@ export type Database = {
         Returns: string;
       };
       current_user_is_superadmin: { Args: never; Returns: boolean };
+      has_active_clinic_pet_relationship: {
+        Args: { p_clinic_id: string; p_pet_id: string };
+        Returns: boolean;
+      };
+      has_active_owner_pet_relationship: {
+        Args: { p_owner_id: string; p_pet_id: string };
+        Returns: boolean;
+      };
       invite_clinic_member: {
         Args: {
           p_clinic_id: string;
@@ -562,6 +1180,10 @@ export type Database = {
       };
       is_clinic_admin: { Args: { p_clinic_id: string }; Returns: boolean };
       is_clinic_member: { Args: { p_clinic_id: string }; Returns: boolean };
+      is_clinic_operational_staff: {
+        Args: { p_clinic_id: string };
+        Returns: boolean;
+      };
       is_organization_admin: {
         Args: { p_organization_id: string };
         Returns: boolean;
@@ -574,10 +1196,68 @@ export type Database = {
         Args: { p_organization_id: string };
         Returns: boolean;
       };
+      link_pet_to_clinic: {
+        Args: {
+          p_clinic_id: string;
+          p_internal_patient_number?: string;
+          p_pet_id: string;
+          p_source?: Database["public"]["Enums"]["clinic_pet_source"];
+        };
+        Returns: string;
+      };
       organization_of_clinic: { Args: { p_clinic_id: string }; Returns: string };
+      pet_belongs_to_accessible_clinic: {
+        Args: { p_pet_id: string };
+        Returns: boolean;
+      };
+      pet_id_from_storage_path: { Args: { p_name: string }; Returns: string };
+      register_owner_with_clinic: {
+        Args: {
+          p_address_line_1?: string;
+          p_address_line_2?: string;
+          p_administrative_notes?: string;
+          p_city?: string;
+          p_clinic_id: string;
+          p_email?: string;
+          p_first_name: string;
+          p_internal_customer_number?: string;
+          p_last_name: string;
+          p_neighborhood?: string;
+          p_phone?: string;
+          p_postal_code?: string;
+          p_preferred_contact_method?: Database["public"]["Enums"]["contact_method"];
+          p_secondary_phone?: string;
+          p_state?: string;
+        };
+        Returns: string;
+      };
+      register_pet_with_relationships: {
+        Args: {
+          p_approximate_birth_date?: boolean;
+          p_birth_date?: string;
+          p_breed?: string;
+          p_clinic_id: string;
+          p_color?: string;
+          p_identifying_marks?: string;
+          p_internal_patient_number?: string;
+          p_microchip_number?: string;
+          p_name: string;
+          p_owner_id: string;
+          p_relationship_type?: Database["public"]["Enums"]["owner_pet_relationship_type"];
+          p_sex?: Database["public"]["Enums"]["pet_sex"];
+          p_source?: Database["public"]["Enums"]["clinic_pet_source"];
+          p_species: Database["public"]["Enums"]["pet_species"];
+          p_sterilized?: boolean;
+        };
+        Returns: string;
+      };
       resend_clinic_invitation: {
         Args: { p_invitation_id: string };
         Returns: string;
+      };
+      set_primary_pet_owner: {
+        Args: { p_owner_id: string; p_pet_id: string };
+        Returns: undefined;
       };
       shares_active_organization_with: {
         Args: { p_profile_id: string };
@@ -585,12 +1265,36 @@ export type Database = {
       };
     };
     Enums: {
+      clinic_pet_source: "manual" | "owner_registration" | "invitation" | "referral" | "import";
+      clinic_pet_status: "active" | "inactive" | "transferred" | "blocked" | "archived";
       clinic_role: "clinic_admin" | "veterinarian" | "receptionist" | "assistant";
       clinic_status: "trial" | "active" | "past_due" | "suspended" | "cancelled" | "archived";
+      consent_medium: "in_person" | "web" | "email" | "phone";
+      consent_type:
+        | "privacy_notice"
+        | "data_processing"
+        | "communications"
+        | "clinic_access"
+        | "share_records"
+        | "portal_terms";
+      contact_method: "phone" | "email" | "whatsapp" | "sms";
       invitation_status: "pending" | "accepted" | "expired" | "revoked";
       membership_status: "invited" | "active" | "suspended" | "removed";
       organization_role: "owner" | "admin" | "billing" | "member";
       organization_status: "active" | "suspended" | "archived";
+      owner_pet_relationship_status: "active" | "inactive" | "disputed" | "revoked";
+      owner_pet_relationship_type:
+        "owner" | "guardian" | "family_member" | "temporary_caregiver" | "other";
+      pet_alert_severity: "info" | "caution" | "critical";
+      pet_alert_type:
+        | "aggressive_behavior"
+        | "escape_risk"
+        | "handling_precaution"
+        | "communication_preference"
+        | "billing_note"
+        | "other";
+      pet_sex: "male" | "female" | "unknown";
+      pet_species: "dog" | "cat" | "other";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -712,12 +1416,43 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      clinic_pet_source: ["manual", "owner_registration", "invitation", "referral", "import"],
+      clinic_pet_status: ["active", "inactive", "transferred", "blocked", "archived"],
       clinic_role: ["clinic_admin", "veterinarian", "receptionist", "assistant"],
       clinic_status: ["trial", "active", "past_due", "suspended", "cancelled", "archived"],
+      consent_medium: ["in_person", "web", "email", "phone"],
+      consent_type: [
+        "privacy_notice",
+        "data_processing",
+        "communications",
+        "clinic_access",
+        "share_records",
+        "portal_terms",
+      ],
+      contact_method: ["phone", "email", "whatsapp", "sms"],
       invitation_status: ["pending", "accepted", "expired", "revoked"],
       membership_status: ["invited", "active", "suspended", "removed"],
       organization_role: ["owner", "admin", "billing", "member"],
       organization_status: ["active", "suspended", "archived"],
+      owner_pet_relationship_status: ["active", "inactive", "disputed", "revoked"],
+      owner_pet_relationship_type: [
+        "owner",
+        "guardian",
+        "family_member",
+        "temporary_caregiver",
+        "other",
+      ],
+      pet_alert_severity: ["info", "caution", "critical"],
+      pet_alert_type: [
+        "aggressive_behavior",
+        "escape_risk",
+        "handling_precaution",
+        "communication_preference",
+        "billing_note",
+        "other",
+      ],
+      pet_sex: ["male", "female", "unknown"],
+      pet_species: ["dog", "cat", "other"],
     },
   },
 } as const;

@@ -67,3 +67,27 @@ Cada regla tiene una aserción pgTAP en `supabase/tests/database/` con fixtures 
 organizaciones, dos clínicas y los nueve perfiles requeridos (superadmin, dos owners,
 admin de clínica, veterinario, recepcionista, suspendida, usuario sin membresías y
 usuaria invitada). `pnpm db:test` (Supabase CLI) o `pnpm db:test:pg` (PostgreSQL local).
+
+## 5. Matriz del dominio de pacientes (Fase 4)
+
+✔ = permitido · ✖ = denegado por RLS/privilegios · B = solo backend
+
+| Acción                                           | org owner/admin | clinic_admin | veterinario       | recepcionista | asistente        | sin membresía |
+| ------------------------------------------------ | --------------- | ------------ | ----------------- | ------------- | ---------------- | ------------- |
+| Consultar propietarios/mascotas de sus clínicas  | ✔               | ✔            | ✔                 | ✔             | ✔ (solo lectura) | ✖             |
+| Registrar/editar propietarios (RPC + update)     | ✔               | ✔            | ✖ (solo consulta) | ✔             | ✖                | ✖             |
+| Registrar mascotas (RPC transaccional)           | ✔               | ✔            | ✔                 | ✔             | ✖                | ✖             |
+| Editar datos globales de mascota                 | ✔               | ✔            | ✔                 | ✔             | ✖                | ✖             |
+| Añadir propietario / transferir principal (RPCs) | ✔               | ✔            | ✔                 | ✔             | ✖                | ✖             |
+| Vincular mascota a clínica del alcance (RPC)     | ✔               | ✔            | ✔                 | ✔             | ✖                | ✖             |
+| Archivar relación clínica–mascota                | ✔               | ✔            | ✔                 | ✔             | ✖                | ✖             |
+| Crear/resolver alertas administrativas           | ✔               | ✔            | ✔                 | ✔             | ✖                | ✖             |
+| Registrar/revocar consentimientos                | ✔               | ✔            | ✖                 | ✔             | ✖                | ✖             |
+| Subir/reemplazar fotografía                      | ✔               | ✔            | ✔                 | ✔             | ✖                | ✖             |
+| Leer notas/número interno de OTRA clínica        | ✖               | ✖            | ✖                 | ✖             | ✖                | ✖             |
+| Borrado físico / deceased_at / deleted_at        | B               | B            | B                 | B             | B                | ✖             |
+
+Ajustes documentados respecto a la propuesta inicial: los veterinarios SÍ editan datos
+básicos de mascotas y crean alertas de manejo (operación clínica cotidiana), pero NO
+gestionan propietarios ni consentimientos; los asistentes son estrictamente de lectura en
+esta fase. La autoridad sigue siendo PostgreSQL (funciones `can_access_*`/`can_manage_*`).

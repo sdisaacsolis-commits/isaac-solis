@@ -122,3 +122,19 @@ por diseño de BYPASSRLS + revocaciones) y superadmin explícito (12).
 - La restricción de acceso a clínicas `suspended/cancelled` (a nivel clínica, no
   membresía) se definirá con las políticas de cobranza (Fase 11).
 - `ip_address`/`user_agent` de `audit_log` se poblarán desde Edge Functions.
+
+## 9. Extensión de la Fase 4 (dominio de pacientes)
+
+Nuevas funciones de acceso (mismas salvaguardas que §3): `can_access_pet`,
+`can_manage_pet`, `can_access_owner`, `can_manage_owner`,
+`has_active_clinic_pet_relationship`, `has_active_owner_pet_relationship`,
+`pet_belongs_to_accessible_clinic`, `is_clinic_operational_staff` y
+`pet_id_from_storage_path` (políticas de Storage). Nunca confían en la clínica enviada
+por el cliente: derivan las clínicas del actor desde sus membresías activas.
+
+Principios aplicados a las 7 tablas nuevas: identidad global (pets/pet_owners) accesible
+SOLO vía relaciones activas; datos por-clínica (notas, números internos, alertas,
+consentimientos) aislados por política; INSERT multi-fila solo vía RPC; `is_primary` sin
+GRANT directo (solo la RPC de transferencia); bucket `pet-photos` privado con las mismas
+funciones. Detalle completo: `docs/pets/domain-model.md`; pruebas: pgTAP 07-08 (241
+aserciones totales).

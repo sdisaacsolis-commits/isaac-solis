@@ -357,3 +357,5 @@ Decisiones aplicadas en la Fase 2:
   `docs/database/local-testing.md`.
 
 | Fase 3 (2026-07-19) | Vista segura `colleague_profiles` (datos básicos de colegas por organización compartida; migración 0011) y RPCs `create_clinic_with_admin` + `resend_clinic_invitation` (migración 0012). 171 aserciones pgTAP totales. |
+
+| Fase 4 (2026-07-19) | Dominio de pacientes: `pet_owners`, `pets`, `pet_owner_relationships` (principal único), `clinic_pet_relationships` (datos privados por clínica), `owner_clinic_relationships`, `pet_alerts`, `owner_consents` (versionados); 11 enums; 8 funciones de acceso; 5 RPCs; bucket privado `pet-photos` con políticas de Storage; 70 aserciones pgTAP nuevas (241 totales). Migraciones `202607193000*`. **Nota**: este diseño SUSTITUYE al esbozo original de `pets` de §3.2 (que llevaba `owner_id` directo); el modelo definitivo separa identidad global de relaciones — ver `docs/pets/domain-model.md`. |
