@@ -1,0 +1,17 @@
+{
+  "name": "@dogtoralia/validation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Esquemas Zod compartidos: toda validación de datos en frontera vive aquí",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.25.0"
+  }
+}

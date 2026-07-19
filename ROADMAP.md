@@ -10,13 +10,23 @@
 - Documentos: PRODUCT_REQUIREMENTS, ARCHITECTURE, DATABASE_DESIGN, ROADMAP, README, CLAUDE.
 - **Criterio de salida**: documentación validada por el propietario del producto.
 
-## Fase 1 — Fundación del monorepo
+## Fase 1 — Fundación del monorepo ✅ (completada 2026-07-19)
 
-- Estructura pnpm workspaces + Turborepo (`apps/web`, `packages/shared`, `supabase/`).
-- Next.js con TypeScript estricto, Tailwind, shadcn/ui, ESLint + Prettier.
-- Supabase local (`supabase start`), primera migración vacía, `.env.example`.
-- CI (GitHub Actions): lint, typecheck, build, pruebas.
-- **Criterio de salida**: `pnpm build` y CI en verde; app web muestra página base en es-MX.
+- Estructura pnpm workspaces + Turborepo (`apps/web`, `packages/{ui,config,types,validation}`,
+  `supabase/`).
+- Next.js (App Router) con TypeScript estricto, Tailwind CSS v4, componentes base patrón
+  shadcn/ui (Button, Card, Input, Label), ESLint (flat config) + Prettier + orden de imports.
+- Página inicial en es-MX con capa mínima de i18n y tema de marca centralizado
+  (`packages/config/tailwind/theme.css`).
+- Supabase configurado (`config.toml`, migración de infraestructura, `seed.sql`) y
+  `.env.example` documentado; validación de variables con protección cliente/servidor.
+- Pruebas: Vitest (14 unitarias de `packages/validation`) + Playwright (smoke E2E de la página).
+- CI (GitHub Actions): lint, formato, typecheck, pruebas, build + job E2E.
+- **Criterio de salida**: cumplido — `pnpm lint/typecheck/test/build` en verde y página base
+  funcionando en desarrollo (verificado con Playwright).
+- _Nota_: `supabase start` requiere Docker; en el entorno de desarrollo remoto usado para esta
+  fase no hay daemon disponible, por lo que el stack local se verificará en máquina del equipo
+  (la configuración ya está lista y versionada).
 
 ## Fase 2 — Esquema base, identidad y tenancy
 

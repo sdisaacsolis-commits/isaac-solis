@@ -1,0 +1,10 @@
+{
+  "name": "@dogtoralia/config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Configuraciones compartidas del monorepo: presets de tsconfig y tema base de Tailwind (identidad de marca)",
+  "files": [
+    "tsconfig",
+    "tailwind"
+  ]
+}

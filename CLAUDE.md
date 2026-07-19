@@ -56,7 +56,7 @@ clínicos**: la seguridad y el aislamiento entre clínicas son innegociables. Do
     como funciones SQL o Edge Functions, no como inserts directos del cliente.
 18. Después de cambiar el esquema, regenerar los tipos TS (`packages/types`, comando
     `pnpm db:types`) en el mismo PR.
-18b. Integraciones externas (correo, push, WhatsApp, pagos) siempre detrás de una interfaz de
+    18b. Integraciones externas (correo, push, WhatsApp, pagos) siempre detrás de una interfaz de
     proveedor desacoplada (ARCHITECTURE.md §6.1); el dominio nunca importa SDKs de proveedores
     directamente. Proveedor previsto para WhatsApp: Meta WhatsApp Cloud API (fase posterior).
 
@@ -82,13 +82,24 @@ clínicos**: la seguridad y el aislamiento entre clínicas son innegociables. Do
 26. Decisiones de arquitectura relevantes se registran como ADR en `docs/adr/` (contexto,
     decisión, consecuencias).
 
-## Comandos de referencia (a partir de la Fase 1)
+## Comandos de referencia
 
 ```bash
-pnpm dev          # panel web local
-pnpm lint         # ESLint + Prettier check
-pnpm typecheck    # tsc --noEmit en todos los paquetes
-pnpm test         # pruebas unitarias y de componentes
-supabase start    # stack local (Docker)
-supabase db reset # aplica migraciones + seed
+pnpm dev           # panel web local (http://localhost:3000)
+pnpm build         # build de producción
+pnpm lint          # ESLint (flat config raíz) en todos los paquetes
+pnpm format:check  # Prettier en modo verificación (format para corregir)
+pnpm typecheck     # tsc --noEmit en todos los paquetes
+pnpm test          # pruebas unitarias (Vitest, desde la raíz)
+pnpm test:e2e      # Playwright (levanta next dev solo; PLAYWRIGHT_CHROMIUM_PATH opcional)
+pnpm db:start      # Supabase local (requiere Docker)
+pnpm db:reset      # aplica migraciones + seed
+pnpm db:types      # regenera packages/types/src/database.types.ts
 ```
+
+Notas de entorno:
+
+- Los postinstalls permitidos se controlan con `pnpm.onlyBuiltDependencies` (package.json);
+  no aprobar builds de dependencias nuevas sin revisarlas.
+- No se usa Husky/lint-staged: la verificación vive en CI y en los comandos anteriores, para
+  no complicar entornos remotos/sandbox. Revalorar cuando el equipo crezca.

@@ -1,0 +1,10 @@
+pnpm-lock.yaml
+node_modules/
+.next/
+.turbo/
+dist/
+coverage/
+playwright-report/
+test-results/
+supabase/.temp/
+next-env.d.ts

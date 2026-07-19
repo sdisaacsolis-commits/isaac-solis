@@ -1,0 +1,46 @@
+/*
+ * Dogtoralia — tema base de marca (Tailwind CSS v4, configuración por CSS).
+ *
+ * Este archivo es la única fuente de la identidad visual: colores, radios y fuentes.
+ * Cuando exista la identidad de marca definitiva, se ajustan estos tokens y toda la
+ * plataforma la adopta sin tocar componentes.
+ *
+ * Paleta provisional: verde azulado (confianza + salud) con acento ámbar cálido
+ * (cercanía + bienestar animal). Tokens en formato oklch.
+ */
+@theme {
+  /* Marca */
+  --color-brand-50: oklch(0.98 0.01 180);
+  --color-brand-100: oklch(0.95 0.03 180);
+  --color-brand-200: oklch(0.89 0.06 180);
+  --color-brand-300: oklch(0.82 0.09 180);
+  --color-brand-400: oklch(0.74 0.11 181);
+  --color-brand-500: oklch(0.64 0.12 182);
+  --color-brand-600: oklch(0.55 0.11 184);
+  --color-brand-700: oklch(0.47 0.09 185);
+  --color-brand-800: oklch(0.4 0.07 186);
+  --color-brand-900: oklch(0.34 0.06 187);
+
+  /* Acento cálido */
+  --color-accent-400: oklch(0.82 0.13 75);
+  --color-accent-500: oklch(0.76 0.15 70);
+  --color-accent-600: oklch(0.67 0.15 62);
+
+  /* Superficies y texto (modo claro) */
+  --color-surface: oklch(0.99 0.002 180);
+  --color-surface-muted: oklch(0.96 0.006 180);
+  --color-ink: oklch(0.25 0.02 210);
+  --color-ink-muted: oklch(0.48 0.02 210);
+
+  /* Semántica de UI (consumida por los componentes de @dogtoralia/ui) */
+  --color-primary: var(--color-brand-600);
+  --color-primary-foreground: oklch(0.99 0.002 180);
+  --color-destructive: oklch(0.55 0.19 27);
+  --color-destructive-foreground: oklch(0.99 0.002 180);
+  --color-border: oklch(0.9 0.008 190);
+  --color-ring: var(--color-brand-500);
+
+  /* Forma y tipografía */
+  --radius-card: 1rem;
+  --font-sans: var(--font-geist-sans, ui-sans-serif, system-ui, sans-serif);
+}

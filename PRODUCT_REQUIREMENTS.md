@@ -17,13 +17,13 @@ reservación médica como Doctoralia, pero especializada exclusivamente en servi
 
 ## 2. Usuarios y roles
 
-| Rol | Ámbito | Descripción |
-|---|---|---|
-| Superadministrador | Global (plataforma) | Personal de Dogtoralia. Administra clínicas, planes y soporte. No accede a expedientes clínicos salvo procesos de soporte auditados. |
-| Administrador de clínica | Una clínica | Configura la clínica, gestiona personal, servicios, horarios y ve reportes. |
-| Médico veterinario | Una clínica (puede pertenecer a varias) | Atiende citas, crea y consulta expedientes, registra vacunas/tratamientos, emite recetas. |
-| Recepcionista | Una clínica | Gestiona agenda: crea, confirma, cancela y reprograma citas. Registra propietarios y mascotas. No accede al detalle médico del expediente. |
-| Propietario de mascota | Global (sus mascotas) | Registra sus mascotas, agenda citas, recibe recordatorios y consulta el historial de sus mascotas. |
+| Rol                      | Ámbito                                  | Descripción                                                                                                                                |
+| ------------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Superadministrador       | Global (plataforma)                     | Personal de Dogtoralia. Administra clínicas, planes y soporte. No accede a expedientes clínicos salvo procesos de soporte auditados.       |
+| Administrador de clínica | Una clínica                             | Configura la clínica, gestiona personal, servicios, horarios y ve reportes.                                                                |
+| Médico veterinario       | Una clínica (puede pertenecer a varias) | Atiende citas, crea y consulta expedientes, registra vacunas/tratamientos, emite recetas.                                                  |
+| Recepcionista            | Una clínica                             | Gestiona agenda: crea, confirma, cancela y reprograma citas. Registra propietarios y mascotas. No accede al detalle médico del expediente. |
+| Propietario de mascota   | Global (sus mascotas)                   | Registra sus mascotas, agenda citas, recibe recordatorios y consulta el historial de sus mascotas.                                         |
 
 Reglas transversales:
 
@@ -36,22 +36,26 @@ Reglas transversales:
 ## 3. Alcance funcional del MVP
 
 ### 3.1 Gestión de clínicas
+
 - Alta de clínica (nombre, RFC opcional, dirección, teléfono, correo, logotipo).
 - El superadministrador aprueba/activa clínicas nuevas.
 - Configuración de horarios de operación y servicios ofrecidos con precio en MXN.
 
 ### 3.2 Gestión de personal
+
 - Alta de veterinarios (nombre, cédula profesional, especialidad, biografía, fotografía).
 - Alta de recepcionistas.
 - Invitación por correo electrónico; el invitado crea su cuenta y queda vinculado a la clínica.
 
 ### 3.3 Propietarios y mascotas
+
 - Registro de propietario (autoservicio desde la app móvil o creado por recepción).
 - Perfil de mascota: nombre, especie, raza, sexo, fecha de nacimiento (o edad estimada),
   peso, color, señas particulares, fotografía, número de microchip (opcional).
 - Una mascota pertenece a un propietario; puede ser atendida en varias clínicas.
 
 ### 3.4 Agenda de citas
+
 - Disponibilidad por veterinario (días y bloques de horario).
 - Creación de cita: mascota + veterinario + servicio + fecha/hora.
 - Estados de la cita: `solicitada → confirmada → en_curso → completada`,
@@ -60,6 +64,7 @@ Reglas transversales:
 - Prevención de traslapes de horario por veterinario.
 
 ### 3.5 Expediente clínico veterinario
+
 - Un expediente por mascota **por clínica** (el historial médico es propiedad de la relación
   clínica–mascota; el propietario ve un consolidado de sus mascotas).
 - Notas de consulta: motivo, anamnesis, exploración física (peso, temperatura, FC, FR),
@@ -70,21 +75,25 @@ Reglas transversales:
 - Los registros clínicos **no se eliminan**: se corrigen mediante adendas con trazabilidad.
 
 ### 3.6 Recetas veterinarias
+
 - Emisión de receta ligada a una consulta: medicamentos, dosis, vía, frecuencia, duración,
   indicaciones. Datos del emisor (nombre y cédula profesional) y de la clínica.
 - Generación de PDF descargable/imprimible.
 
 ### 3.7 Recordatorios y notificaciones
+
 - Recordatorio de próxima cita (push + correo) 24 h antes. **[Configurable por clínica: Propuesta]**
 - Recordatorio de vacunas y desparasitaciones próximas a vencer.
 - Notificación al propietario cuando su cita es confirmada, cancelada o reprogramada.
 
 ### 3.8 Panel administrativo por clínica
+
 - Resumen del día: citas, confirmaciones pendientes.
 - Gestión de personal, servicios y horarios.
 - Métricas básicas: citas por periodo, tasa de cancelación/inasistencia.
 
 ### 3.9 Preparación para suscripciones (sin cobro en MVP)
+
 - Modelo de datos de planes y suscripciones desde el inicio.
 - Toda clínica del MVP opera en un plan "beta/gratuito".
 - La integración de cobro con Stripe se activa en una fase posterior.
@@ -100,19 +109,20 @@ Reglas transversales:
 
 ## 5. Requerimientos no funcionales
 
-| Área | Requerimiento |
-|---|---|
-| Seguridad | Aislamiento multi-clínica por RLS; permisos por rol; sin secretos en el código; variables de entorno. |
-| Privacidad | Datos personales y clínicos tratados conforme a la LFPDPPP; aviso de privacidad; derechos ARCO considerados en el diseño (exportación/eliminación de cuenta). |
-| Trazabilidad | Bitácora de auditoría (`audit_log`) para operaciones sensibles: expedientes, recetas, cambios de rol, cancelaciones. |
-| Calidad | TypeScript estricto, validación de datos en frontera (Zod), manejo de errores consistente, pruebas automatizadas desde la primera fase. |
-| Disponibilidad | Objetivo MVP: mejor esfuerzo sobre infraestructura gestionada (Vercel + Supabase). |
-| Accesibilidad | Componentes accesibles (WCAG AA como meta), navegación por teclado en el panel web. |
-| Localización | Fechas, horas y moneda en formato mexicano; almacenamiento en UTC. |
+| Área           | Requerimiento                                                                                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Seguridad      | Aislamiento multi-clínica por RLS; permisos por rol; sin secretos en el código; variables de entorno.                                                         |
+| Privacidad     | Datos personales y clínicos tratados conforme a la LFPDPPP; aviso de privacidad; derechos ARCO considerados en el diseño (exportación/eliminación de cuenta). |
+| Trazabilidad   | Bitácora de auditoría (`audit_log`) para operaciones sensibles: expedientes, recetas, cambios de rol, cancelaciones.                                          |
+| Calidad        | TypeScript estricto, validación de datos en frontera (Zod), manejo de errores consistente, pruebas automatizadas desde la primera fase.                       |
+| Disponibilidad | Objetivo MVP: mejor esfuerzo sobre infraestructura gestionada (Vercel + Supabase).                                                                            |
+| Accesibilidad  | Componentes accesibles (WCAG AA como meta), navegación por teclado en el panel web.                                                                           |
+| Localización   | Fechas, horas y moneda en formato mexicano; almacenamiento en UTC.                                                                                            |
 
 ## 6. Riesgos identificados
 
 ### Riesgos técnicos
+
 1. **Fuga de datos entre clínicas** — el riesgo más grave. Mitigación: RLS obligatorio en toda
    tabla con `clinic_id`, pruebas automatizadas específicas de aislamiento, revisión de cada política.
 2. **Errores de zona horaria en la agenda** — citas mostradas u ordenadas en hora incorrecta.
@@ -125,6 +135,7 @@ Reglas transversales:
    notificaciones con estado y reintentos, no "disparar y olvidar".
 
 ### Riesgos de producto
+
 1. **Adopción por clínicas** — las clínicas pequeñas usan papel o Excel; la curva de adopción debe
    ser mínima (alta de clínica en minutos, captura rápida en recepción).
 2. **Doble mercado (clínica y propietario)** — el valor para el propietario depende de que su
@@ -141,6 +152,7 @@ Reglas transversales:
 Estas decisiones fueron confirmadas por el propietario del producto y son vinculantes:
 
 ### 7.1 Perfiles públicos (fase posterior)
+
 Dogtoralia tendrá perfiles públicos de clínicas y veterinarios con estructura prevista
 `/clinicas/[slug]` y `/veterinarios/[slug]`, preparados para SEO, reservación pública y
 descubrimiento de servicios. **No se implementan en el MVP**, pero la arquitectura los
@@ -148,12 +160,14 @@ contempla: Next.js con SSR ya soporta este caso, y las entidades `clinics` y
 `clinic_members` reservan un campo `slug` desde el diseño de base de datos.
 
 ### 7.2 Canal WhatsApp (fase posterior)
+
 El proveedor principal previsto es **Meta WhatsApp Cloud API**. No se implementa todavía.
 Todas las integraciones de mensajería se diseñan tras una **interfaz desacoplada de
 proveedor** (ver ARCHITECTURE.md §6.1) que permita cambiar de proveedor sin reescribir el
 dominio.
 
 ### 7.3 Conservación de expedientes y ciclo de vida de clínicas
+
 Los expedientes clínicos **no se eliminan automáticamente** cuando una clínica cancela su
 cuenta. El estado de una clínica transita entre:
 `trial → active → past_due → suspended → cancelled → archived`.
@@ -162,6 +176,7 @@ expedientes se conservan (borrado lógico + campos de auditoría). El plazo defi
 retención queda **pendiente de revisión legal**.
 
 ### 7.4 Modelo comercial
+
 Suscripción **por clínica** con una cantidad incluida de veterinarios activos. La
 arquitectura soporta: una organización (empresa) → una o varias clínicas/sucursales →
 usuarios asociados a la organización → veterinarios asociados a una o varias clínicas;
@@ -170,6 +185,7 @@ futuros para grupos veterinarios con varias sucursales. Sin cobros en el MVP; el
 datos queda preparado (ver DATABASE_DESIGN.md §3.1 y §3.7).
 
 ### 7.5 Dominio y correo transaccional
+
 Aún sin definición definitiva. Se usan variables de entorno descriptivas
 (`NEXT_PUBLIC_APP_URL`, `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO`) con valores de
 ejemplo tipo `notificaciones@dogtoralia.mx` en `.env.example`. Sin credenciales reales en el

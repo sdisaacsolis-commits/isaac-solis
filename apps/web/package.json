@@ -1,0 +1,31 @@
+{
+  "name": "@dogtoralia/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Panel web de Dogtoralia (Next.js App Router)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@dogtoralia/config": "workspace:*",
+    "@dogtoralia/ui": "workspace:*",
+    "@t3-oss/env-nextjs": "^0.13.4",
+    "next": "^15.3.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@tailwindcss/postcss": "^4.1.8",
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "tailwindcss": "^4.1.8"
+  }
+}

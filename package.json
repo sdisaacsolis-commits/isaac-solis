@@ -1,0 +1,47 @@
+{
+  "name": "dogtoralia",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plataforma SaaS mexicana para clínicas veterinarias, veterinarios y propietarios de mascotas",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "pnpm --filter @dogtoralia/web test:e2e",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:types": "supabase gen types typescript --local --schema public > packages/types/src/database.types.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@next/eslint-plugin-next": "^15.5.20",
+    "@types/node": "^22.15.0",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "prettier": "^3.5.3",
+    "supabase": "^2.24.0",
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.33.0",
+    "vitest": "^3.2.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "esbuild",
+      "sharp",
+      "supabase"
+    ]
+  }
+}

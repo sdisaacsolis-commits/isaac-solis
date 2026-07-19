@@ -1,0 +1,15 @@
+{
+  "name": "@dogtoralia/types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tipos TypeScript compartidos: dominio de Dogtoralia y tipos generados desde PostgreSQL",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./database": "./src/database.types.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  }
+}
