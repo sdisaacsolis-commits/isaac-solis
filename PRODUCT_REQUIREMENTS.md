@@ -92,10 +92,10 @@ Reglas transversales:
 ## 4. Fuera de alcance del MVP
 
 - Cobro real de suscripciones y facturación (CFDI).
-- Marketplace público de búsqueda de clínicas (perfil público tipo directorio). **[Propuesta fase 2]**
+- Perfiles públicos de clínicas y veterinarios (**confirmado para fase posterior**, ver §7.1).
 - App móvil para veterinarios (fase posterior; el panel web será responsivo).
 - Telemedicina, inventario de farmacia, punto de venta, hospitalización.
-- Recordatorios por WhatsApp Business API. **[Propuesta — canal dominante en México, alta prioridad post-MVP]**
+- Recordatorios por WhatsApp (**confirmado para fase posterior** con Meta WhatsApp Cloud API, ver §7.2).
 - Multi-idioma (la arquitectura de i18n queda preparada, pero solo se entrega `es-MX`).
 
 ## 5. Requerimientos no funcionales
@@ -136,7 +136,46 @@ Reglas transversales:
 4. **Canal de recordatorios** — correo tiene baja apertura en este mercado; sin WhatsApp el valor
    percibido de los recordatorios baja. Se prioriza push (app) + correo y se planea WhatsApp.
 
-## 7. Métricas de éxito del MVP
+## 7. Decisiones de producto confirmadas (2026-07-19)
+
+Estas decisiones fueron confirmadas por el propietario del producto y son vinculantes:
+
+### 7.1 Perfiles públicos (fase posterior)
+Dogtoralia tendrá perfiles públicos de clínicas y veterinarios con estructura prevista
+`/clinicas/[slug]` y `/veterinarios/[slug]`, preparados para SEO, reservación pública y
+descubrimiento de servicios. **No se implementan en el MVP**, pero la arquitectura los
+contempla: Next.js con SSR ya soporta este caso, y las entidades `clinics` y
+`clinic_members` reservan un campo `slug` desde el diseño de base de datos.
+
+### 7.2 Canal WhatsApp (fase posterior)
+El proveedor principal previsto es **Meta WhatsApp Cloud API**. No se implementa todavía.
+Todas las integraciones de mensajería se diseñan tras una **interfaz desacoplada de
+proveedor** (ver ARCHITECTURE.md §6.1) que permita cambiar de proveedor sin reescribir el
+dominio.
+
+### 7.3 Conservación de expedientes y ciclo de vida de clínicas
+Los expedientes clínicos **no se eliminan automáticamente** cuando una clínica cancela su
+cuenta. El estado de una clínica transita entre:
+`trial → active → past_due → suspended → cancelled → archived`.
+En `suspended` y `cancelled` se restringe el acceso según políticas futuras, pero los
+expedientes se conservan (borrado lógico + campos de auditoría). El plazo definitivo de
+retención queda **pendiente de revisión legal**.
+
+### 7.4 Modelo comercial
+Suscripción **por clínica** con una cantidad incluida de veterinarios activos. La
+arquitectura soporta: una organización (empresa) → una o varias clínicas/sucursales →
+usuarios asociados a la organización → veterinarios asociados a una o varias clínicas;
+límites de veterinarios por plan; cobro futuro por veterinarios adicionales; y planes
+futuros para grupos veterinarios con varias sucursales. Sin cobros en el MVP; el modelo de
+datos queda preparado (ver DATABASE_DESIGN.md §3.1 y §3.7).
+
+### 7.5 Dominio y correo transaccional
+Aún sin definición definitiva. Se usan variables de entorno descriptivas
+(`NEXT_PUBLIC_APP_URL`, `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO`) con valores de
+ejemplo tipo `notificaciones@dogtoralia.mx` en `.env.example`. Sin credenciales reales en el
+repositorio.
+
+## 8. Métricas de éxito del MVP
 
 - Clínicas activas con al menos 10 citas/semana gestionadas en la plataforma.
 - ≥ 60 % de citas confirmadas mediante la plataforma (no por teléfono).

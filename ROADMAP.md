@@ -20,8 +20,10 @@
 
 ## Fase 2 — Esquema base, identidad y tenancy
 
-- Migraciones: `profiles`, `clinics`, `clinic_members`, `clinic_invitations`, `audit_log`,
-  funciones auxiliares de RLS y triggers de auditoría/`updated_at`.
+- Migraciones: `profiles`, `organizations`, `organization_members`, `clinics` (con ciclo de
+  vida `trial/active/past_due/suspended/cancelled/archived` y `slug` reservado),
+  `clinic_members`, `clinic_invitations`, `audit_log`, funciones auxiliares de RLS y triggers
+  de auditoría/`updated_at`.
 - Supabase Auth (correo/contraseña) + creación automática de perfil.
 - **Pruebas de RLS de aislamiento entre clínicas (pgTAP) — bloqueantes.**
 - **Criterio de salida**: usuario de clínica A no puede leer/escribir nada de clínica B
@@ -97,10 +99,12 @@
 - Beta con 1–3 clínicas reales.
 - **Criterio de salida**: sin hallazgos críticos; clínicas beta operando.
 
-## Post-MVP (backlog priorizado — [Propuesta])
+## Post-MVP (backlog priorizado — decisiones 1 y 2 ya confirmadas por producto)
 
-1. Recordatorios y confirmación de citas por **WhatsApp** (canal dominante en México).
-2. Perfil público de clínicas con reservación en línea (estilo directorio).
+1. Recordatorios y confirmación de citas por **WhatsApp** — proveedor confirmado:
+   Meta WhatsApp Cloud API, tras la interfaz desacoplada de mensajería (ARCHITECTURE.md §6.1).
+2. Perfiles públicos de clínicas y veterinarios (`/clinicas/[slug]`, `/veterinarios/[slug]`)
+   con SEO y reservación pública — confirmado.
 3. App/interfaz móvil para veterinarios.
 4. Cobro real de suscripciones con Stripe Billing.
 5. Exportación ARCO de datos del propietario.

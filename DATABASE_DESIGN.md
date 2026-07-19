@@ -20,6 +20,8 @@
 
 ```
 auth.users 1──1 profiles
+organizations 1──N clinics                    (empresa → clínicas/sucursales)
+profiles   1──N organization_members N──1 organizations
 profiles   1──N clinic_members N──1 clinics
 profiles   1──N pets                          (propietario → mascotas)
 clinics    1──N services
@@ -54,17 +56,40 @@ audit_log  (global, append-only)
 | is_superadmin | boolean DEFAULT false | solo modificable por superadmin |
 | default_locale | text DEFAULT 'es-MX' | |
 
-**`clinics`**
+**`organizations`** — sujeto comercial (decisión confirmada PRD §7.4). Una empresa o grupo
+veterinario que agrupa una o varias clínicas/sucursales.
 | Columna | Tipo | Notas |
 |---|---|---|
 | id | uuid PK | |
 | name | text NOT NULL | |
 | legal_name / rfc | text | opcionales |
+| deleted_at | timestamptz | borrado lógico |
+
+**`organization_members`** — usuarios asociados a la organización.
+`organization_id FK, user_id FK profiles, role enum org_role: org_owner, org_admin`,
+`UNIQUE (organization_id, user_id)`. En el caso simple (una clínica independiente) la
+organización se crea automáticamente con la clínica y su creador es `org_owner`.
+
+**`clinics`**
+| Columna | Tipo | Notas |
+|---|---|---|
+| id | uuid PK | |
+| organization_id | uuid FK → organizations NOT NULL | |
+| name | text NOT NULL | |
+| slug | text UNIQUE nullable | reservado para perfil público `/clinicas/[slug]` (fase posterior) |
+| legal_name / rfc | text | opcionales |
 | address, city, state, postal_code | text | |
 | phone, email | text | |
 | logo_url | text | |
 | timezone | text DEFAULT 'America/Mexico_City' | |
-| status | enum: `pending, active, suspended` | activada por superadmin |
+| status | enum `clinic_status`: `trial, active, past_due, suspended, cancelled, archived` | ciclo de vida confirmado (PRD §7.3); una clínica nueva entra en `trial` al ser aprobada por el superadmin |
+| deleted_at | timestamptz | borrado lógico; **los expedientes nunca se eliminan automáticamente** |
+
+Transiciones de `clinic_status` (validadas por función SQL): `trial → active`,
+`active ⇄ past_due`, `past_due → suspended`, `active/suspended → cancelled`,
+`cancelled → archived` (y reactivaciones `suspended/cancelled → active`). En `suspended` y
+`cancelled` el acceso se restringe según políticas futuras; los datos clínicos se conservan
+(plazo de retención definitivo pendiente de revisión legal).
 
 **`clinic_members`** — corazón de la autorización por clínica.
 | Columna | Tipo | Notas |
@@ -196,16 +221,28 @@ Edge Function `send-reminders` para procesar `notifications` pendientes.
 
 ### 3.7 Suscripciones (preparación, sin cobro en MVP)
 
-**`plans`** — `code UNIQUE, name, price_cents, currency 'MXN', billing_interval enum: month, year, max_veterinarians int nullable, features jsonb, is_active`.
+Modelo comercial confirmado (PRD §7.4): **suscripción por clínica** con una cantidad incluida
+de veterinarios activos y cobro futuro por veterinarios adicionales; las organizaciones
+permiten planes de grupo multi-sucursal en el futuro.
 
-**`subscriptions`** — `clinic_id UNIQUE, plan_id, status enum: trialing, active, past_due, canceled, current_period_start/end, stripe_customer_id nullable, stripe_subscription_id nullable`.
-En el MVP toda clínica activa recibe una suscripción al plan `beta` sin Stripe.
+**`plans`**
+`code UNIQUE, name, price_cents, currency 'MXN', billing_interval enum: month, year,`
+`included_veterinarians int NOT NULL, additional_veterinarian_price_cents int nullable,`
+`scope enum plan_scope: clinic, organization (para planes de grupo futuros), features jsonb, is_active`.
+
+**`subscriptions`**
+`clinic_id UNIQUE, organization_id (denormalizado para reporteo/facturación de grupo),`
+`plan_id, status enum: trialing, active, past_due, canceled,`
+`current_period_start/end, stripe_customer_id nullable, stripe_subscription_id nullable`.
+En el MVP toda clínica activa recibe una suscripción al plan `beta` sin Stripe. El límite de
+veterinarios activos por plan se verifica con una función SQL al activar miembros con rol
+`veterinarian` (en el plan `beta` el límite no bloquea, solo se registra).
 
 ### 3.8 Auditoría
 
 **`audit_log`** — append-only (sin políticas de UPDATE/DELETE; revocados a todos los roles).
 `id bigint identity, occurred_at, actor_id nullable, clinic_id nullable, table_name, record_id, action enum: insert, update, delete, old_data jsonb, new_data jsonb`.
-Poblada por triggers en: `clinic_members, appointments, consultations, consultation_addenda, prescriptions, vaccinations, dewormings, medical_records, subscriptions, clinics, profiles(is_superadmin)`.
+Poblada por triggers en: `organizations, organization_members, clinic_members, appointments, consultations, consultation_addenda, prescriptions, vaccinations, dewormings, medical_records, subscriptions, clinics, profiles(is_superadmin)`.
 
 ## 4. Estrategia multi-tenant
 

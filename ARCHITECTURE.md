@@ -67,9 +67,13 @@ un cambio de infraestructura, no una reescritura.
    depende únicamente del cliente. RLS activo en toda tabla de datos; el frontend solo mejora UX.
 2. **El esquema vive en el repositorio.** Migraciones SQL versionadas (`supabase/migrations`),
    aplicadas por CI. Nunca cambios manuales en producción.
-3. **Compartir tipos, no duplicar lógica.** `packages/shared` contiene tipos generados desde la BD,
-   esquemas de validación Zod y constantes de dominio, consumidos por web y Edge Functions.
-   Flutter genera sus modelos desde los mismos contratos.
+3. **Compartir tipos, no duplicar lógica.** `packages/types` contiene los tipos generados desde
+   la BD y tipos de dominio; `packages/validation` los esquemas Zod; ambos se consumen desde web
+   y Edge Functions. Flutter genera sus modelos desde los mismos contratos.
+   *(Nota de cambio: el diseño original proponía un solo `packages/shared`; se dividió en
+   `ui/config/types/validation` para separar responsabilidades y evitar dependencias cruzadas —
+   p. ej. las Edge Functions consumen `validation` sin arrastrar React. Las plantillas de correo
+   (`packages/emails`) se crearán en la fase de invitaciones/notificaciones, no antes.)*
 4. **Escrituras sensibles pasan por RPC.** Operaciones con invariantes (agendar cita, emitir
    receta, cerrar consulta) se implementan como funciones de PostgreSQL (`SECURITY DEFINER`
    auditadas) o Edge Functions, no como inserts directos desde el cliente.
@@ -101,8 +105,10 @@ dogtoralia/
 │       │   └── main.dart
 │       └── test/
 ├── packages/
-│   ├── shared/                 # tipos TS generados de la BD, esquemas Zod, constantes
-│   └── emails/                 # plantillas React Email para Resend
+│   ├── ui/                     # componentes UI compartidos (base shadcn/ui + Tailwind)
+│   ├── config/                 # presets compartidos de tsconfig (y futuras configs)
+│   ├── types/                  # tipos TS: dominio + generados desde PostgreSQL (supabase gen types)
+│   └── validation/             # esquemas Zod compartidos (frontera de validación)
 ├── supabase/
 │   ├── migrations/             # SQL versionado (fuente de verdad del esquema)
 │   ├── functions/              # Edge Functions (Deno/TS)
@@ -133,12 +139,16 @@ dogtoralia/
 - El personal de clínica entra por **invitación** (correo con token); el propietario se
   registra en autoservicio.
 
-### Autorización (dos niveles)
+### Autorización (tres niveles)
 1. **Nivel plataforma**: `profiles.is_superadmin` (booleano, solo modificable por superadmin).
-2. **Nivel clínica**: tabla `clinic_members (user_id, clinic_id, role)` con roles
+2. **Nivel organización**: tabla `organization_members (user_id, organization_id, role)`.
+   Una organización (empresa) agrupa una o varias clínicas/sucursales y es el sujeto comercial
+   de la suscripción (decisión confirmada §7.4 del PRD). El rol `org_owner` administra la
+   organización y su facturación futura.
+3. **Nivel clínica**: tabla `clinic_members (user_id, clinic_id, role)` con roles
    `clinic_admin | veterinarian | receptionist`. Un usuario puede pertenecer a varias clínicas
    con roles distintos.
-3. **Propietarios**: no son miembros de clínica; su acceso deriva de la propiedad de sus
+4. **Propietarios**: no son miembros de clínica; su acceso deriva de la propiedad de sus
    mascotas (`pets.owner_id`).
 
 Las políticas RLS consultan `clinic_members` mediante funciones SQL auxiliares
@@ -157,6 +167,25 @@ recursión y mantener las políticas legibles. Detalle completo de la matriz de 
 | Invitación de personal | Edge Function `invite-staff` | Crea invitación, envía correo con Resend. |
 | Auditoría | Triggers `AFTER INSERT/UPDATE/DELETE` → `audit_log` | Sobre tablas sensibles. |
 | Pagos (futuro) | Edge Function webhook Stripe | Actualiza `subscriptions`. |
+
+### 6.1 Interfaz desacoplada de mensajería (decisión confirmada)
+
+Toda salida de mensajes (correo, push y, en el futuro, WhatsApp) pasa por una interfaz de
+proveedor desacoplada, de modo que cambiar de proveedor no toque el dominio:
+
+```ts
+interface MessageProvider {
+  readonly channel: 'email' | 'push' | 'whatsapp';
+  send(message: OutboundMessage): Promise<SendResult>; // nunca lanza: devuelve éxito/fallo tipado
+}
+```
+
+- Implementaciones previstas: `ResendEmailProvider`, `FcmPushProvider` y, post-MVP,
+  `MetaWhatsAppProvider` (**Meta WhatsApp Cloud API** es el proveedor principal previsto).
+- El dominio solo encola filas en `notifications`; la Edge Function `send-reminders` resuelve
+  el proveedor por canal. Cambiar de proveedor = una implementación nueva + configuración.
+- Esta interfaz se implementa en la fase de notificaciones (Fase 5 en adelante); aquí solo se
+  fija el contrato.
 
 ## 7. Manejo de errores y validación
 
@@ -190,13 +219,12 @@ recursión y mantener las políticas legibles. Detalle completo de la matriz de 
 - `audit_log` inmutable (sin UPDATE/DELETE) para operaciones sensibles.
 - Cabeceras de seguridad en Vercel (CSP, HSTS); dependencias auditadas en CI.
 
-## 10. Decisiones técnicas pendientes (requieren definición del negocio)
+## 10. Decisiones técnicas — estado (actualizado 2026-07-19)
 
-1. **Nombre de dominio y correo remitente** para Resend (afecta configuración DNS/SPF/DKIM).
-2. **¿Perfil público de clínicas con reservación abierta (estilo Doctoralia) en fase 2?**
-   Afecta SEO/SSR y el modelo de datos de visibilidad pública.
-3. **Canal WhatsApp**: proveedor (Twilio vs Meta Cloud API directa) y presupuesto por mensaje.
-4. **Política de retención de expedientes** al dar de baja una clínica (obligación legal de
-   conservación vs derecho de supresión).
-5. **Precio y estructura de planes** (por clínica, por veterinario activo, o híbrido) — el
-   modelo de datos soporta ambos, pero Stripe se configura distinto.
+| # | Decisión | Estado |
+|---|---|---|
+| 1 | Dominio y correo remitente | **Pendiente.** Mientras tanto: variables `NEXT_PUBLIC_APP_URL`, `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO` con valores de ejemplo en `.env.example`. |
+| 2 | Perfiles públicos | **Resuelta.** Sí habrá, en fase posterior: `/clinicas/[slug]` y `/veterinarios/[slug]`, con SEO y reservación pública. Next.js SSR ya lo soporta; `slug` reservado en el modelo de datos. |
+| 3 | Canal WhatsApp | **Resuelta.** Proveedor principal previsto: **Meta WhatsApp Cloud API**, tras la interfaz desacoplada de §6.1. Presupuesto por mensaje: pendiente al activarlo. |
+| 4 | Retención de expedientes | **Resuelta (parcial).** Nunca se eliminan automáticamente; ciclo de vida de clínica `trial/active/past_due/suspended/cancelled/archived` con borrado lógico y auditoría. Plazo definitivo de retención: pendiente de revisión legal. |
+| 5 | Estructura de planes | **Resuelta.** Suscripción por clínica con N veterinarios activos incluidos y cobro futuro por veterinario adicional; organizaciones agrupan clínicas para planes de grupo futuros. |

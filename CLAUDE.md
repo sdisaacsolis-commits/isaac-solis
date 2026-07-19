@@ -29,11 +29,12 @@ clínicos**: la seguridad y el aislamiento entre clínicas son innegociables. Do
 7. TypeScript en modo `strict` (además `noUncheckedIndexedAccess`). Prohibido `any` salvo
    justificación comentada; preferir `unknown` + narrowing.
 8. Todo dato externo (formularios, params, payloads, webhooks) se valida con Zod en la frontera
-   antes de usarse. Los esquemas viven en `packages/shared` y se reutilizan — no se duplican.
+   antes de usarse. Los esquemas viven en `packages/validation` y se reutilizan — no se duplican.
 9. Manejo de errores explícito: nada de `catch` vacíos ni errores silenciados. Errores de
    dominio con código estable; mensajes al usuario en español claro sin detalles internos.
-10. Evitar duplicación: lógica compartida en `packages/shared`; componentes UI reutilizables en
-    `apps/web/src/components`. Antes de crear algo, buscar si ya existe.
+10. Evitar duplicación: tipos en `packages/types`, esquemas en `packages/validation`,
+    componentes UI reutilizables en `packages/ui` (los específicos de una pantalla viven en
+    `apps/web/src/components`). Antes de crear algo, buscar si ya existe.
 11. Nombres claros y consistentes: tablas/columnas en inglés `snake_case`; componentes React en
     `PascalCase`; archivos de features en `kebab-case`; funciones con verbo
     (`bookAppointment`, `issuePrescription`).
@@ -53,7 +54,11 @@ clínicos**: la seguridad y el aislamiento entre clínicas son innegociables. Do
     Integridad en la BD (`NOT NULL`, `CHECK`, `UNIQUE`, FK, `EXCLUDE`), no solo en la app.
 17. Escrituras con invariantes (agendar cita, cerrar consulta, emitir receta) se implementan
     como funciones SQL o Edge Functions, no como inserts directos del cliente.
-18. Después de cambiar el esquema, regenerar los tipos TS (`packages/shared`) en el mismo PR.
+18. Después de cambiar el esquema, regenerar los tipos TS (`packages/types`, comando
+    `pnpm db:types`) en el mismo PR.
+18b. Integraciones externas (correo, push, WhatsApp, pagos) siempre detrás de una interfaz de
+    proveedor desacoplada (ARCHITECTURE.md §6.1); el dominio nunca importa SDKs de proveedores
+    directamente. Proveedor previsto para WhatsApp: Meta WhatsApp Cloud API (fase posterior).
 
 ## Reglas de pruebas
 
