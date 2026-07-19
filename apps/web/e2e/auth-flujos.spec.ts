@@ -49,8 +49,9 @@ test.describe("Flujos de autenticación (Supabase local)", () => {
 
     // Dashboard con datos reales
     await expect(page).toHaveURL(/\/app\/inicio/);
-    await expect(page.getByText("Dra. Elena Prueba")).toBeVisible();
-    await expect(page.getByText("Clínica E2E Centro")).toBeVisible();
+    // .first(): el nombre aparece también en la barra de navegación.
+    await expect(page.getByText("Dra. Elena Prueba").first()).toBeVisible();
+    await expect(page.getByText("Clínica E2E Centro").first()).toBeVisible();
   });
 
   test("crear invitación y aceptarla en una segunda sesión", async ({ browser, page }) => {

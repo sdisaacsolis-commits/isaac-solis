@@ -42,7 +42,14 @@ export async function subirFotoMascota(
   if (!valida.ok) return { ok: false, error: valida.error };
 
   const supabase = await createClient();
-  const procesada = await procesarFoto(Buffer.from(await archivo.arrayBuffer()));
+  let procesada: Buffer;
+  try {
+    procesada = await procesarFoto(Buffer.from(await archivo.arrayBuffer()));
+  } catch {
+    // Archivo corrupto o formato no decodificable: la foto es opcional y el
+    // registro del paciente no debe fallar por ella.
+    return { ok: false, error: "La imagen no pudo procesarse; verifica el archivo." };
+  }
   const ruta = construirRutaFoto(petId);
 
   const { error: uploadError } = await supabase.storage

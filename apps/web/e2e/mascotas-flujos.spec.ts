@@ -81,7 +81,8 @@ test.describe("Propietarios y mascotas (Supabase local)", () => {
     await page.getByRole("button", { name: "Añadir propietario" }).click();
     await expect(page.getByText("Se agregó el propietario a la mascota.")).toBeVisible();
     await page.getByRole("button", { name: "Hacer principal" }).click();
-    await expect(page.getByText("Principal")).toBeVisible();
+    // exact: el botón "Hacer principal" también contiene la palabra.
+    await expect(page.getByText("Principal", { exact: true }).first()).toBeVisible();
 
     // Alerta administrativa
     await page.getByLabel("Título").fill("Usar bozal");

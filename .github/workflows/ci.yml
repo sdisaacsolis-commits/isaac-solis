@@ -167,3 +167,9 @@ jobs:
         env:
           E2E_AUTH: "1"
         run: pnpm test:e2e
+
+      # Los snapshots de accesibilidad de Playwright permiten diagnosticar
+      # fallos sin descargar artefactos (solo datos locales de prueba).
+      - name: Mostrar contexto de errores de Playwright
+        if: failure()
+        run: find apps/web/test-results -name 'error-context.md' -print -exec cat {} \; || true
