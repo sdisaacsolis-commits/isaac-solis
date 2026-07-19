@@ -28,6 +28,7 @@ estado) pero pierde todo acceso operativo.
 | Acción                                    | superadmin  | org owner                         | org admin | org member/billing              | clinic_admin    | vet/recep/asist | propietario de mascota* |
 | ----------------------------------------- | ----------- | --------------------------------- | --------- | ------------------------------- | --------------- | --------------- | ----------------------- |
 | Ver su propio perfil                      | ✔           | ✔                                 | ✔         | ✔                               | ✔               | ✔               | ✔                       |
+| Ver perfil básico de colegas (vista)      | ✔           | ✔ su org                          | ✔ su org  | ✔ su org                        | ✔ su org        | ✔ su org        | ✖                       |
 | Ver todos los perfiles                    | ✔ (lectura) | ✖                                 | ✖         | ✖                               | ✖               | ✖               | ✖                       |
 | Crear organización (RPC)                  | ✔           | ✔ (cualquier usuario autenticado) | ✔         | ✔                               | ✔               | ✔               | ✔                       |
 | Editar datos de la organización           | B           | ✔                                 | ✖         | ✖                               | ✖               | ✖               | ✖                       |

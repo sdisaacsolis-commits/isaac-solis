@@ -4,10 +4,11 @@ Plataforma SaaS mexicana para clínicas veterinarias, médicos veterinarios y pr
 mascotas: agenda de citas, expedientes clínicos, recetas y recordatorios — con aislamiento
 total de datos entre clínicas.
 
-> **Estado actual: Fase 2 (identidad, organizaciones, clínicas y aislamiento RLS).**
-> El esquema de tenancy está implementado y validado con 153 pruebas pgTAP sobre
-> PostgreSQL local; la confirmación en Supabase CLI + Docker corre en CI
-> (ver [ROADMAP.md](./ROADMAP.md) y [docs/security/rls-model.md](./docs/security/rls-model.md)).
+> **Estado actual: Fase 3 (autenticación, onboarding, clínicas, personal e invitaciones).**
+> Panel web funcional con Supabase Auth, onboarding por RPCs transaccionales, invitaciones
+> con tokens hasheados y correo desacoplado (Resend/dev). Aislamiento RLS validado con 171
+> pruebas pgTAP sobre PostgreSQL local (ver [ROADMAP.md](./ROADMAP.md), `docs/auth/` y
+> [docs/security/rls-model.md](./docs/security/rls-model.md)).
 
 ## Documentación
 
@@ -37,8 +38,11 @@ pnpm install
 cp .env.example apps/web/.env.local   # completa valores locales; NUNCA se commitea
 ```
 
-La app funciona sin `.env.local` en la Fase 1 (todas las variables son opcionales todavía);
-el archivo se vuelve necesario al integrar Supabase en la Fase 2.
+Sin `.env.local` la app compila y muestra la portada, pero autenticación y panel requieren
+`NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` (los imprime `pnpm db:start`).
+El correo funciona en modo dev sin configuración (`EMAIL_MODE=dev`, no envía nada real).
+Las URLs de redirección que debe conocer Supabase Auth están en `.env.example` y
+`docs/auth/authentication-flow.md`.
 
 ## Variables de entorno
 

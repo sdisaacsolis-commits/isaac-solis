@@ -105,3 +105,7 @@ Notas de entorno:
   no aprobar builds de dependencias nuevas sin revisarlas.
 - No se usa Husky/lint-staged: la verificación vive en CI y en los comandos anteriores, para
   no complicar entornos remotos/sandbox. Revalorar cuando el equipo crezca.
+- Autenticación: siempre `@supabase/ssr` (cookies del SDK); prohibido guardar tokens a mano
+  o usar la service_role en `apps/web`. Flujos y URLs de redirección: `docs/auth/`.
+- Los flujos E2E completos de auth requieren Supabase local y `E2E_AUTH=1`
+  (`docs/testing/auth-e2e.md`); las suites básicas corren sin Supabase.

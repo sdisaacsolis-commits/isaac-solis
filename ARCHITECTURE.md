@@ -192,8 +192,10 @@ interface MessageProvider {
   `MetaWhatsAppProvider` (**Meta WhatsApp Cloud API** es el proveedor principal previsto).
 - El dominio solo encola filas en `notifications`; la Edge Function `send-reminders` resuelve
   el proveedor por canal. Cambiar de proveedor = una implementación nueva + configuración.
-- Esta interfaz se implementa en la fase de notificaciones (Fase 5 en adelante); aquí solo se
-  fija el contrato.
+- Estado: el canal de **correo** quedó implementado en la Fase 3
+  (`apps/web/src/lib/email/`: contrato `EmailProvider`, adaptador Resend vía API REST y
+  adaptador de desarrollo que no envía). Decisión de ubicación (Server Actions en lugar de
+  Edge Function en esta fase): ADR 0002. Push y WhatsApp siguen pendientes por fase.
 
 ## 7. Manejo de errores y validación
 

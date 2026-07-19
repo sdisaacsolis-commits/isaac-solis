@@ -30,6 +30,9 @@ jobs:
       - name: Instalar dependencias
         run: pnpm install --frozen-lockfile
 
+      - name: Escaneo básico de secretos
+        run: bash scripts/ci/scan-secrets.sh
+
       - name: Lint
         run: pnpm lint
 

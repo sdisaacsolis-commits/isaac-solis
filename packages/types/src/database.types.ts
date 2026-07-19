@@ -98,6 +98,12 @@ export type Database = {
           {
             foreignKeyName: "clinic_invitations_accepted_by_fkey";
             columns: ["accepted_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "clinic_invitations_accepted_by_fkey";
+            columns: ["accepted_by"];
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
@@ -105,6 +111,12 @@ export type Database = {
             foreignKeyName: "clinic_invitations_clinic_id_fkey";
             columns: ["clinic_id"];
             referencedRelation: "clinics";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "clinic_invitations_invited_by_fkey";
+            columns: ["invited_by"];
+            referencedRelation: "colleague_profiles";
             referencedColumns: ["id"];
           },
           {
@@ -168,7 +180,19 @@ export type Database = {
           {
             foreignKeyName: "clinic_members_created_by_fkey";
             columns: ["created_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "clinic_members_created_by_fkey";
+            columns: ["created_by"];
             referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "clinic_members_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "colleague_profiles";
             referencedColumns: ["id"];
           },
           {
@@ -259,6 +283,12 @@ export type Database = {
           {
             foreignKeyName: "clinics_created_by_fkey";
             columns: ["created_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "clinics_created_by_fkey";
+            columns: ["created_by"];
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
@@ -311,6 +341,12 @@ export type Database = {
           {
             foreignKeyName: "organization_members_created_by_fkey";
             columns: ["created_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "organization_members_created_by_fkey";
+            columns: ["created_by"];
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
@@ -318,6 +354,12 @@ export type Database = {
             foreignKeyName: "organization_members_organization_id_fkey";
             columns: ["organization_id"];
             referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "organization_members_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "colleague_profiles";
             referencedColumns: ["id"];
           },
           {
@@ -372,6 +414,12 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "organizations_created_by_fkey";
+            columns: ["created_by"];
+            referencedRelation: "colleague_profiles";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "organizations_created_by_fkey";
             columns: ["created_by"];
@@ -445,13 +493,54 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      colleague_profiles: {
+        Row: {
+          avatar_url: string | null;
+          display_name: string | null;
+          first_name: string | null;
+          id: string | null;
+          last_name: string | null;
+        };
+        Insert: {
+          avatar_url?: string | null;
+          display_name?: string | null;
+          first_name?: string | null;
+          id?: string | null;
+          last_name?: string | null;
+        };
+        Update: {
+          avatar_url?: string | null;
+          display_name?: string | null;
+          first_name?: string | null;
+          id?: string | null;
+          last_name?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       accept_clinic_invitation: { Args: { p_token: string }; Returns: string };
       clinic_belongs_to_organization: {
         Args: { p_clinic_id: string; p_organization_id: string };
         Returns: boolean;
+      };
+      create_clinic_with_admin: {
+        Args: {
+          p_address_line_1?: string;
+          p_address_line_2?: string;
+          p_city?: string;
+          p_description?: string;
+          p_email?: string;
+          p_name: string;
+          p_neighborhood?: string;
+          p_organization_id: string;
+          p_phone?: string;
+          p_postal_code?: string;
+          p_slug?: string;
+          p_state?: string;
+          p_timezone?: string;
+        };
+        Returns: string;
       };
       create_organization_with_owner: {
         Args: {
@@ -486,6 +575,14 @@ export type Database = {
         Returns: boolean;
       };
       organization_of_clinic: { Args: { p_clinic_id: string }; Returns: string };
+      resend_clinic_invitation: {
+        Args: { p_invitation_id: string };
+        Returns: string;
+      };
+      shares_active_organization_with: {
+        Args: { p_profile_id: string };
+        Returns: boolean;
+      };
     };
     Enums: {
       clinic_role: "clinic_admin" | "veterinarian" | "receptionist" | "assistant";

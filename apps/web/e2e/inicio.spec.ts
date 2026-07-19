@@ -11,10 +11,9 @@ test.describe("Página de inicio", () => {
       }),
     ).toBeVisible();
 
-    // El botón informativo existe y está deshabilitado (aún sin funcionalidad)
-    const botones = page.getByRole("button", { name: "Próximamente" });
-    await expect(botones.first()).toBeVisible();
-    await expect(botones.first()).toBeDisabled();
+    // Accesos a autenticación
+    await expect(page.getByRole("link", { name: "Iniciar sesión" }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Crear cuenta" }).first()).toBeVisible();
 
     // El documento declara español de México
     await expect(page.locator("html")).toHaveAttribute("lang", "es-MX");

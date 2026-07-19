@@ -121,3 +121,22 @@ export const profileSchema = z.object({
   preferredLocale: z.literal("es-MX").default("es-MX"),
   timezone: z.string().trim().min(1).default("America/Mexico_City"),
 });
+
+/** Perfil mínimo requerido para completar el onboarding (Fase 3). */
+export const onboardingProfileSchema = profileSchema.extend({
+  firstName: z
+    .string({ required_error: "El nombre es obligatorio." })
+    .trim()
+    .min(1, "El nombre es obligatorio.")
+    .max(100, "El nombre no puede exceder 100 caracteres."),
+  lastName: z
+    .string({ required_error: "Los apellidos son obligatorios." })
+    .trim()
+    .min(1, "Los apellidos son obligatorios.")
+    .max(100, "Los apellidos no pueden exceder 100 caracteres."),
+  displayName: z
+    .string({ required_error: "El nombre para mostrar es obligatorio." })
+    .trim()
+    .min(1, "El nombre para mostrar es obligatorio.")
+    .max(120, "El nombre para mostrar no puede exceder 120 caracteres."),
+});

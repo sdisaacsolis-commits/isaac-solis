@@ -83,8 +83,18 @@ Los "—" significan: sin política **y** sin GRANT ⇒ la operación es del bac
 | RPC                                                         | Qué garantiza                                                                                                                                            |
 | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `create_organization_with_owner(name, slug?, legal?, rfc?)` | organización + membresía owner en una transacción; nunca una organización sin owner                                                                      |
+| `create_clinic_with_admin(org, name, …)` (Fase 3)           | admin de la organización verificado; clínica (`trial`) + membresía `clinic_admin` del creador en una transacción                                         |
 | `invite_clinic_member(clinic, email, role)`                 | permisos verificados, correo normalizado, token aleatorio de 256 bits devuelto UNA vez, solo hash SHA-256 persistido, sin duplicados pendientes          |
+| `resend_clinic_invitation(invitation_id)` (Fase 3)          | solo admins y solo pendientes; token NUEVO que reemplaza el hash (el enlace anterior se invalida al instante) y extiende vigencia; sin duplicar filas    |
 | `accept_clinic_invitation(token)`                           | vigencia + coincidencia de correo verificadas; membresía de organización (`member`) y de clínica creadas y la invitación marcada `accepted`, todo o nada |
+
+### Vista segura `colleague_profiles` (Fase 3)
+
+Expone SOLO `id, display_name, first_name, last_name, avatar_url` de perfiles que
+comparten una organización ACTIVA con el actor (o el propio). Es la única vía para ver
+colegas: la tabla `profiles` sigue cerrada (propio + superadmin). Sin teléfono, sin
+`is_superadmin`, sin locale. Probado en pgTAP 06 que no filtra perfiles de otras
+organizaciones.
 
 ## 6. Acciones que requieren service_role (backend) — nunca cliente
 
@@ -104,8 +114,9 @@ por diseño de BYPASSRLS + revocaciones) y superadmin explícito (12).
 
 ## 8. Limitaciones conocidas / pendientes
 
-- Los perfiles de colegas no son visibles entre sí todavía (mínimo privilegio); la Fase 3
-  añadirá una política para ver nombres del personal de tus clínicas.
+- ~~Perfiles de colegas invisibles~~ → resuelto en Fase 3 con la vista `colleague_profiles`.
+- El correo de los miembros no se muestra en la UI de personal (los correos viven en
+  `auth.users`, no expuestos a clientes); se evaluará exponerlo vía vista en fase posterior.
 - No hay flujo de "salir de la organización" self-service ni transferencia de propiedad
   (RPC futura `transfer_organization_ownership`).
 - La restricción de acceso a clínicas `suspended/cancelled` (a nivel clínica, no

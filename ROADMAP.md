@@ -49,12 +49,26 @@
   la app web) se hará con el flujo de alta de clínicas en la Fase 3; el trigger de
   creación automática de perfil ya está listo y probado.
 
-## Fase 3 — Registro de clínicas y personal
+## Fase 3 — Autenticación, onboarding, personal e invitaciones ✅ (2026-07-19; validación con Supabase real pendiente)
 
-- Flujo de alta de clínica y activación por superadmin (panel `(admin)`).
-- Invitación de personal por correo (Edge Function + Resend) y aceptación con creación de cuenta.
-- Gestión de personal, servicios (precios MXN en centavos) y horarios de veterinarios.
-- **Criterio de salida**: una clínica real puede quedar configurada de punta a punta.
+- Entregado: autenticación completa (registro, login, logout, recuperación y actualización
+  de contraseña, confirmación de correo configurable) con `@supabase/ssr`; protección de
+  rutas privadas en middleware + servidor; onboarding de 3 pasos (perfil → organización
+  vía `create_organization_with_owner` → primera clínica vía `create_clinic_with_admin`);
+  dashboard con datos reales; gestión de organización, clínicas (listado/detalle/edición/
+  selector de activa) y personal; invitaciones con token hasheado (crear/reenviar/revocar/
+  aceptar) y correo por interfaz desacoplada (adaptador Resend + adaptador dev).
+- Base de datos: migraciones 0011 (vista segura `colleague_profiles`) y 0012 (RPCs
+  `create_clinic_with_admin`, `resend_clinic_invitation`) con 18 aserciones pgTAP nuevas
+  (171 totales, en verde sobre PostgreSQL local).
+- Pruebas: 79 unitarias; E2E Playwright en dos niveles (8 sin Supabase siempre + 3 flujos
+  completos con `E2E_AUTH=1`); CI con escaneo de secretos.
+- **Criterio de salida**: cumplido en lo verificable localmente (lint, typecheck, unit,
+  build, E2E básicas, 171 pgTAP). **Pendiente**: ejercitar los flujos con un Supabase
+  real (`pnpm db:start` + `E2E_AUTH=1 pnpm test:e2e`) y el job de CI con Docker — este
+  entorno no tiene daemon de Docker.
+- _Alcance movido a fases siguientes_: activación de clínicas por superadmin (panel
+  `(admin)`, Fase 10), servicios y horarios de veterinarios (Fase 5).
 
 ## Fase 4 — Propietarios y mascotas (web)
 

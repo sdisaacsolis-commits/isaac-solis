@@ -1,4 +1,5 @@
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@dogtoralia/ui";
+import Link from "next/link";
 
 import { mensajes } from "@/lib/i18n/es-mx";
 
@@ -13,9 +14,14 @@ export default function PaginaInicio() {
             <span aria-hidden="true">🐾 </span>
             {marca.nombre}
           </p>
-          <Button disabled title={inicio.tituloBotonProximamente}>
-            {inicio.botonProximamente}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="ghost">
+              <Link href="/iniciar-sesion">{inicio.entrar}</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/registro">{inicio.crearCuenta}</Link>
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -28,9 +34,12 @@ export default function PaginaInicio() {
             {marca.eslogan}
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-ink-muted">{inicio.descripcionHero}</p>
-          <div className="mt-10 flex justify-center">
-            <Button size="lg" disabled title={inicio.tituloBotonProximamente}>
-              {inicio.botonProximamente}
+          <div className="mt-10 flex justify-center gap-3">
+            <Button asChild size="lg">
+              <Link href="/registro">{inicio.crearCuenta}</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <Link href="/iniciar-sesion">{inicio.entrar}</Link>
             </Button>
           </div>
         </section>

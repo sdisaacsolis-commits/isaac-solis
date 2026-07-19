@@ -355,3 +355,5 @@ Decisiones aplicadas en la Fase 2:
 - Los detalles operativos del modelo de seguridad viven en `docs/security/rls-model.md` y
   `docs/security/roles-and-permissions.md`; las guías de prueba en
   `docs/database/local-testing.md`.
+
+| Fase 3 (2026-07-19) | Vista segura `colleague_profiles` (datos básicos de colegas por organización compartida; migración 0011) y RPCs `create_clinic_with_admin` + `resend_clinic_invitation` (migración 0012). 171 aserciones pgTAP totales. |
