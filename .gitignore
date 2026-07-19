@@ -1,0 +1,26 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno — nunca commitear secretos
+.env
+.env.*
+!.env.example
+
+# Builds
+.next/
+dist/
+build/
+.turbo/
+
+# Supabase local
+supabase/.temp/
+
+# Flutter
+apps/mobile/.dart_tool/
+apps/mobile/build/
+
+# Sistema / editor
+.DS_Store
+*.log
+.vscode/
+.idea/
