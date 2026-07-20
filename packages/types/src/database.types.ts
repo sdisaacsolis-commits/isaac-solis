@@ -29,7 +29,6 @@ export type Database = {
           {
             foreignKeyName: "appointment_folio_counters_clinic_id_fkey"
             columns: ["clinic_id"]
-            isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
@@ -97,21 +96,18 @@ export type Database = {
           {
             foreignKeyName: "appointment_notifications_appointment_id_fkey"
             columns: ["appointment_id"]
-            isOneToOne: false
             referencedRelation: "appointments"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointment_notifications_clinic_id_fkey"
             columns: ["clinic_id"]
-            isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointment_notifications_organization_id_fkey"
             columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
@@ -161,14 +157,12 @@ export type Database = {
           {
             foreignKeyName: "appointment_services_appointment_id_fkey"
             columns: ["appointment_id"]
-            isOneToOne: false
             referencedRelation: "appointments"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointment_services_clinic_service_id_fkey"
             columns: ["clinic_service_id"]
-            isOneToOne: false
             referencedRelation: "clinic_services"
             referencedColumns: ["id"]
           },
@@ -206,21 +200,18 @@ export type Database = {
           {
             foreignKeyName: "appointment_status_history_appointment_id_fkey"
             columns: ["appointment_id"]
-            isOneToOne: false
             referencedRelation: "appointments"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointment_status_history_changed_by_fkey"
             columns: ["changed_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointment_status_history_changed_by_fkey"
             columns: ["changed_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -318,63 +309,54 @@ export type Database = {
           {
             foreignKeyName: "appointments_cancelled_by_fkey"
             columns: ["cancelled_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointments_cancelled_by_fkey"
             columns: ["cancelled_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointments_clinic_id_fkey"
             columns: ["clinic_id"]
-            isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointments_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointments_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointments_organization_id_fkey"
             columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointments_owner_id_fkey"
             columns: ["owner_id"]
-            isOneToOne: false
             referencedRelation: "pet_owners"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointments_pet_id_fkey"
             columns: ["pet_id"]
-            isOneToOne: false
             referencedRelation: "pets"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "appointments_veterinarian_clinic_member_id_fkey"
             columns: ["veterinarian_clinic_member_id"]
-            isOneToOne: false
             referencedRelation: "clinic_members"
             referencedColumns: ["id"]
           },
@@ -475,35 +457,30 @@ export type Database = {
           {
             foreignKeyName: "clinic_invitations_accepted_by_fkey"
             columns: ["accepted_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_invitations_accepted_by_fkey"
             columns: ["accepted_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_invitations_clinic_id_fkey"
             columns: ["clinic_id"]
-            isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_invitations_invited_by_fkey"
             columns: ["invited_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_invitations_invited_by_fkey"
             columns: ["invited_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -556,35 +533,30 @@ export type Database = {
           {
             foreignKeyName: "clinic_members_clinic_id_fkey"
             columns: ["clinic_id"]
-            isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_members_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_members_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_members_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_members_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -646,42 +618,36 @@ export type Database = {
           {
             foreignKeyName: "clinic_pet_relationships_clinic_id_fkey"
             columns: ["clinic_id"]
-            isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_pet_relationships_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_pet_relationships_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_pet_relationships_organization_id_fkey"
             columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_pet_relationships_pet_id_fkey"
             columns: ["pet_id"]
-            isOneToOne: false
             referencedRelation: "pets"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_pet_relationships_referred_by_clinic_id_fkey"
             columns: ["referred_by_clinic_id"]
-            isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
@@ -716,28 +682,24 @@ export type Database = {
           {
             foreignKeyName: "clinic_service_veterinarians_clinic_member_id_fkey"
             columns: ["clinic_member_id"]
-            isOneToOne: false
             referencedRelation: "clinic_members"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_service_veterinarians_clinic_service_id_fkey"
             columns: ["clinic_service_id"]
-            isOneToOne: false
             referencedRelation: "clinic_services"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_service_veterinarians_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_service_veterinarians_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -802,29 +764,426 @@ export type Database = {
           {
             foreignKeyName: "clinic_services_clinic_id_fkey"
             columns: ["clinic_id"]
-            isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_services_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_services_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinic_services_organization_id_fkey"
             columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinical_encounters: {
+        Row: {
+          appointment_id: string | null
+          chief_complaint: string | null
+          clinic_id: string
+          clinic_pet_relationship_id: string
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          encounter_type: Database["public"]["Enums"]["encounter_type"]
+          examination_skipped_reason: string | null
+          finalized_at: string | null
+          finalized_by: string | null
+          folio: string
+          id: string
+          internal_notes: string | null
+          organization_id: string
+          pet_id: string
+          responsible_veterinarian_clinic_member_id: string
+          started_at: string
+          status: Database["public"]["Enums"]["encounter_status"]
+          updated_at: string
+          vitals_skipped_reason: string | null
+          void_reason: string | null
+          voided_at: string | null
+          voided_by: string | null
+        }
+        Insert: {
+          appointment_id?: string | null
+          chief_complaint?: string | null
+          clinic_id: string
+          clinic_pet_relationship_id: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          encounter_type?: Database["public"]["Enums"]["encounter_type"]
+          examination_skipped_reason?: string | null
+          finalized_at?: string | null
+          finalized_by?: string | null
+          folio: string
+          id?: string
+          internal_notes?: string | null
+          organization_id: string
+          pet_id: string
+          responsible_veterinarian_clinic_member_id: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["encounter_status"]
+          updated_at?: string
+          vitals_skipped_reason?: string | null
+          void_reason?: string | null
+          voided_at?: string | null
+          voided_by?: string | null
+        }
+        Update: {
+          appointment_id?: string | null
+          chief_complaint?: string | null
+          clinic_id?: string
+          clinic_pet_relationship_id?: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          encounter_type?: Database["public"]["Enums"]["encounter_type"]
+          examination_skipped_reason?: string | null
+          finalized_at?: string | null
+          finalized_by?: string | null
+          folio?: string
+          id?: string
+          internal_notes?: string | null
+          organization_id?: string
+          pet_id?: string
+          responsible_veterinarian_clinic_member_id?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["encounter_status"]
+          updated_at?: string
+          vitals_skipped_reason?: string | null
+          void_reason?: string | null
+          voided_at?: string | null
+          voided_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinical_encounters_appointment_id_fkey"
+            columns: ["appointment_id"]
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_encounters_clinic_id_fkey"
+            columns: ["clinic_id"]
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_encounters_clinic_pet_relationship_id_fkey"
+            columns: ["clinic_pet_relationship_id"]
+            referencedRelation: "clinic_pet_relationships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_encounters_created_by_fkey"
+            columns: ["created_by"]
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_encounters_created_by_fkey"
+            columns: ["created_by"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_encounters_finalized_by_fkey"
+            columns: ["finalized_by"]
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_encounters_finalized_by_fkey"
+            columns: ["finalized_by"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_encounters_organization_id_fkey"
+            columns: ["organization_id"]
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_encounters_pet_id_fkey"
+            columns: ["pet_id"]
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_encounters_responsible_veterinarian_clinic_member_fkey"
+            columns: ["responsible_veterinarian_clinic_member_id"]
+            referencedRelation: "clinic_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_encounters_voided_by_fkey"
+            columns: ["voided_by"]
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_encounters_voided_by_fkey"
+            columns: ["voided_by"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinical_files: {
+        Row: {
+          clinic_id: string
+          created_at: string
+          deleted_at: string | null
+          description: string | null
+          encounter_id: string
+          id: string
+          kind: Database["public"]["Enums"]["clinical_file_kind"]
+          mime_type: string
+          organization_id: string
+          original_filename: string
+          pet_id: string
+          size_bytes: number
+          storage_path: string
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          clinic_id: string
+          created_at?: string
+          deleted_at?: string | null
+          description?: string | null
+          encounter_id: string
+          id?: string
+          kind?: Database["public"]["Enums"]["clinical_file_kind"]
+          mime_type: string
+          organization_id: string
+          original_filename: string
+          pet_id: string
+          size_bytes: number
+          storage_path: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          clinic_id?: string
+          created_at?: string
+          deleted_at?: string | null
+          description?: string | null
+          encounter_id?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["clinical_file_kind"]
+          mime_type?: string
+          organization_id?: string
+          original_filename?: string
+          pet_id?: string
+          size_bytes?: number
+          storage_path?: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinical_files_clinic_id_fkey"
+            columns: ["clinic_id"]
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_files_encounter_id_fkey"
+            columns: ["encounter_id"]
+            referencedRelation: "clinical_encounters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_files_organization_id_fkey"
+            columns: ["organization_id"]
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_files_pet_id_fkey"
+            columns: ["pet_id"]
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_files_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_files_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinical_folio_counters: {
+        Row: {
+          clinic_id: string
+          counter: number
+          year: number
+        }
+        Insert: {
+          clinic_id: string
+          counter?: number
+          year: number
+        }
+        Update: {
+          clinic_id?: string
+          counter?: number
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinical_folio_counters_clinic_id_fkey"
+            columns: ["clinic_id"]
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinical_notes: {
+        Row: {
+          assessment: string | null
+          author_clinic_member_id: string | null
+          created_at: string
+          encounter_id: string
+          history_summary: string | null
+          id: string
+          objective: string | null
+          plan: string | null
+          subjective: string | null
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          assessment?: string | null
+          author_clinic_member_id?: string | null
+          created_at?: string
+          encounter_id: string
+          history_summary?: string | null
+          id?: string
+          objective?: string | null
+          plan?: string | null
+          subjective?: string | null
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          assessment?: string | null
+          author_clinic_member_id?: string | null
+          created_at?: string
+          encounter_id?: string
+          history_summary?: string | null
+          id?: string
+          objective?: string | null
+          plan?: string | null
+          subjective?: string | null
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinical_notes_author_clinic_member_id_fkey"
+            columns: ["author_clinic_member_id"]
+            referencedRelation: "clinic_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_notes_encounter_id_fkey"
+            columns: ["encounter_id"]
+            referencedRelation: "clinical_encounters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinical_vitals: {
+        Row: {
+          blood_pressure_diastolic: number | null
+          blood_pressure_systolic: number | null
+          body_condition_score: number | null
+          capillary_refill_seconds: number | null
+          created_at: string
+          encounter_id: string
+          heart_rate_bpm: number | null
+          hydration_status: string | null
+          id: string
+          mucous_membranes: string | null
+          notes: string | null
+          pain_score: number | null
+          recorded_at: string
+          recorded_by: string | null
+          respiratory_rate_bpm: number | null
+          temperature_c: number | null
+          updated_at: string
+          weight_kg: number | null
+        }
+        Insert: {
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          body_condition_score?: number | null
+          capillary_refill_seconds?: number | null
+          created_at?: string
+          encounter_id: string
+          heart_rate_bpm?: number | null
+          hydration_status?: string | null
+          id?: string
+          mucous_membranes?: string | null
+          notes?: string | null
+          pain_score?: number | null
+          recorded_at?: string
+          recorded_by?: string | null
+          respiratory_rate_bpm?: number | null
+          temperature_c?: number | null
+          updated_at?: string
+          weight_kg?: number | null
+        }
+        Update: {
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          body_condition_score?: number | null
+          capillary_refill_seconds?: number | null
+          created_at?: string
+          encounter_id?: string
+          heart_rate_bpm?: number | null
+          hydration_status?: string | null
+          id?: string
+          mucous_membranes?: string | null
+          notes?: string | null
+          pain_score?: number | null
+          recorded_at?: string
+          recorded_by?: string | null
+          respiratory_rate_bpm?: number | null
+          temperature_c?: number | null
+          updated_at?: string
+          weight_kg?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinical_vitals_encounter_id_fkey"
+            columns: ["encounter_id"]
+            referencedRelation: "clinical_encounters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_vitals_recorded_by_fkey"
+            columns: ["recorded_by"]
+            referencedRelation: "clinic_members"
             referencedColumns: ["id"]
           },
         ]
@@ -909,22 +1268,409 @@ export type Database = {
           {
             foreignKeyName: "clinics_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinics_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "clinics_organization_id_fkey"
             columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      diagnoses: {
+        Row: {
+          certainty: Database["public"]["Enums"]["diagnosis_certainty"]
+          code: string | null
+          code_system: string | null
+          created_at: string
+          deleted_at: string | null
+          description: string | null
+          diagnosed_by: string | null
+          encounter_id: string
+          id: string
+          is_primary: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          certainty?: Database["public"]["Enums"]["diagnosis_certainty"]
+          code?: string | null
+          code_system?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          description?: string | null
+          diagnosed_by?: string | null
+          encounter_id: string
+          id?: string
+          is_primary?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          certainty?: Database["public"]["Enums"]["diagnosis_certainty"]
+          code?: string | null
+          code_system?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          description?: string | null
+          diagnosed_by?: string | null
+          encounter_id?: string
+          id?: string
+          is_primary?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diagnoses_diagnosed_by_fkey"
+            columns: ["diagnosed_by"]
+            referencedRelation: "clinic_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "diagnoses_encounter_id_fkey"
+            columns: ["encounter_id"]
+            referencedRelation: "clinical_encounters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      encounter_addenda: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          encounter_id: string
+          id: string
+          reason: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by?: string | null
+          encounter_id: string
+          id?: string
+          reason: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          encounter_id?: string
+          id?: string
+          reason?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "encounter_addenda_created_by_fkey"
+            columns: ["created_by"]
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "encounter_addenda_created_by_fkey"
+            columns: ["created_by"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "encounter_addenda_encounter_id_fkey"
+            columns: ["encounter_id"]
+            referencedRelation: "clinical_encounters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      encounter_examinations: {
+        Row: {
+          additional_findings: Json | null
+          attitude: string | null
+          body_condition: string | null
+          cardiovascular: string | null
+          created_at: string
+          digestive: string | null
+          ears: string | null
+          encounter_id: string
+          examined_by: string | null
+          eyes: string | null
+          general_condition: string | null
+          id: string
+          lymph_nodes: string | null
+          musculoskeletal: string | null
+          neurological: string | null
+          observations: string | null
+          oral_cavity: string | null
+          respiratory: string | null
+          skin_and_coat: string | null
+          updated_at: string
+          urinary: string | null
+          version: number
+        }
+        Insert: {
+          additional_findings?: Json | null
+          attitude?: string | null
+          body_condition?: string | null
+          cardiovascular?: string | null
+          created_at?: string
+          digestive?: string | null
+          ears?: string | null
+          encounter_id: string
+          examined_by?: string | null
+          eyes?: string | null
+          general_condition?: string | null
+          id?: string
+          lymph_nodes?: string | null
+          musculoskeletal?: string | null
+          neurological?: string | null
+          observations?: string | null
+          oral_cavity?: string | null
+          respiratory?: string | null
+          skin_and_coat?: string | null
+          updated_at?: string
+          urinary?: string | null
+          version?: number
+        }
+        Update: {
+          additional_findings?: Json | null
+          attitude?: string | null
+          body_condition?: string | null
+          cardiovascular?: string | null
+          created_at?: string
+          digestive?: string | null
+          ears?: string | null
+          encounter_id?: string
+          examined_by?: string | null
+          eyes?: string | null
+          general_condition?: string | null
+          id?: string
+          lymph_nodes?: string | null
+          musculoskeletal?: string | null
+          neurological?: string | null
+          observations?: string | null
+          oral_cavity?: string | null
+          respiratory?: string | null
+          skin_and_coat?: string | null
+          updated_at?: string
+          urinary?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "encounter_examinations_encounter_id_fkey"
+            columns: ["encounter_id"]
+            referencedRelation: "clinical_encounters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "encounter_examinations_examined_by_fkey"
+            columns: ["examined_by"]
+            referencedRelation: "clinic_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      encounter_follow_ups: {
+        Row: {
+          appointment_id: string | null
+          created_at: string
+          encounter_id: string
+          id: string
+          reason: string
+          recommended_within_days: number | null
+          service_id: string | null
+          status: Database["public"]["Enums"]["follow_up_status"]
+          updated_at: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          created_at?: string
+          encounter_id: string
+          id?: string
+          reason: string
+          recommended_within_days?: number | null
+          service_id?: string | null
+          status?: Database["public"]["Enums"]["follow_up_status"]
+          updated_at?: string
+        }
+        Update: {
+          appointment_id?: string | null
+          created_at?: string
+          encounter_id?: string
+          id?: string
+          reason?: string
+          recommended_within_days?: number | null
+          service_id?: string | null
+          status?: Database["public"]["Enums"]["follow_up_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "encounter_follow_ups_appointment_id_fkey"
+            columns: ["appointment_id"]
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "encounter_follow_ups_encounter_id_fkey"
+            columns: ["encounter_id"]
+            referencedRelation: "clinical_encounters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "encounter_follow_ups_service_id_fkey"
+            columns: ["service_id"]
+            referencedRelation: "clinic_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      encounter_status_history: {
+        Row: {
+          changed_by: string | null
+          clinic_id: string
+          created_at: string
+          encounter_id: string
+          from_status: Database["public"]["Enums"]["encounter_status"] | null
+          id: string
+          metadata: Json | null
+          organization_id: string
+          reason: string | null
+          to_status: Database["public"]["Enums"]["encounter_status"]
+        }
+        Insert: {
+          changed_by?: string | null
+          clinic_id: string
+          created_at?: string
+          encounter_id: string
+          from_status?: Database["public"]["Enums"]["encounter_status"] | null
+          id?: string
+          metadata?: Json | null
+          organization_id: string
+          reason?: string | null
+          to_status: Database["public"]["Enums"]["encounter_status"]
+        }
+        Update: {
+          changed_by?: string | null
+          clinic_id?: string
+          created_at?: string
+          encounter_id?: string
+          from_status?: Database["public"]["Enums"]["encounter_status"] | null
+          id?: string
+          metadata?: Json | null
+          organization_id?: string
+          reason?: string | null
+          to_status?: Database["public"]["Enums"]["encounter_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "encounter_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "encounter_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "encounter_status_history_clinic_id_fkey"
+            columns: ["clinic_id"]
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "encounter_status_history_encounter_id_fkey"
+            columns: ["encounter_id"]
+            referencedRelation: "clinical_encounters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "encounter_status_history_organization_id_fkey"
+            columns: ["organization_id"]
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      encounter_treatments: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          description: string | null
+          dosage_text: string | null
+          duration_text: string | null
+          encounter_id: string
+          frequency_text: string | null
+          id: string
+          instructions: string | null
+          name: string
+          performed_during_encounter: boolean
+          route_text: string | null
+          treatment_type: Database["public"]["Enums"]["treatment_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          dosage_text?: string | null
+          duration_text?: string | null
+          encounter_id: string
+          frequency_text?: string | null
+          id?: string
+          instructions?: string | null
+          name: string
+          performed_during_encounter?: boolean
+          route_text?: string | null
+          treatment_type?: Database["public"]["Enums"]["treatment_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          dosage_text?: string | null
+          duration_text?: string | null
+          encounter_id?: string
+          frequency_text?: string | null
+          id?: string
+          instructions?: string | null
+          name?: string
+          performed_during_encounter?: boolean
+          route_text?: string | null
+          treatment_type?: Database["public"]["Enums"]["treatment_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "encounter_treatments_created_by_fkey"
+            columns: ["created_by"]
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "encounter_treatments_created_by_fkey"
+            columns: ["created_by"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "encounter_treatments_encounter_id_fkey"
+            columns: ["encounter_id"]
+            referencedRelation: "clinical_encounters"
             referencedColumns: ["id"]
           },
         ]
@@ -970,35 +1716,30 @@ export type Database = {
           {
             foreignKeyName: "organization_members_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "organization_members_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "organization_members_organization_id_fkey"
             columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "organization_members_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "organization_members_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1051,14 +1792,12 @@ export type Database = {
           {
             foreignKeyName: "organizations_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "organizations_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1108,35 +1847,30 @@ export type Database = {
           {
             foreignKeyName: "owner_clinic_relationships_clinic_id_fkey"
             columns: ["clinic_id"]
-            isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "owner_clinic_relationships_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "owner_clinic_relationships_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "owner_clinic_relationships_organization_id_fkey"
             columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "owner_clinic_relationships_owner_id_fkey"
             columns: ["owner_id"]
-            isOneToOne: false
             referencedRelation: "pet_owners"
             referencedColumns: ["id"]
           },
@@ -1195,49 +1929,42 @@ export type Database = {
           {
             foreignKeyName: "owner_consents_clinic_id_fkey"
             columns: ["clinic_id"]
-            isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "owner_consents_organization_id_fkey"
             columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "owner_consents_owner_id_fkey"
             columns: ["owner_id"]
-            isOneToOne: false
             referencedRelation: "pet_owners"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "owner_consents_recorded_by_fkey"
             columns: ["recorded_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "owner_consents_recorded_by_fkey"
             columns: ["recorded_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "owner_consents_revoked_by_fkey"
             columns: ["revoked_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "owner_consents_revoked_by_fkey"
             columns: ["revoked_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1296,49 +2023,42 @@ export type Database = {
           {
             foreignKeyName: "pet_alerts_clinic_id_fkey"
             columns: ["clinic_id"]
-            isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pet_alerts_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pet_alerts_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pet_alerts_organization_id_fkey"
             columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pet_alerts_pet_id_fkey"
             columns: ["pet_id"]
-            isOneToOne: false
             referencedRelation: "pets"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pet_alerts_resolved_by_fkey"
             columns: ["resolved_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pet_alerts_resolved_by_fkey"
             columns: ["resolved_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1400,28 +2120,24 @@ export type Database = {
           {
             foreignKeyName: "pet_owner_relationships_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pet_owner_relationships_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pet_owner_relationships_owner_id_fkey"
             columns: ["owner_id"]
-            isOneToOne: false
             referencedRelation: "pet_owners"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pet_owner_relationships_pet_id_fkey"
             columns: ["pet_id"]
-            isOneToOne: false
             referencedRelation: "pets"
             referencedColumns: ["id"]
           },
@@ -1498,28 +2214,24 @@ export type Database = {
           {
             foreignKeyName: "pet_owners_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pet_owners_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pet_owners_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pet_owners_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1587,14 +2299,12 @@ export type Database = {
           {
             foreignKeyName: "pets_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pets_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1707,35 +2417,30 @@ export type Database = {
           {
             foreignKeyName: "schedule_exceptions_clinic_id_fkey"
             columns: ["clinic_id"]
-            isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "schedule_exceptions_clinic_member_id_fkey"
             columns: ["clinic_member_id"]
-            isOneToOne: false
             referencedRelation: "clinic_members"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "schedule_exceptions_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "schedule_exceptions_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "schedule_exceptions_organization_id_fkey"
             columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
@@ -1791,35 +2496,30 @@ export type Database = {
           {
             foreignKeyName: "veterinarian_schedules_clinic_id_fkey"
             columns: ["clinic_id"]
-            isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "veterinarian_schedules_clinic_member_id_fkey"
             columns: ["clinic_member_id"]
-            isOneToOne: false
             referencedRelation: "clinic_members"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "veterinarian_schedules_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "colleague_profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "veterinarian_schedules_created_by_fkey"
             columns: ["created_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "veterinarian_schedules_organization_id_fkey"
             columns: ["organization_id"]
-            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
@@ -1891,8 +2591,25 @@ export type Database = {
       }
       can_access_owner: { Args: { p_owner_id: string }; Returns: boolean }
       can_access_pet: { Args: { p_pet_id: string }; Returns: boolean }
+      can_edit_clinical_encounter: {
+        Args: { p_encounter_id: string }
+        Returns: boolean
+      }
+      can_finalize_clinical_encounter: {
+        Args: { p_encounter_id: string }
+        Returns: boolean
+      }
       can_manage_owner: { Args: { p_owner_id: string }; Returns: boolean }
       can_manage_pet: { Args: { p_pet_id: string }; Returns: boolean }
+      can_record_vitals: { Args: { p_encounter_id: string }; Returns: boolean }
+      can_view_clinical_content: {
+        Args: { p_encounter_id: string }
+        Returns: boolean
+      }
+      can_view_clinical_encounter: {
+        Args: { p_encounter_id: string }
+        Returns: boolean
+      }
       cancel_appointment: {
         Args: { p_appointment_id: string; p_reason: string }
         Returns: Database["public"]["Enums"]["appointment_status"]
@@ -1932,6 +2649,10 @@ export type Database = {
       clinic_belongs_to_organization: {
         Args: { p_clinic_id: string; p_organization_id: string }
         Returns: boolean
+      }
+      clinical_encounter_from_storage_path: {
+        Args: { p_name: string }
+        Returns: string
       }
       configure_veterinarian_schedule: {
         Args: { p_clinic_id: string; p_clinic_member_id: string; p_slots: Json }
@@ -1979,13 +2700,38 @@ export type Database = {
         }
         Returns: string
       }
+      create_walk_in_encounter: {
+        Args: {
+          p_chief_complaint?: string
+          p_clinic_id: string
+          p_emergency_reason?: string
+          p_encounter_type?: Database["public"]["Enums"]["encounter_type"]
+          p_owner_id: string
+          p_pet_id: string
+          p_service_ids: string[]
+          p_veterinarian_clinic_member_id: string
+        }
+        Returns: string
+      }
       current_user_is_superadmin: { Args: never; Returns: boolean }
+      encounter_clinic: { Args: { p_encounter_id: string }; Returns: string }
+      encounter_transition_allowed: {
+        Args: {
+          p_from: Database["public"]["Enums"]["encounter_status"]
+          p_to: Database["public"]["Enums"]["encounter_status"]
+        }
+        Returns: boolean
+      }
       enqueue_appointment_notifications: {
         Args: {
           p_appointment_id: string
           p_kind: Database["public"]["Enums"]["appointment_notification_type"]
         }
         Returns: undefined
+      }
+      finalize_clinical_encounter: {
+        Args: { p_encounter_id: string }
+        Returns: Database["public"]["Enums"]["encounter_status"]
       }
       get_available_slots: {
         Args: {
@@ -2022,6 +2768,10 @@ export type Database = {
         Args: { p_clinic_id: string }
         Returns: boolean
       }
+      is_encounter_veterinarian: {
+        Args: { p_encounter_id: string }
+        Returns: boolean
+      }
       is_organization_admin: {
         Args: { p_organization_id: string }
         Returns: boolean
@@ -2043,11 +2793,19 @@ export type Database = {
         }
         Returns: string
       }
+      log_clinical_record_access: {
+        Args: { p_access_type: string; p_encounter_id: string }
+        Returns: undefined
+      }
       mark_appointment_notification: {
         Args: { p_error?: string; p_notification_id: string; p_ok: boolean }
         Returns: undefined
       }
       next_appointment_folio: {
+        Args: { p_clinic_id: string; p_year: number }
+        Returns: string
+      }
+      next_clinical_folio: {
         Args: { p_clinic_id: string; p_year: number }
         Returns: string
       }
@@ -2118,6 +2876,10 @@ export type Database = {
         Args: { p_profile_id: string }
         Returns: boolean
       }
+      start_encounter_from_appointment: {
+        Args: { p_appointment_id: string }
+        Returns: string
+      }
       transition_appointment_status: {
         Args: {
           p_appointment_id: string
@@ -2125,6 +2887,10 @@ export type Database = {
           p_reason?: string
         }
         Returns: Database["public"]["Enums"]["appointment_status"]
+      }
+      void_clinical_encounter: {
+        Args: { p_encounter_id: string; p_reason: string }
+        Returns: Database["public"]["Enums"]["encounter_status"]
       }
     }
     Enums: {
@@ -2152,29 +2918,20 @@ export type Database = {
         | "cancelled"
         | "no_show"
       clinic_pet_source:
-        | "manual"
-        | "owner_registration"
-        | "invitation"
-        | "referral"
-        | "import"
+        "manual" | "owner_registration" | "invitation" | "referral" | "import"
       clinic_pet_status:
-        | "active"
-        | "inactive"
-        | "transferred"
-        | "blocked"
-        | "archived"
+        "active" | "inactive" | "transferred" | "blocked" | "archived"
       clinic_role:
-        | "clinic_admin"
-        | "veterinarian"
-        | "receptionist"
-        | "assistant"
+        "clinic_admin" | "veterinarian" | "receptionist" | "assistant"
       clinic_status:
-        | "trial"
-        | "active"
-        | "past_due"
-        | "suspended"
-        | "cancelled"
-        | "archived"
+        "trial" | "active" | "past_due" | "suspended" | "cancelled" | "archived"
+      clinical_file_kind:
+        | "laboratory_result"
+        | "image"
+        | "external_prescription"
+        | "referral"
+        | "consent"
+        | "other"
       consent_medium: "in_person" | "web" | "email" | "phone"
       consent_type:
         | "privacy_notice"
@@ -2184,28 +2941,23 @@ export type Database = {
         | "share_records"
         | "portal_terms"
       contact_method: "phone" | "email" | "whatsapp" | "sms"
+      diagnosis_certainty:
+        "differential" | "presumptive" | "confirmed" | "ruled_out"
+      encounter_status: "in_progress" | "finalized" | "voided"
+      encounter_type:
+        "scheduled" | "walk_in" | "emergency" | "follow_up" | "other"
+      follow_up_status: "pending" | "scheduled" | "completed" | "cancelled"
       invitation_status: "pending" | "accepted" | "expired" | "revoked"
       membership_status: "invited" | "active" | "suspended" | "removed"
       notification_channel: "email" | "whatsapp" | "push" | "sms"
       notification_status:
-        | "pending"
-        | "processing"
-        | "sent"
-        | "failed"
-        | "cancelled"
+        "pending" | "processing" | "sent" | "failed" | "cancelled"
       organization_role: "owner" | "admin" | "billing" | "member"
       organization_status: "active" | "suspended" | "archived"
       owner_pet_relationship_status:
-        | "active"
-        | "inactive"
-        | "disputed"
-        | "revoked"
+        "active" | "inactive" | "disputed" | "revoked"
       owner_pet_relationship_type:
-        | "owner"
-        | "guardian"
-        | "family_member"
-        | "temporary_caregiver"
-        | "other"
+        "owner" | "guardian" | "family_member" | "temporary_caregiver" | "other"
       pet_alert_severity: "info" | "caution" | "critical"
       pet_alert_type:
         | "aggressive_behavior"
@@ -2235,6 +2987,15 @@ export type Database = {
         | "dental"
         | "emergency"
         | "other"
+      treatment_type:
+        | "medication_recommendation"
+        | "procedure"
+        | "diet"
+        | "home_care"
+        | "restriction"
+        | "referral"
+        | "follow_up"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2250,12 +3011,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2277,13 +3038,12 @@ export type Tables<
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2302,13 +3062,12 @@ export type TablesInsert<
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2327,13 +3086,12 @@ export type TablesUpdate<
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    keyof DefaultSchema["Enums"] | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2346,11 +3104,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2416,6 +3174,14 @@ export const Constants = {
         "cancelled",
         "archived",
       ],
+      clinical_file_kind: [
+        "laboratory_result",
+        "image",
+        "external_prescription",
+        "referral",
+        "consent",
+        "other",
+      ],
       consent_medium: ["in_person", "web", "email", "phone"],
       consent_type: [
         "privacy_notice",
@@ -2426,6 +3192,21 @@ export const Constants = {
         "portal_terms",
       ],
       contact_method: ["phone", "email", "whatsapp", "sms"],
+      diagnosis_certainty: [
+        "differential",
+        "presumptive",
+        "confirmed",
+        "ruled_out",
+      ],
+      encounter_status: ["in_progress", "finalized", "voided"],
+      encounter_type: [
+        "scheduled",
+        "walk_in",
+        "emergency",
+        "follow_up",
+        "other",
+      ],
+      follow_up_status: ["pending", "scheduled", "completed", "cancelled"],
       invitation_status: ["pending", "accepted", "expired", "revoked"],
       membership_status: ["invited", "active", "suspended", "removed"],
       notification_channel: ["email", "whatsapp", "push", "sms"],
@@ -2483,7 +3264,16 @@ export const Constants = {
         "emergency",
         "other",
       ],
+      treatment_type: [
+        "medication_recommendation",
+        "procedure",
+        "diet",
+        "home_care",
+        "restriction",
+        "referral",
+        "follow_up",
+        "other",
+      ],
     },
   },
 } as const
-

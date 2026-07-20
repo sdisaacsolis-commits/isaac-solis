@@ -29,6 +29,23 @@ export {
 } from "./schemas/auth";
 export { clinicSlugSchema, emailSchema, nonEmptyTextSchema, phoneMxSchema } from "./schemas/common";
 export {
+  addendumSchema,
+  CLINICAL_FILE_MIME_TYPES,
+  clinicalFileSchema,
+  diagnosisSchema,
+  encounterHeaderSchema,
+  encounterTypeSchema,
+  encounterVersionSchema,
+  examinationSchema,
+  followUpSchema,
+  soapNoteSchema,
+  startEncounterSchema,
+  treatmentSchema,
+  vitalsSchema,
+  voidEncounterSchema,
+  walkInEncounterSchema,
+} from "./schemas/clinical";
+export {
   clinicSearchSchema,
   createOwnerSchema,
   createPetSchema,

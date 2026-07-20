@@ -124,3 +124,35 @@ export const OCCUPYING_APPOINTMENT_STATUSES = [
   "checked_in",
   "in_progress",
 ] as const satisfies readonly AppointmentStatus[];
+
+// ---------------------------------------------------------------------------
+// Enums del expediente clínico (Fase 6), derivados de la base de datos
+// ---------------------------------------------------------------------------
+export const ENCOUNTER_STATUSES = Constants.public.Enums.encounter_status;
+export type EncounterStatus = Enums<"encounter_status">;
+
+export const ENCOUNTER_TYPES = Constants.public.Enums.encounter_type;
+export type EncounterType = Enums<"encounter_type">;
+
+export const DIAGNOSIS_CERTAINTIES = Constants.public.Enums.diagnosis_certainty;
+export type DiagnosisCertainty = Enums<"diagnosis_certainty">;
+
+export const TREATMENT_TYPES = Constants.public.Enums.treatment_type;
+export type TreatmentType = Enums<"treatment_type">;
+
+export const CLINICAL_FILE_KINDS = Constants.public.Enums.clinical_file_kind;
+export type ClinicalFileKind = Enums<"clinical_file_kind">;
+
+export const FOLLOW_UP_STATUSES = Constants.public.Enums.follow_up_status;
+export type FollowUpStatus = Enums<"follow_up_status">;
+
+/**
+ * Máquina de estados de consultas (espejo de encounter_transition_allowed en
+ * SQL, que es la autoridad). draft e in_progress están fusionados: la consulta
+ * abierta ES el borrador; finalized→voided es la anulación administrativa.
+ */
+export const ENCOUNTER_TRANSITIONS: Record<EncounterStatus, readonly EncounterStatus[]> = {
+  in_progress: ["finalized", "voided"],
+  finalized: ["voided"],
+  voided: [],
+} as const;
