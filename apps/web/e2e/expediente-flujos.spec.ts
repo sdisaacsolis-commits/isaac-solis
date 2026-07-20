@@ -162,7 +162,7 @@ test.describe("Expediente clínico (Supabase local)", () => {
     // Walk-in desde la pantalla de nueva consulta.
     await page.goto("/app/consultas/nueva");
     await page.getByLabel("Mascota (paciente)").selectOption({ index: 1 });
-    await page.getByLabel("Servicio", { exact: true }).selectOption({ index: 1 });
+    await page.getByRole("combobox", { name: "Servicio", exact: true }).selectOption({ index: 1 });
     await page.getByLabel("Veterinario que atiende").selectOption({ index: 1 });
     await page.getByLabel("Motivo de la consulta").fill("Cojera súbita en pata trasera");
     await page.getByRole("button", { name: "Abrir consulta" }).click();
@@ -191,13 +191,15 @@ test.describe("Expediente clínico (Supabase local)", () => {
     await expect(page.getByText("La nota clínica quedó guardada.")).toBeVisible();
 
     // Diagnóstico principal.
-    await page.getByLabel("Diagnóstico", { exact: true }).fill("Esguince de tarso");
+    await page.getByRole("textbox", { name: "Diagnóstico", exact: true }).fill("Esguince de tarso");
     await page.getByLabel("Es el diagnóstico principal").check();
     await page.getByRole("button", { name: "Agregar diagnóstico" }).click();
     await expect(page.getByText("El diagnóstico quedó registrado.")).toBeVisible();
 
     // Tratamiento.
-    await page.getByLabel("Tratamiento", { exact: true }).fill("Meloxicam suspensión");
+    await page
+      .getByRole("textbox", { name: "Tratamiento", exact: true })
+      .fill("Meloxicam suspensión");
     await page.getByLabel("Indicaciones").fill("0.1 mg/kg cada 24 h por 5 días");
     await page.getByRole("button", { name: "Agregar tratamiento" }).click();
     await expect(page.getByText("El tratamiento quedó registrado.")).toBeVisible();
