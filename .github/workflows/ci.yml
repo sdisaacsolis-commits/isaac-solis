@@ -1,0 +1,178 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validar:
+    name: Lint, typecheck, pruebas y build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar pnpm
+        uses: pnpm/action-setup@v4
+        # La versión de pnpm se toma del campo packageManager de package.json
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Escaneo básico de secretos
+        run: bash scripts/ci/scan-secrets.sh
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Formato
+        run: pnpm format:check
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Pruebas unitarias
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+  base-de-datos:
+    name: Migraciones y pruebas RLS (pgTAP)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      # Supabase CLI + Docker: el entorno que mejor representa producción
+      # (imagen real de Postgres de Supabase, con auth, pgtap y roles).
+      - name: Iniciar PostgreSQL de Supabase
+        run: pnpm exec supabase db start
+
+      - name: Aplicar migraciones desde una base limpia
+        run: pnpm exec supabase db reset
+
+      - name: Pruebas pgTAP (aislamiento RLS)
+        run: pnpm exec supabase test db
+
+      - name: Verificar que los tipos generados no tienen drift
+        run: |
+          pnpm exec supabase gen types typescript --local --schema public > /tmp/database.types.ts
+          if ! diff -u packages/types/src/database.types.ts /tmp/database.types.ts; then
+            echo "::error::packages/types/src/database.types.ts difiere del canónico (pnpm db:types)."
+            # Volcado del archivo canónico para poder corregirlo desde entornos sin Docker:
+            echo "___TYPES_CANONICOS_B64_INICIO___"
+            gzip -c /tmp/database.types.ts | base64 -w0
+            echo ""
+            echo "___TYPES_CANONICOS_B64_FIN___"
+            exit 1
+          fi
+
+  e2e:
+    name: Pruebas E2E (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Instalar navegador de Playwright
+        run: pnpm --filter @dogtoralia/web exec playwright install --with-deps chromium
+
+      - name: Ejecutar pruebas E2E
+        run: pnpm test:e2e
+
+  e2e-auth:
+    name: Flujos E2E con Supabase real
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Iniciar Supabase local completo
+        run: pnpm exec supabase start
+
+      - name: Exportar credenciales locales (no son secretos)
+        run: |
+          set -euo pipefail
+          # Falla en voz alta si el JSON no llega o cambian los nombres de las
+          # claves: exportar valores vacíos produce fallos confusos aguas abajo.
+          pnpm exec supabase status -o json | node -e '
+            let d = "";
+            process.stdin.on("data", (c) => (d += c)).on("end", () => {
+              const m = d.match(/\{[\s\S]*\}/);
+              if (!m) throw new Error("supabase status no devolvió JSON: " + d.slice(0, 200));
+              const j = JSON.parse(m[0]);
+              if (!j.API_URL || !j.ANON_KEY || !j.SERVICE_ROLE_KEY)
+                throw new Error("claves faltantes; disponibles: " + Object.keys(j).join(", "));
+              // SERVICE_ROLE_KEY: llave LOCAL efímera, solo para fixtures E2E
+              // (crear el veterinario); permitida en CI por CLAUDE.md §2.
+              require("fs").appendFileSync(
+                process.env.GITHUB_ENV,
+                "NEXT_PUBLIC_SUPABASE_URL=" + j.API_URL + "\n" +
+                  "NEXT_PUBLIC_SUPABASE_ANON_KEY=" + j.ANON_KEY + "\n" +
+                  "SUPABASE_SERVICE_ROLE_KEY=" + j.SERVICE_ROLE_KEY + "\n",
+              );
+              console.log("Supabase local disponible en " + j.API_URL);
+            });
+          '
+
+      - name: Instalar navegador de Playwright
+        run: pnpm --filter @dogtoralia/web exec playwright install --with-deps chromium
+
+      - name: Ejecutar flujos completos (auth + pacientes)
+        env:
+          E2E_AUTH: "1"
+        run: pnpm test:e2e
+
+      # Los snapshots de accesibilidad de Playwright permiten diagnosticar
+      # fallos sin descargar artefactos (solo datos locales de prueba).
+      - name: Mostrar contexto de errores de Playwright
+        if: failure()
+        run: find apps/web/test-results -name 'error-context.md' -print -exec cat {} \; || true

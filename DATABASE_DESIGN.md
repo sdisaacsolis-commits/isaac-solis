@@ -20,6 +20,8 @@
 
 ```
 auth.users 1──1 profiles
+organizations 1──N clinics                    (empresa → clínicas/sucursales)
+profiles   1──N organization_members N──1 organizations
 profiles   1──N clinic_members N──1 clinics
 profiles   1──N pets                          (propietario → mascotas)
 clinics    1──N services
@@ -45,59 +47,108 @@ audit_log  (global, append-only)
 ### 3.1 Identidad y tenancy
 
 **`profiles`** — 1:1 con `auth.users`.
-| Columna | Tipo | Notas |
-|---|---|---|
-| id | uuid PK | = `auth.users.id` |
-| full_name | text NOT NULL | |
-| phone | text | formato E.164 (+52...) |
-| avatar_url | text | |
-| is_superadmin | boolean DEFAULT false | solo modificable por superadmin |
-| default_locale | text DEFAULT 'es-MX' | |
+
+| Columna        | Tipo                  | Notas                           |
+| -------------- | --------------------- | ------------------------------- |
+| id             | uuid PK               | = `auth.users.id`               |
+| full_name      | text NOT NULL         |                                 |
+| phone          | text                  | formato E.164 (+52...)          |
+| avatar_url     | text                  |                                 |
+| is_superadmin  | boolean DEFAULT false | solo modificable por superadmin |
+| default_locale | text DEFAULT 'es-MX'  |                                 |
+
+**`organizations`** — sujeto comercial (decisión confirmada PRD §7.4). Una empresa o grupo
+veterinario que agrupa una o varias clínicas/sucursales.
+
+| Columna                       | Tipo                                                      | Notas                             |
+| ----------------------------- | --------------------------------------------------------- | --------------------------------- |
+| id                            | uuid PK                                                   |                                   |
+| name                          | text NOT NULL                                             | 2–120 caracteres                  |
+| legal_name / tax_id           | text                                                      | opcionales; tax_id = RFC (CHECK)  |
+| slug                          | text UNIQUE nullable                                      | normalizado; sin slugs reservados |
+| status                        | enum `organization_status`: `active, suspended, archived` | gestionado por backend            |
+| plan_code                     | text DEFAULT 'beta'                                       | se liga a `plans` en Fase 11      |
+| included_active_veterinarians | int DEFAULT 1                                             | límite del plan (PRD §7.4)        |
+| created_by                    | uuid FK → profiles                                        |                                   |
+| deleted_at                    | timestamptz                                               | borrado lógico                    |
+
+Las organizaciones se crean SOLO con la RPC `create_organization_with_owner` (transacción
+organización + primer owner). Sin INSERT directo de clientes.
+
+**`organization_members`** — usuarios asociados a la organización.
+`organization_id FK, user_id FK profiles, role enum organization_role: owner, admin,
+billing, member`, `status enum membership_status: invited, active, suspended, removed`,
+`joined_at, created_by, deleted_at`. Índice único parcial: una sola membresía viva
+(no `removed`, no borrada) por usuario y organización. Un trigger garantiza que toda
+organización conserve al menos un `owner` activo.
 
 **`clinics`**
-| Columna | Tipo | Notas |
-|---|---|---|
-| id | uuid PK | |
-| name | text NOT NULL | |
-| legal_name / rfc | text | opcionales |
-| address, city, state, postal_code | text | |
-| phone, email | text | |
-| logo_url | text | |
-| timezone | text DEFAULT 'America/Mexico_City' | |
-| status | enum: `pending, active, suspended` | activada por superadmin |
+
+| Columna                           | Tipo                                                                            | Notas                                                                                               |
+| --------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| id                                | uuid PK                                                                         |                                                                                                     |
+| organization_id                   | uuid FK → organizations NOT NULL                                                |                                                                                                     |
+| name                              | text NOT NULL                                                                   |                                                                                                     |
+| slug                              | text UNIQUE nullable                                                            | reservado para perfil público `/clinicas/[slug]` (fase posterior)                                   |
+| legal_name / rfc                  | text                                                                            | opcionales                                                                                          |
+| address, city, state, postal_code | text                                                                            |                                                                                                     |
+| phone, email                      | text                                                                            |                                                                                                     |
+| logo_url                          | text                                                                            |                                                                                                     |
+| timezone                          | text DEFAULT 'America/Mexico_City'                                              |                                                                                                     |
+| status                            | enum `clinic_status`: `trial, active, past_due, suspended, cancelled, archived` | ciclo de vida confirmado (PRD §7.3); toda clínica nace en `trial`; el estado lo gestiona el backend |
+| deleted_at                        | timestamptz                                                                     | borrado lógico; **los expedientes nunca se eliminan automáticamente**                               |
+
+Transiciones de `clinic_status` (trigger `clinics_validate_status_transition`, aplica a
+todos los roles incluido backend): `trial → active|cancelled`,
+`active → past_due|suspended|cancelled`, `past_due → active|suspended|cancelled`,
+`suspended → active|cancelled`, `cancelled → active|archived`; `archived` es terminal.
+En `suspended` y `cancelled` el acceso se restringe según políticas futuras; los datos
+clínicos se conservan (plazo de retención definitivo pendiente de revisión legal).
+El campo `status` no es modificable por clientes (sin GRANT de columna).
 
 **`clinic_members`** — corazón de la autorización por clínica.
-| Columna | Tipo | Notas |
-|---|---|---|
-| id | uuid PK | |
-| clinic_id | uuid FK → clinics | |
-| user_id | uuid FK → profiles | |
-| role | enum `clinic_role`: `clinic_admin, veterinarian, receptionist` | |
-| license_number | text | cédula profesional (obligatoria si role = veterinarian) |
-| specialty, bio | text | datos profesionales del veterinario |
-| is_active | boolean DEFAULT true | baja lógica del personal |
-| UNIQUE (clinic_id, user_id) | | un rol por usuario por clínica |
+
+| Columna                         | Tipo                                                                      | Notas                                                  |
+| ------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------ |
+| id                              | uuid PK                                                                   |                                                        |
+| clinic_id                       | uuid FK → clinics                                                         |                                                        |
+| user_id                         | uuid FK → profiles                                                        |                                                        |
+| role                            | enum `clinic_role`: `clinic_admin, veterinarian, receptionist, assistant` |                                                        |
+| status                          | enum `membership_status`: `invited, active, suspended, removed`           | solo `active` da acceso                                |
+| professional_license            | text                                                                      | cédula; se exigirá a veterinarios al activar la agenda |
+| job_title                       | text                                                                      |                                                        |
+| joined_at/created_by/deleted_at | —                                                                         | índice único parcial: una membresía viva por usuario   |
+
+Trigger `clinic_members_require_org_membership`: solo miembros ACTIVOS de la organización
+dueña pueden tener membresía viva en la clínica. (Los datos profesionales extendidos —
+especialidad, biografía — se agregarán con los perfiles públicos.)
 
 **`clinic_invitations`**
-Invitaciones de personal: `clinic_id, email, role, token_hash, expires_at, accepted_at, invited_by`.
+`clinic_id, email (normalizado a minúsculas), role clinic_role, token_hash (SHA-256, ÚNICO
+dato persistido del token; columna sin GRANT de lectura para clientes), status enum
+invitation_status: pending, accepted, expired, revoked, expires_at, accepted_at,
+accepted_by, invited_by`. Índice único parcial: sin invitaciones `pending` duplicadas por
+(clínica, correo, rol). Creación solo vía RPC `invite_clinic_member`; aceptación vía
+`accept_clinic_invitation`; los clientes solo pueden revocar.
 
 ### 3.2 Mascotas
 
 **`pets`**
-| Columna | Tipo | Notas |
-|---|---|---|
-| id | uuid PK | |
-| owner_id | uuid FK → profiles NOT NULL | |
-| name | text NOT NULL | |
-| species | enum: `dog, cat, bird, rabbit, reptile, other` | |
-| breed | text | |
-| sex | enum: `male, female, unknown` | |
-| birth_date | date | o `estimated_age_months int` |
-| weight_kg | numeric(5,2) | último peso conocido |
-| color, distinguishing_marks | text | |
-| microchip_number | text UNIQUE NULLS DISTINCT | |
-| photo_url | text | |
-| is_deceased | boolean DEFAULT false | |
+
+| Columna                     | Tipo                                           | Notas                        |
+| --------------------------- | ---------------------------------------------- | ---------------------------- |
+| id                          | uuid PK                                        |                              |
+| owner_id                    | uuid FK → profiles NOT NULL                    |                              |
+| name                        | text NOT NULL                                  |                              |
+| species                     | enum: `dog, cat, bird, rabbit, reptile, other` |                              |
+| breed                       | text                                           |                              |
+| sex                         | enum: `male, female, unknown`                  |                              |
+| birth_date                  | date                                           | o `estimated_age_months int` |
+| weight_kg                   | numeric(5,2)                                   | último peso conocido         |
+| color, distinguishing_marks | text                                           |                              |
+| microchip_number            | text UNIQUE NULLS DISTINCT                     |                              |
+| photo_url                   | text                                           |                              |
+| is_deceased                 | boolean DEFAULT false                          |                              |
 
 ### 3.3 Servicios y agenda
 
@@ -110,27 +161,30 @@ Invitaciones de personal: `clinic_id, email, role, token_hash, expires_at, accep
 **[Propuesta]** `schedule_exceptions` para vacaciones/días festivos.
 
 **`appointments`**
-| Columna | Tipo | Notas |
-|---|---|---|
-| id | uuid PK | |
-| clinic_id | uuid FK NOT NULL | |
-| pet_id | uuid FK → pets NOT NULL | |
-| veterinarian_id | uuid FK → profiles NOT NULL | |
-| service_id | uuid FK → services | |
-| starts_at / ends_at | timestamptz NOT NULL | |
-| status | enum: `requested, confirmed, in_progress, completed, cancelled, no_show` | |
-| requested_by | uuid FK → profiles | quién la creó (recepción o propietario) |
-| cancellation_reason | text | |
-| rescheduled_from_id | uuid FK → appointments | cadena de reprogramaciones |
-| notes | text | |
+
+| Columna             | Tipo                                                                     | Notas                                   |
+| ------------------- | ------------------------------------------------------------------------ | --------------------------------------- |
+| id                  | uuid PK                                                                  |                                         |
+| clinic_id           | uuid FK NOT NULL                                                         |                                         |
+| pet_id              | uuid FK → pets NOT NULL                                                  |                                         |
+| veterinarian_id     | uuid FK → profiles NOT NULL                                              |                                         |
+| service_id          | uuid FK → services                                                       |                                         |
+| starts_at / ends_at | timestamptz NOT NULL                                                     |                                         |
+| status              | enum: `requested, confirmed, in_progress, completed, cancelled, no_show` |                                         |
+| requested_by        | uuid FK → profiles                                                       | quién la creó (recepción o propietario) |
+| cancellation_reason | text                                                                     |                                         |
+| rescheduled_from_id | uuid FK → appointments                                                   | cadena de reprogramaciones              |
+| notes               | text                                                                     |                                         |
 
 Restricción anti-traslape (misma clínica y veterinario, citas activas):
+
 ```sql
 CONSTRAINT no_overlap EXCLUDE USING gist (
   veterinarian_id WITH =,
   tstzrange(starts_at, ends_at) WITH &&
 ) WHERE (status IN ('requested','confirmed','in_progress'))
 ```
+
 La transición de estados se hace vía función SQL `update_appointment_status(...)` que valida el
 grafo permitido: `requested → confirmed → in_progress → completed`; salidas a `cancelled`
 (desde requested/confirmed) y `no_show` (desde confirmed).
@@ -141,14 +195,15 @@ grafo permitido: `requested → confirmed → in_progress → completed`; salida
 `clinic_id, pet_id, record_number (secuencial por clínica), allergies text, chronic_conditions text, UNIQUE (clinic_id, pet_id)`.
 
 **`consultations`** — nota de consulta.
-| Columna | Tipo | Notas |
-|---|---|---|
-| id, medical_record_id FK, appointment_id FK nullable | | consulta puede existir sin cita (walk-in) |
-| veterinarian_id | uuid FK NOT NULL | quién atendió |
-| reason, anamnesis, physical_exam_notes | text | |
-| weight_kg, temperature_c, heart_rate, respiratory_rate | numeric | signos vitales |
-| status | enum: `open, closed` | al cerrar se vuelve inmutable; correcciones por adenda |
-| closed_at | timestamptz | |
+
+| Columna                                                | Tipo                 | Notas                                                  |
+| ------------------------------------------------------ | -------------------- | ------------------------------------------------------ |
+| id, medical_record_id FK, appointment_id FK nullable   |                      | consulta puede existir sin cita (walk-in)              |
+| veterinarian_id                                        | uuid FK NOT NULL     | quién atendió                                          |
+| reason, anamnesis, physical_exam_notes                 | text                 |                                                        |
+| weight_kg, temperature_c, heart_rate, respiratory_rate | numeric              | signos vitales                                         |
+| status                                                 | enum: `open, closed` | al cerrar se vuelve inmutable; correcciones por adenda |
+| closed_at                                              | timestamptz          |                                                        |
 
 **`consultation_addenda`** — correcciones post-cierre: `consultation_id, author_id, content, created_at`.
 
@@ -178,16 +233,17 @@ El PDF incluye nombre y cédula del veterinario y datos de la clínica.
 ### 3.6 Notificaciones y recordatorios
 
 **`notifications`** — cola con estado (no "disparar y olvidar").
-| Columna | Tipo | Notas |
-|---|---|---|
-| id, recipient_id FK profiles, clinic_id nullable | | |
-| type | enum: `appointment_reminder, appointment_confirmed, appointment_cancelled, appointment_rescheduled, vaccination_due, deworming_due` | |
-| channel | enum: `push, email` | una fila por canal |
-| payload | jsonb | datos para plantilla |
-| scheduled_for | timestamptz | cuándo debe enviarse |
-| status | enum: `pending, sent, failed, cancelled` | |
-| attempts | int DEFAULT 0 | reintentos con backoff |
-| sent_at, last_error | | |
+
+| Columna                                          | Tipo                                                                                                                                | Notas                  |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| id, recipient_id FK profiles, clinic_id nullable |                                                                                                                                     |                        |
+| type                                             | enum: `appointment_reminder, appointment_confirmed, appointment_cancelled, appointment_rescheduled, vaccination_due, deworming_due` |                        |
+| channel                                          | enum: `push, email`                                                                                                                 | una fila por canal     |
+| payload                                          | jsonb                                                                                                                               | datos para plantilla   |
+| scheduled_for                                    | timestamptz                                                                                                                         | cuándo debe enviarse   |
+| status                                           | enum: `pending, sent, failed, cancelled`                                                                                            |                        |
+| attempts                                         | int DEFAULT 0                                                                                                                       | reintentos con backoff |
+| sent_at, last_error                              |                                                                                                                                     |                        |
 
 **`device_tokens`** — `user_id, fcm_token UNIQUE, platform enum: ios, android, updated_at`.
 
@@ -196,16 +252,28 @@ Edge Function `send-reminders` para procesar `notifications` pendientes.
 
 ### 3.7 Suscripciones (preparación, sin cobro en MVP)
 
-**`plans`** — `code UNIQUE, name, price_cents, currency 'MXN', billing_interval enum: month, year, max_veterinarians int nullable, features jsonb, is_active`.
+Modelo comercial confirmado (PRD §7.4): **suscripción por clínica** con una cantidad incluida
+de veterinarios activos y cobro futuro por veterinarios adicionales; las organizaciones
+permiten planes de grupo multi-sucursal en el futuro.
 
-**`subscriptions`** — `clinic_id UNIQUE, plan_id, status enum: trialing, active, past_due, canceled, current_period_start/end, stripe_customer_id nullable, stripe_subscription_id nullable`.
-En el MVP toda clínica activa recibe una suscripción al plan `beta` sin Stripe.
+**`plans`**
+`code UNIQUE, name, price_cents, currency 'MXN', billing_interval enum: month, year,`
+`included_veterinarians int NOT NULL, additional_veterinarian_price_cents int nullable,`
+`scope enum plan_scope: clinic, organization (para planes de grupo futuros), features jsonb, is_active`.
+
+**`subscriptions`**
+`clinic_id UNIQUE, organization_id (denormalizado para reporteo/facturación de grupo),`
+`plan_id, status enum: trialing, active, past_due, canceled,`
+`current_period_start/end, stripe_customer_id nullable, stripe_subscription_id nullable`.
+En el MVP toda clínica activa recibe una suscripción al plan `beta` sin Stripe. El límite de
+veterinarios activos por plan se verifica con una función SQL al activar miembros con rol
+`veterinarian` (en el plan `beta` el límite no bloquea, solo se registra).
 
 ### 3.8 Auditoría
 
 **`audit_log`** — append-only (sin políticas de UPDATE/DELETE; revocados a todos los roles).
 `id bigint identity, occurred_at, actor_id nullable, clinic_id nullable, table_name, record_id, action enum: insert, update, delete, old_data jsonb, new_data jsonb`.
-Poblada por triggers en: `clinic_members, appointments, consultations, consultation_addenda, prescriptions, vaccinations, dewormings, medical_records, subscriptions, clinics, profiles(is_superadmin)`.
+Poblada por triggers en: `organizations, organization_members, clinic_members, appointments, consultations, consultation_addenda, prescriptions, vaccinations, dewormings, medical_records, subscriptions, clinics, profiles(is_superadmin)`.
 
 ## 4. Estrategia multi-tenant
 
@@ -220,6 +288,7 @@ Poblada por triggers en: `clinic_members, appointments, consultations, consultat
   del esquema `public` sin RLS.
 
 Funciones auxiliares (SECURITY DEFINER, STABLE):
+
 ```sql
 is_superadmin() → boolean
 is_clinic_member(p_clinic_id uuid, p_roles clinic_role[] DEFAULT NULL) → boolean
@@ -228,21 +297,22 @@ owns_pet(p_pet_id uuid) → boolean
 
 ## 5. Matriz de acceso por rol (resumen)
 
-| Recurso | Superadmin | Admin clínica | Veterinario | Recepcionista | Propietario |
-|---|---|---|---|---|---|
-| Clínicas (todas) | CRUD | — | — | — | — |
-| Su clínica (config) | R | RU | R | R | — |
-| Personal (clinic_members) | R | CRUD | R | R | — |
-| Servicios y horarios | R | CRUD | R (los suyos) | R | R (catálogo de su clínica) |
-| Mascotas | — | R (relacionadas) | R (relacionadas) | CRU (relacionadas) | CRUD (las suyas) |
-| Citas | — | CRUD | RU (las suyas) | CRUD | CR (las suyas: crear/cancelar) |
-| Expedientes y consultas | — | R | CRUD | — (solo existencia, sin detalle médico) | R (sus mascotas) |
-| Recetas | — | R | CRUD (emite) | — | R (sus mascotas) |
-| Notificaciones | — | R (de su clínica) | R (las suyas) | R (de su clínica) | R (las suyas) |
-| Suscripción de clínica | CRUD | R | — | — | — |
-| audit_log | R | R (solo su clínica) **[Propuesta]** | — | — | — |
+| Recurso                   | Superadmin | Admin clínica                       | Veterinario      | Recepcionista                           | Propietario                    |
+| ------------------------- | ---------- | ----------------------------------- | ---------------- | --------------------------------------- | ------------------------------ |
+| Clínicas (todas)          | CRUD       | —                                   | —                | —                                       | —                              |
+| Su clínica (config)       | R          | RU                                  | R                | R                                       | —                              |
+| Personal (clinic_members) | R          | CRUD                                | R                | R                                       | —                              |
+| Servicios y horarios      | R          | CRUD                                | R (los suyos)    | R                                       | R (catálogo de su clínica)     |
+| Mascotas                  | —          | R (relacionadas)                    | R (relacionadas) | CRU (relacionadas)                      | CRUD (las suyas)               |
+| Citas                     | —          | CRUD                                | RU (las suyas)   | CRUD                                    | CR (las suyas: crear/cancelar) |
+| Expedientes y consultas   | —          | R                                   | CRUD             | — (solo existencia, sin detalle médico) | R (sus mascotas)               |
+| Recetas                   | —          | R                                   | CRUD (emite)     | —                                       | R (sus mascotas)               |
+| Notificaciones            | —          | R (de su clínica)                   | R (las suyas)    | R (de su clínica)                       | R (las suyas)                  |
+| Suscripción de clínica    | CRUD       | R                                   | —                | —                                       | —                              |
+| audit_log                 | R          | R (solo su clínica) **[Propuesta]** | —                | —                                       | —                              |
 
 Notas:
+
 - "Relacionadas" = mascotas con cita o expediente en la clínica.
 - El detalle médico (consultas, diagnósticos, tratamientos, recetas) está **excluido** de
   recepción por política RLS, no solo por UI.
@@ -266,3 +336,28 @@ Notas:
   de definición legal, ver ARCHITECTURE.md §10).
 - Exportación de datos del propietario (ARCO): función que compila sus datos y expedientes
   de sus mascotas en JSON/PDF **[Propuesta de implementación en fase de app móvil]**.
+
+## 8. Estado de implementación
+
+| Fase                | Qué está implementado                                                                                                                                                                                                                                                                                                 |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fase 2 (2026-07-19) | `profiles`, `reserved_slugs`, `organizations`, `organization_members`, `clinics`, `clinic_members`, `clinic_invitations`, `audit_log`; 6 enums; 8 funciones auxiliares de seguridad; 3 RPCs transaccionales; RLS habilitado y forzado con políticas por operación; 153 aserciones pgTAP. Migraciones `202607191000*`. |
+
+Decisiones aplicadas en la Fase 2:
+
+- **Enums de PostgreSQL** para vocabularios cerrados (roles, estados) — tipado fuerte y
+  tipos TS generados; **tabla** (`reserved_slugs`) para catálogos extensibles sin
+  migración. Criterio documentado en la migración `..._enums_y_slugs.sql`.
+- **Slug de clínica único GLOBALMENTE** (no por organización): la ruta pública futura
+  `/clinicas/[slug]` no incluye organización; unicidad global evita renombres al publicar.
+- **`audit_log` con id `bigint identity`** (no uuid): tabla de log de alto volumen con
+  orden natural; el resto de tablas de negocio usa uuid.
+- Los detalles operativos del modelo de seguridad viven en `docs/security/rls-model.md` y
+  `docs/security/roles-and-permissions.md`; las guías de prueba en
+  `docs/database/local-testing.md`.
+
+| Fase 3 (2026-07-19) | Vista segura `colleague_profiles` (datos básicos de colegas por organización compartida; migración 0011) y RPCs `create_clinic_with_admin` + `resend_clinic_invitation` (migración 0012). 171 aserciones pgTAP totales. |
+
+| Fase 4 (2026-07-19) | Dominio de pacientes: `pet_owners`, `pets`, `pet_owner_relationships` (principal único), `clinic_pet_relationships` (datos privados por clínica), `owner_clinic_relationships`, `pet_alerts`, `owner_consents` (versionados); 11 enums; 8 funciones de acceso; 5 RPCs; bucket privado `pet-photos` con políticas de Storage; 70 aserciones pgTAP nuevas (241 totales). Migraciones `202607193000*`. **Nota**: este diseño SUSTITUYE al esbozo original de `pets` de §3.2 (que llevaba `owner_id` directo); el modelo definitivo separa identidad global de relaciones — ver `docs/pets/domain-model.md`. |
+| Fase 5 (2026-07-19) | Agenda: `clinic_services` + `clinic_service_veterinarians`, `veterinarian_schedules` (EXCLUDE de ventanas) + `schedule_exceptions`, `appointments` (folio `CIT-AAAA-NNNNNN` por contador UPSERT; `EXCLUDE USING gist` anti-traslape sobre la ventana ocupada con colchones, solo estados que ocupan agenda), `appointment_services` (snapshot), `appointment_status_history` (append-only por trigger), `appointment_folio_counters`, `appointment_notifications` (outbox idempotente); 7 enums; máquina de estados en SQL; RPCs `create_clinic_service`, `configure_veterinarian_schedule`, `book_appointment`, `transition_appointment_status`, `reschedule_appointment`, `cancel_appointment`, `get_available_slots`, claim/mark del outbox; 70 aserciones pgTAP nuevas (311 totales). Migraciones `202607194000*`. Ver `docs/appointments/`. |
+| Fase 6 (2026-07-20) | Expediente clínico: `clinical_encounters` (folio `CON-AAAA-NNNNNN` por contador UPSERT; cita ≠ consulta; `draft` fusionado con `in_progress`; una consulta no anulada por cita vía índice único parcial), `clinical_notes` + `encounter_examinations` (1:1 **versionadas**, trigger `bump_version` para control optimista), `clinical_vitals` (append-only), `diagnoses` (principal único por índice parcial, soft-delete), `encounter_treatments`, `encounter_follow_ups`, `clinical_files` (metadata; bucket privado `clinical-files` con políticas de Storage por ruta), `encounter_addenda` (append-only, solo finalizadas), `encounter_status_history` (trigger), `clinical_folio_counters`; 6 enums; funciones `can_view_clinical_content`/`can_edit_clinical_encounter`/`can_record_vitals`/`can_finalize_clinical_encounter`; RPCs `start_encounter_from_appointment` (idempotente), `create_walk_in_encounter` (cita interna), `finalize_clinical_encounter` (requisitos mínimos), `void_clinical_encounter` (solo administración de la organización), `log_clinical_record_access` (impresión/descarga); inmutabilidad de dos capas (RLS + `CONSULTA_INMUTABLE`) y auditoría redactada (sin contenido clínico en `audit_log`); 54 aserciones pgTAP nuevas (suite 11; 365 totales). Migraciones `202607195000*`. Ver `docs/clinical/`. |

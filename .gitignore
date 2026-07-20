@@ -6,16 +6,24 @@ node_modules/
 .env.*
 !.env.example
 
-# Builds
+# Builds y cachés
 .next/
 dist/
 build/
 .turbo/
+*.tsbuildinfo
+next-env.d.ts
+
+# Pruebas
+coverage/
+playwright-report/
+test-results/
 
 # Supabase local
 supabase/.temp/
+supabase/.branches/
 
-# Flutter
+# Flutter (fase posterior)
 apps/mobile/.dart_tool/
 apps/mobile/build/
 

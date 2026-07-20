@@ -10,38 +10,86 @@
 - Documentos: PRODUCT_REQUIREMENTS, ARCHITECTURE, DATABASE_DESIGN, ROADMAP, README, CLAUDE.
 - **Criterio de salida**: documentación validada por el propietario del producto.
 
-## Fase 1 — Fundación del monorepo
+## Fase 1 — Fundación del monorepo ✅ (completada 2026-07-19)
 
-- Estructura pnpm workspaces + Turborepo (`apps/web`, `packages/shared`, `supabase/`).
-- Next.js con TypeScript estricto, Tailwind, shadcn/ui, ESLint + Prettier.
-- Supabase local (`supabase start`), primera migración vacía, `.env.example`.
-- CI (GitHub Actions): lint, typecheck, build, pruebas.
-- **Criterio de salida**: `pnpm build` y CI en verde; app web muestra página base en es-MX.
+- Estructura pnpm workspaces + Turborepo (`apps/web`, `packages/{ui,config,types,validation}`,
+  `supabase/`).
+- Next.js (App Router) con TypeScript estricto, Tailwind CSS v4, componentes base patrón
+  shadcn/ui (Button, Card, Input, Label), ESLint (flat config) + Prettier + orden de imports.
+- Página inicial en es-MX con capa mínima de i18n y tema de marca centralizado
+  (`packages/config/tailwind/theme.css`).
+- Supabase configurado (`config.toml`, migración de infraestructura, `seed.sql`) y
+  `.env.example` documentado; validación de variables con protección cliente/servidor.
+- Pruebas: Vitest (14 unitarias de `packages/validation`) + Playwright (smoke E2E de la página).
+- CI (GitHub Actions): lint, formato, typecheck, pruebas, build + job E2E.
+- **Criterio de salida**: cumplido — `pnpm lint/typecheck/test/build` en verde y página base
+  funcionando en desarrollo (verificado con Playwright).
+- _Nota_: `supabase start` requiere Docker; en el entorno de desarrollo remoto usado para esta
+  fase no hay daemon disponible, por lo que el stack local se verificará en máquina del equipo
+  (la configuración ya está lista y versionada).
 
-## Fase 2 — Esquema base, identidad y tenancy
+## Fase 2 — Esquema base, identidad y tenancy ✅ (2026-07-19; confirmación CI/Docker pendiente)
 
-- Migraciones: `profiles`, `clinics`, `clinic_members`, `clinic_invitations`, `audit_log`,
-  funciones auxiliares de RLS y triggers de auditoría/`updated_at`.
-- Supabase Auth (correo/contraseña) + creación automática de perfil.
-- **Pruebas de RLS de aislamiento entre clínicas (pgTAP) — bloqueantes.**
-- **Criterio de salida**: usuario de clínica A no puede leer/escribir nada de clínica B
-  (demostrado por pruebas automatizadas).
+- Entregado: 9 migraciones (`profiles` + trigger sobre `auth.users`, `reserved_slugs`,
+  `organizations` + `organization_members` con protección de último owner,
+  `clinics` con ciclo de vida `trial/active/past_due/suspended/cancelled/archived` y slug
+  global, `clinic_members` con pertenencia obligatoria a la organización,
+  `clinic_invitations` con tokens SHA-256, `audit_log` append-only, 8 funciones de
+  seguridad y políticas RLS explícitas por operación, 3 RPCs transaccionales).
+- Pruebas: 153 aserciones pgTAP en 5 suites (`supabase/tests/database/`), incluidas las
+  12 pruebas de aislamiento exigidas; tipos generados desde el esquema real; validación
+  Zod de tenancy con 38 pruebas unitarias; job de CI de base de datos.
+- Documentación: `docs/security/rls-model.md`, `docs/security/roles-and-permissions.md`,
+  `docs/database/local-testing.md`.
+- **Criterio de salida**: CUMPLIDO en PostgreSQL 16 local (clúster efímero + shim de
+  Supabase, `pnpm db:test:pg`): migraciones desde base limpia y 153/153 pruebas en verde.
+  **Pendiente**: confirmar la misma suite sobre Supabase CLI + Docker (job de CI
+  "Migraciones y pruebas RLS"), no disponible en el entorno de desarrollo usado.
+- _Alcance movido_: la configuración de Supabase Auth (proveedores, flujo de registro en
+  la app web) se hará con el flujo de alta de clínicas en la Fase 3; el trigger de
+  creación automática de perfil ya está listo y probado.
 
-## Fase 3 — Registro de clínicas y personal
+## Fase 3 — Autenticación, onboarding, personal e invitaciones ✅ (2026-07-19; validación con Supabase real pendiente)
 
-- Flujo de alta de clínica y activación por superadmin (panel `(admin)`).
-- Invitación de personal por correo (Edge Function + Resend) y aceptación con creación de cuenta.
-- Gestión de personal, servicios (precios MXN en centavos) y horarios de veterinarios.
-- **Criterio de salida**: una clínica real puede quedar configurada de punta a punta.
+- Entregado: autenticación completa (registro, login, logout, recuperación y actualización
+  de contraseña, confirmación de correo configurable) con `@supabase/ssr`; protección de
+  rutas privadas en middleware + servidor; onboarding de 3 pasos (perfil → organización
+  vía `create_organization_with_owner` → primera clínica vía `create_clinic_with_admin`);
+  dashboard con datos reales; gestión de organización, clínicas (listado/detalle/edición/
+  selector de activa) y personal; invitaciones con token hasheado (crear/reenviar/revocar/
+  aceptar) y correo por interfaz desacoplada (adaptador Resend + adaptador dev).
+- Base de datos: migraciones 0011 (vista segura `colleague_profiles`) y 0012 (RPCs
+  `create_clinic_with_admin`, `resend_clinic_invitation`) con 18 aserciones pgTAP nuevas
+  (171 totales, en verde sobre PostgreSQL local).
+- Pruebas: 79 unitarias; E2E Playwright en dos niveles (8 sin Supabase siempre + 3 flujos
+  completos con `E2E_AUTH=1`); CI con escaneo de secretos.
+- **Criterio de salida**: cumplido en lo verificable localmente (lint, typecheck, unit,
+  build, E2E básicas, 171 pgTAP). **Pendiente**: ejercitar los flujos con un Supabase
+  real (`pnpm db:start` + `E2E_AUTH=1 pnpm test:e2e`) y el job de CI con Docker — este
+  entorno no tiene daemon de Docker.
+- _Alcance movido a fases siguientes_: activación de clínicas por superadmin (panel
+  `(admin)`, Fase 10), servicios y horarios de veterinarios (Fase 5).
 
-## Fase 4 — Propietarios y mascotas (web)
+## Fase 4 — Propietarios y mascotas ✅ (2026-07-19; validación Supabase CLI/Storage real pendiente)
 
-- Registro de propietario desde recepción; perfil de mascota completo con fotografía
-  (Storage privado).
-- Búsqueda de mascotas/propietarios dentro de la clínica.
-- **Criterio de salida**: recepción registra propietario + mascota en menos de 2 minutos.
+- Entregado: identidad global de mascotas y propietarios con TRES relaciones
+  (propietario–mascota con contacto principal único, clínica–mascota con datos privados
+  por clínica, propietario–clínica), alertas administrativas, consentimientos
+  versionados, 7 migraciones (`202607193000*`), 8 funciones de acceso, 5 RPCs
+  transaccionales, bucket privado `pet-photos` con políticas de Storage y procesamiento
+  de imagen (sharp → WebP sin EXIF).
+- Web: `/app/propietarios*` y `/app/mascotas*` (listados con búsqueda/paginación/filtros,
+  altas con detección de duplicados advertida, fichas completas con foto firmada,
+  propietarios múltiples, alertas) + métricas reales en el dashboard.
+- Pruebas: 70 aserciones pgTAP nuevas (241 totales, incluidos los 23 casos exigidos),
+  108 unitarias, E2E en dos niveles.
+- **Criterio de salida**: cumplido en lo verificable localmente (241/241 pgTAP sobre
+  PostgreSQL + shim con storage mínimo). **Pendiente**: suite sobre Supabase CLI/Docker
+  y subida real de fotografías a Supabase Storage (procedimiento en
+  docs/pets/testing.md).
+- Documentación: `docs/pets/` (7 documentos).
 
-## Fase 5 — Agenda de citas
+## Fase 5 — Agenda de citas ✅ (2026-07-19)
 
 - Función `book_appointment` con validación de disponibilidad y restricción anti-traslape.
 - Vista de agenda (día/semana) por veterinario; crear, confirmar, cancelar, reprogramar,
@@ -49,14 +97,47 @@
 - Notificaciones internas de cambios de estado (tabla `notifications`, correo vía Resend).
 - **Criterio de salida**: imposible crear traslape (prueba de concurrencia); flujo completo de
   estados operando con auditoría.
+- **Entregado**: catálogo `clinic_services` (9 categorías, precios en centavos, colchones),
+  horarios semanales + excepciones (8 tipos, `special_hours` agrega disponibilidad),
+  `get_available_slots` (≤31 días), citas con folio `CIT-AAAA-NNNNNN` concurrencia-seguro,
+  `EXCLUDE USING gist` sobre la ventana ocupada (colchones incluidos) en estados que ocupan
+  agenda, máquina de estados en SQL (+ espejo TS), historial append-only por trigger, outbox
+  de notificaciones idempotente (confirmación/recordatorios 24h-2h/cancelación/reagendado;
+  email activo, whatsapp/push/sms preparados), walk-ins y urgencias auditadas, UI
+  (`/app/agenda*`, `/app/configuracion/servicios*`, `/app/configuracion/horarios`),
+  métricas reales en dashboard y 70 aserciones pgTAP nuevas (suites 09–10; 311 totales).
+  Documentación en `docs/appointments/`. La garantía anti-traslape es estructural
+  (`EXCLUDE`); ver nota de concurrencia en `docs/appointments/testing.md`. El disparador
+  programado de recordatorios queda preparado (Edge Function + `CRON_SECRET`, fase
+  posterior): hoy el outbox se procesa al operar el panel.
 
-## Fase 6 — Expediente clínico
+## Fase 6 — Expediente clínico ✅ (2026-07-20)
 
 - `medical_records`, `consultations` (con cierre e inmutabilidad + adendas), `diagnoses`,
   `treatments`, `vaccinations`, `dewormings`, adjuntos.
 - UI de consulta para el veterinario; recepción sin acceso al detalle médico (verificado por RLS).
 - **Criterio de salida**: consulta completa registrable durante una cita; correcciones solo por
-  adenda; auditoría completa.
+  adenda; auditoría completa. Cumplido (vacunas/desparasitaciones estructuradas quedan como
+  extensión natural: los encounters ya las soportan por referencia; ver
+  `docs/clinical/domain-model.md`).
+- **Entregado**: consultas clínicas `clinical_encounters` (cita ≠ consulta; `draft` fusionado
+  con `in_progress`: la consulta abierta ES el borrador) con folio `CON-AAAA-NNNNNN` por
+  contador UPSERT, tipos scheduled/walk-in/urgencia/seguimiento, apertura idempotente desde
+  cita (`start_encounter_from_appointment`) y walk-in con cita interna
+  (`create_walk_in_encounter`); nota SOAP y exploración física 1:1 **versionadas** (control
+  optimista: UPDATE con versión esperada, 0 filas = conflicto), vitales append-only,
+  diagnósticos (principal único, certeza), tratamientos, seguimientos, archivos clínicos en
+  bucket privado `clinical-files` (magic bytes, PDF/JPEG/PNG/WebP, URLs firmadas cortas,
+  descarga e impresión auditadas vía `log_clinical_record_access`); finalización con
+  requisitos mínimos (motivo, A+P; exploración/vitales omisibles con justificación),
+  inmutabilidad de dos capas (RLS 0-filas + trigger `CONSULTA_INMUTABLE`), adendas
+  append-only solo en finalizadas y anulación administrativa con motivo (contenido intacto,
+  folio no reutilizado, fuera de métricas); privacidad por rol (recepción solo cabecera;
+  asistentes ven contenido y capturan vitales) con auditoría redactada; UI completa
+  (`/app/consultas*` con sala de espera, detalle por secciones, documento imprimible y
+  expediente por mascota `/app/mascotas/[id]/expediente`), métricas en dashboard y 54
+  aserciones pgTAP nuevas (suite 11; 365 totales). Migraciones `202607195000*`.
+  Documentación en `docs/clinical/` (10 documentos).
 
 ## Fase 7 — Recetas
 
@@ -97,10 +178,12 @@
 - Beta con 1–3 clínicas reales.
 - **Criterio de salida**: sin hallazgos críticos; clínicas beta operando.
 
-## Post-MVP (backlog priorizado — [Propuesta])
+## Post-MVP (backlog priorizado — decisiones 1 y 2 ya confirmadas por producto)
 
-1. Recordatorios y confirmación de citas por **WhatsApp** (canal dominante en México).
-2. Perfil público de clínicas con reservación en línea (estilo directorio).
+1. Recordatorios y confirmación de citas por **WhatsApp** — proveedor confirmado:
+   Meta WhatsApp Cloud API, tras la interfaz desacoplada de mensajería (ARCHITECTURE.md §6.1).
+2. Perfiles públicos de clínicas y veterinarios (`/clinicas/[slug]`, `/veterinarios/[slug]`)
+   con SEO y reservación pública — confirmado.
 3. App/interfaz móvil para veterinarios.
 4. Cobro real de suscripciones con Stripe Billing.
 5. Exportación ARCO de datos del propietario.

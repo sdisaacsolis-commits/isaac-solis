@@ -1,0 +1,7 @@
+-- ============================================================================
+-- Datos de desarrollo (seed) — se aplican con `supabase db reset`.
+-- ============================================================================
+-- Fase 1: vacío a propósito; no existen todavía tablas del producto.
+-- A partir de la Fase 2 se agregan aquí datos de prueba (clínicas, personal,
+-- mascotas) SIEMPRE ficticios: nunca datos reales de personas o pacientes.
+-- ============================================================================

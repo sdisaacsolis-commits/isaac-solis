@@ -29,11 +29,12 @@ clínicos**: la seguridad y el aislamiento entre clínicas son innegociables. Do
 7. TypeScript en modo `strict` (además `noUncheckedIndexedAccess`). Prohibido `any` salvo
    justificación comentada; preferir `unknown` + narrowing.
 8. Todo dato externo (formularios, params, payloads, webhooks) se valida con Zod en la frontera
-   antes de usarse. Los esquemas viven en `packages/shared` y se reutilizan — no se duplican.
+   antes de usarse. Los esquemas viven en `packages/validation` y se reutilizan — no se duplican.
 9. Manejo de errores explícito: nada de `catch` vacíos ni errores silenciados. Errores de
    dominio con código estable; mensajes al usuario en español claro sin detalles internos.
-10. Evitar duplicación: lógica compartida en `packages/shared`; componentes UI reutilizables en
-    `apps/web/src/components`. Antes de crear algo, buscar si ya existe.
+10. Evitar duplicación: tipos en `packages/types`, esquemas en `packages/validation`,
+    componentes UI reutilizables en `packages/ui` (los específicos de una pantalla viven en
+    `apps/web/src/components`). Antes de crear algo, buscar si ya existe.
 11. Nombres claros y consistentes: tablas/columnas en inglés `snake_case`; componentes React en
     `PascalCase`; archivos de features en `kebab-case`; funciones con verbo
     (`bookAppointment`, `issuePrescription`).
@@ -53,7 +54,11 @@ clínicos**: la seguridad y el aislamiento entre clínicas son innegociables. Do
     Integridad en la BD (`NOT NULL`, `CHECK`, `UNIQUE`, FK, `EXCLUDE`), no solo en la app.
 17. Escrituras con invariantes (agendar cita, cerrar consulta, emitir receta) se implementan
     como funciones SQL o Edge Functions, no como inserts directos del cliente.
-18. Después de cambiar el esquema, regenerar los tipos TS (`packages/shared`) en el mismo PR.
+18. Después de cambiar el esquema, regenerar los tipos TS (`packages/types`, comando
+    `pnpm db:types`) en el mismo PR.
+    18b. Integraciones externas (correo, push, WhatsApp, pagos) siempre detrás de una interfaz de
+    proveedor desacoplada (ARCHITECTURE.md §6.1); el dominio nunca importa SDKs de proveedores
+    directamente. Proveedor previsto para WhatsApp: Meta WhatsApp Cloud API (fase posterior).
 
 ## Reglas de pruebas
 
@@ -77,13 +82,30 @@ clínicos**: la seguridad y el aislamiento entre clínicas son innegociables. Do
 26. Decisiones de arquitectura relevantes se registran como ADR en `docs/adr/` (contexto,
     decisión, consecuencias).
 
-## Comandos de referencia (a partir de la Fase 1)
+## Comandos de referencia
 
 ```bash
-pnpm dev          # panel web local
-pnpm lint         # ESLint + Prettier check
-pnpm typecheck    # tsc --noEmit en todos los paquetes
-pnpm test         # pruebas unitarias y de componentes
-supabase start    # stack local (Docker)
-supabase db reset # aplica migraciones + seed
+pnpm dev           # panel web local (http://localhost:3000)
+pnpm build         # build de producción
+pnpm lint          # ESLint (flat config raíz) en todos los paquetes
+pnpm format:check  # Prettier en modo verificación (format para corregir)
+pnpm typecheck     # tsc --noEmit en todos los paquetes
+pnpm test          # pruebas unitarias (Vitest, desde la raíz)
+pnpm test:e2e      # Playwright (levanta next dev solo; PLAYWRIGHT_CHROMIUM_PATH opcional)
+pnpm db:start      # Supabase local (requiere Docker)
+pnpm db:reset      # aplica migraciones + seed
+pnpm db:test       # pruebas pgTAP vía Supabase CLI (supabase/tests/database/)
+pnpm db:test:pg    # pruebas pgTAP sin Docker (PostgreSQL 16 + scripts/db/supabase-shim.sql)
+pnpm db:types      # regenera packages/types/src/database.types.ts
 ```
+
+Notas de entorno:
+
+- Los postinstalls permitidos se controlan con `pnpm.onlyBuiltDependencies` (package.json);
+  no aprobar builds de dependencias nuevas sin revisarlas.
+- No se usa Husky/lint-staged: la verificación vive en CI y en los comandos anteriores, para
+  no complicar entornos remotos/sandbox. Revalorar cuando el equipo crezca.
+- Autenticación: siempre `@supabase/ssr` (cookies del SDK); prohibido guardar tokens a mano
+  o usar la service_role en `apps/web`. Flujos y URLs de redirección: `docs/auth/`.
+- Los flujos E2E completos de auth requieren Supabase local y `E2E_AUTH=1`
+  (`docs/testing/auth-e2e.md`); las suites básicas corren sin Supabase.
