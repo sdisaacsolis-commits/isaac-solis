@@ -26,6 +26,10 @@ export const env = createEnv({
     CRON_SECRET: z.string().min(16).optional(),
     // Duración (segundos) de las URLs firmadas de fotografías de mascotas.
     PET_PHOTO_SIGNED_URL_SECONDS: z.coerce.number().int().min(30).max(3600).default(300),
+    // Tamaño máximo (MB) de archivos clínicos adjuntos (bucket clinical-files).
+    CLINICAL_FILE_MAX_MB: z.coerce.number().int().min(1).max(50).default(10),
+    // Duración (segundos) de las URLs firmadas de archivos clínicos.
+    CLINICAL_FILE_SIGNED_URL_SECONDS: z.coerce.number().int().min(30).max(3600).default(300),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
@@ -41,6 +45,8 @@ export const env = createEnv({
     EMAIL_MODE: process.env.EMAIL_MODE,
     CRON_SECRET: process.env.CRON_SECRET,
     PET_PHOTO_SIGNED_URL_SECONDS: process.env.PET_PHOTO_SIGNED_URL_SECONDS,
+    CLINICAL_FILE_MAX_MB: process.env.CLINICAL_FILE_MAX_MB,
+    CLINICAL_FILE_SIGNED_URL_SECONDS: process.env.CLINICAL_FILE_SIGNED_URL_SECONDS,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,

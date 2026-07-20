@@ -143,6 +143,11 @@ export default async function PaginaFichaMascota({
             <Button asChild variant="outline" size="sm">
               <Link href={`/app/mascotas/${mascota.id}/editar`}>{t.editar}</Link>
             </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/app/mascotas/${mascota.id}/expediente`}>
+                {mensajes.consultas.expediente.verExpediente}
+              </Link>
+            </Button>
           </div>
           <dl className="mt-3 grid gap-x-8 gap-y-1 text-sm sm:grid-cols-3">
             <div>
@@ -304,7 +309,6 @@ export default async function PaginaFichaMascota({
         {[
           t.proximamente.citas,
           t.proximamente.vacunas,
-          t.proximamente.consultas,
           t.proximamente.recetas,
           t.proximamente.documentos,
         ].map((titulo) => (

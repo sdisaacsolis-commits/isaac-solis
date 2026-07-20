@@ -15,4 +15,5 @@ export { Label } from "./components/label";
 export { Select } from "./components/select";
 export { Skeleton } from "./components/skeleton";
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./components/table";
+export { Textarea } from "./components/textarea";
 export { cn } from "./lib/cn";

@@ -111,13 +111,33 @@
   programado de recordatorios queda preparado (Edge Function + `CRON_SECRET`, fase
   posterior): hoy el outbox se procesa al operar el panel.
 
-## Fase 6 — Expediente clínico
+## Fase 6 — Expediente clínico ✅ (2026-07-20)
 
 - `medical_records`, `consultations` (con cierre e inmutabilidad + adendas), `diagnoses`,
   `treatments`, `vaccinations`, `dewormings`, adjuntos.
 - UI de consulta para el veterinario; recepción sin acceso al detalle médico (verificado por RLS).
 - **Criterio de salida**: consulta completa registrable durante una cita; correcciones solo por
-  adenda; auditoría completa.
+  adenda; auditoría completa. Cumplido (vacunas/desparasitaciones estructuradas quedan como
+  extensión natural: los encounters ya las soportan por referencia; ver
+  `docs/clinical/domain-model.md`).
+- **Entregado**: consultas clínicas `clinical_encounters` (cita ≠ consulta; `draft` fusionado
+  con `in_progress`: la consulta abierta ES el borrador) con folio `CON-AAAA-NNNNNN` por
+  contador UPSERT, tipos scheduled/walk-in/urgencia/seguimiento, apertura idempotente desde
+  cita (`start_encounter_from_appointment`) y walk-in con cita interna
+  (`create_walk_in_encounter`); nota SOAP y exploración física 1:1 **versionadas** (control
+  optimista: UPDATE con versión esperada, 0 filas = conflicto), vitales append-only,
+  diagnósticos (principal único, certeza), tratamientos, seguimientos, archivos clínicos en
+  bucket privado `clinical-files` (magic bytes, PDF/JPEG/PNG/WebP, URLs firmadas cortas,
+  descarga e impresión auditadas vía `log_clinical_record_access`); finalización con
+  requisitos mínimos (motivo, A+P; exploración/vitales omisibles con justificación),
+  inmutabilidad de dos capas (RLS 0-filas + trigger `CONSULTA_INMUTABLE`), adendas
+  append-only solo en finalizadas y anulación administrativa con motivo (contenido intacto,
+  folio no reutilizado, fuera de métricas); privacidad por rol (recepción solo cabecera;
+  asistentes ven contenido y capturan vitales) con auditoría redactada; UI completa
+  (`/app/consultas*` con sala de espera, detalle por secciones, documento imprimible y
+  expediente por mascota `/app/mascotas/[id]/expediente`), métricas en dashboard y 54
+  aserciones pgTAP nuevas (suite 11; 365 totales). Migraciones `202607195000*`.
+  Documentación en `docs/clinical/` (10 documentos).
 
 ## Fase 7 — Recetas
 

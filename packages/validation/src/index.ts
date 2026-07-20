@@ -27,7 +27,6 @@ export {
   safeInternalPathSchema,
   updatePasswordSchema,
 } from "./schemas/auth";
-export { clinicSlugSchema, emailSchema, nonEmptyTextSchema, phoneMxSchema } from "./schemas/common";
 export {
   addendumSchema,
   CLINICAL_FILE_MIME_TYPES,
@@ -45,6 +44,7 @@ export {
   voidEncounterSchema,
   walkInEncounterSchema,
 } from "./schemas/clinical";
+export { clinicSlugSchema, emailSchema, nonEmptyTextSchema, phoneMxSchema } from "./schemas/common";
 export {
   clinicSearchSchema,
   createOwnerSchema,

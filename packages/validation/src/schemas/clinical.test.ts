@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { addendumSchema, vitalsSchema, voidEncounterSchema, walkInEncounterSchema } from "./clinical";
+import {
+  addendumSchema,
+  vitalsSchema,
+  voidEncounterSchema,
+  walkInEncounterSchema,
+} from "./clinical";
 
 const uuid = "3f0e8c9a-1b2d-4c5e-8f7a-9b0c1d2e3f4a";
 
@@ -33,11 +38,17 @@ describe("addendumSchema / voidEncounterSchema", () => {
 describe("walkInEncounterSchema", () => {
   it("solo admite walk_in o emergency y exige servicio", () => {
     const base = {
-      clinicId: uuid, petId: uuid, ownerId: uuid, veterinarianMemberId: uuid,
-      serviceIds: [uuid], encounterType: "walk_in",
+      clinicId: uuid,
+      petId: uuid,
+      ownerId: uuid,
+      veterinarianMemberId: uuid,
+      serviceIds: [uuid],
+      encounterType: "walk_in",
     };
     expect(walkInEncounterSchema.safeParse(base).success).toBe(true);
-    expect(walkInEncounterSchema.safeParse({ ...base, encounterType: "scheduled" }).success).toBe(false);
+    expect(walkInEncounterSchema.safeParse({ ...base, encounterType: "scheduled" }).success).toBe(
+      false,
+    );
     expect(walkInEncounterSchema.safeParse({ ...base, serviceIds: [] }).success).toBe(false);
   });
 });

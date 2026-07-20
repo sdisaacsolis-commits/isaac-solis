@@ -21,6 +21,8 @@ test.describe("Protección de rutas y páginas de autenticación", () => {
       "/app/mascotas/nueva",
       "/app/agenda",
       "/app/agenda/nueva",
+      "/app/consultas",
+      "/app/consultas/nueva",
       "/app/configuracion/servicios",
       "/app/configuracion/horarios",
     ]) {

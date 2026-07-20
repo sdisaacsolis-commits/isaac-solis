@@ -12,6 +12,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { metricasAgenda } from "@/lib/agenda/queries";
+import { metricasConsultas } from "@/lib/clinica/queries";
 import { mensajes } from "@/lib/i18n/es-mx";
 import { metricasPacientes } from "@/lib/pets/queries";
 import { etiquetasEstadoClinica } from "@/lib/roles";
@@ -46,6 +47,7 @@ export default async function PaginaInicioPanel({
   const clinica = context.activeClinic;
   const pacientes = clinica ? await metricasPacientes(clinica.id) : null;
   const agenda = clinica ? await metricasAgenda(clinica.id, clinica.timezone) : null;
+  const consultas = clinica ? await metricasConsultas(clinica.id, clinica.timezone) : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -158,6 +160,29 @@ export default async function PaginaInicioPanel({
                 <CardDescription>{titulo}</CardDescription>
                 <CardTitle className="text-2xl">
                   <Link className="hover:text-brand-700" href="/app/agenda">
+                    {valor}
+                  </Link>
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      ) : null}
+
+      {consultas ? (
+        <div className="grid gap-4 sm:grid-cols-3">
+          {(
+            [
+              [mensajes.consultas.metricas.abiertasHoy, consultas.abiertas],
+              [mensajes.consultas.metricas.finalizadasHoy, consultas.finalizadasHoy],
+              [mensajes.consultas.metricas.walkInsHoy, consultas.walkInsHoy],
+            ] as const
+          ).map(([titulo, valor]) => (
+            <Card key={titulo}>
+              <CardHeader className="p-4">
+                <CardDescription>{titulo}</CardDescription>
+                <CardTitle className="text-2xl">
+                  <Link className="hover:text-brand-700" href="/app/consultas">
                     {valor}
                   </Link>
                 </CardTitle>

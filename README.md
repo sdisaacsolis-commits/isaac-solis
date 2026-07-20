@@ -4,11 +4,12 @@ Plataforma SaaS mexicana para clínicas veterinarias, médicos veterinarios y pr
 mascotas: agenda de citas, expedientes clínicos, recetas y recordatorios — con aislamiento
 total de datos entre clínicas.
 
-> **Estado actual: Fase 5 (servicios veterinarios, horarios y agenda de citas).**
-> Núcleo de pacientes con identidad global de mascotas, relaciones multi-propietario y
-> multi-clínica, alertas administrativas, consentimientos versionados y fotografías en
-> bucket privado. Aislamiento RLS validado con 241 pruebas pgTAP sobre PostgreSQL local
-> (ver [ROADMAP.md](./ROADMAP.md), `docs/pets/` y
+> **Estado actual: Fase 6 (expediente clínico básico).**
+> Consultas clínicas con nota SOAP versionada, exploración física, signos vitales,
+> diagnósticos, tratamientos, archivos en bucket privado, finalización inmutable con
+> adendas y privacidad por rol (recepción sin contenido clínico), sobre la agenda de la
+> Fase 5. Aislamiento RLS validado con pruebas pgTAP sobre PostgreSQL local
+> (ver [ROADMAP.md](./ROADMAP.md), `docs/clinical/` y
 > [docs/security/rls-model.md](./docs/security/rls-model.md)).
 
 ## Documentación

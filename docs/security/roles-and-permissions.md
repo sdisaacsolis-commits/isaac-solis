@@ -102,3 +102,29 @@ agenda y gestiona citas; iniciar/completar la atención es acto clínico
 (veterinario o administración); el personal asistente solo consulta; la
 configuración de catálogo y horarios es de administración. Todas las
 escrituras con invariantes son RPCs SECURITY DEFINER.
+
+## 11. Matriz del dominio clínico (Fase 6)
+
+✔ = permitido · ✖ = denegado por RLS/privilegios
+
+| Acción                                      | org owner/admin   | clinic_admin      | veterinario        | recepcionista  | asistente | sin membresía |
+| ------------------------------------------- | ----------------- | ----------------- | ------------------ | -------------- | --------- | ------------- |
+| Ver cabecera de consultas (folio/estado)    | ✔                 | ✔                 | ✔                  | ✔              | ✔         | ✖             |
+| Ver contenido clínico (nota, dx, vitales…)  | ✔                 | ✔                 | ✔                  | ✖              | ✔         | ✖             |
+| Abrir consulta desde cita / walk-in (RPCs)  | ✔                 | ✔                 | ✔                  | ✔ (vía agenda) | ✖         | ✖             |
+| Editar contenido clínico (consulta abierta) | ✖ (salvo rol vet) | ✖ (salvo rol vet) | ✔                  | ✖              | ✖         | ✖             |
+| Capturar signos vitales                     | ✖ (salvo rol vet) | ✖ (salvo rol vet) | ✔                  | ✖              | ✔         | ✖             |
+| Registrar diagnósticos/tratamientos         | ✖ (salvo rol vet) | ✖ (salvo rol vet) | ✔                  | ✖              | ✖         | ✖             |
+| Subir archivos clínicos                     | ✔ (clinic_admin)  | ✔                 | ✔                  | ✖              | ✖         | ✖             |
+| Finalizar consulta (firma clínica)          | ✖ (salvo rol vet) | ✖ (salvo rol vet) | ✔ (la responsable) | ✖              | ✖         | ✖             |
+| Crear adendas (solo finalizadas)            | ✖ (salvo rol vet) | ✖ (salvo rol vet) | ✔                  | ✖              | ✖         | ✖             |
+| Editar contenido de consulta finalizada     | ✖ (nadie)         | ✖                 | ✖                  | ✖              | ✖         | ✖             |
+| Anular consulta (motivo obligatorio)        | ✔                 | ✖                 | ✖                  | ✖              | ✖         | ✖             |
+| Imprimir/descargar (queda en bitácora)      | ✔                 | ✔                 | ✔                  | ✖              | ✔         | ✖             |
+
+Notas: la recepción opera la sala de espera con la cabecera y registra walk-ins vía la
+agenda, sin ver jamás contenido clínico; el asistente ve contenido y captura vitales pero
+no diagnostica ni finaliza; finalizar y editar contenido son actos clínicos que exigen rol
+`veterinarian` aunque se tenga administración. La anulación conserva el contenido intacto y
+no reutiliza el folio. Detalle y auditoría redactada: ver
+[`docs/clinical/privacy.md`](../clinical/privacy.md).
