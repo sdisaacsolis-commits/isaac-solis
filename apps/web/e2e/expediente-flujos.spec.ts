@@ -233,7 +233,10 @@ test.describe("Expediente clínico (Supabase local)", () => {
     await page.getByRole("link", { name: "Ver expediente clínico" }).click();
     await expect(page).toHaveURL(/\/expediente/);
     await expect(page.getByRole("link", { name: /CON-\d{4}-\d{6}/ })).toBeVisible();
-    await expect(page.getByText("Finalizada").first()).toBeVisible();
-    await expect(page.getByText("Esguince de tarso").first()).toBeVisible();
+    // Se asevera dentro de la fila de la consulta: el filtro de estado también
+    // contiene el texto "Finalizada" como <option> (oculto en un select cerrado).
+    const fila = page.getByRole("row", { name: /CON-\d{4}-\d{6}/ });
+    await expect(fila.getByText("Finalizada")).toBeVisible();
+    await expect(fila.getByText("Esguince de tarso")).toBeVisible();
   });
 });
