@@ -169,8 +169,7 @@ export type VaccinationRecordStatus = Enums<"vaccination_record_status">;
 export const VACCINATION_SOURCES = Constants.public.Enums.vaccination_source;
 export type VaccinationSource = Enums<"vaccination_source">;
 
-export const VACCINATION_NOTIFICATION_TYPES =
-  Constants.public.Enums.vaccination_notification_type;
+export const VACCINATION_NOTIFICATION_TYPES = Constants.public.Enums.vaccination_notification_type;
 export type VaccinationNotificationType = Enums<"vaccination_notification_type">;
 
 /**
@@ -179,10 +178,7 @@ export type VaccinationNotificationType = Enums<"vaccination_notification_type">
  * el contenido; no existe "desemitir". Los borradores se descartan por borrado
  * lógico, no por transición.
  */
-export const PRESCRIPTION_TRANSITIONS: Record<
-  PrescriptionStatus,
-  readonly PrescriptionStatus[]
-> = {
+export const PRESCRIPTION_TRANSITIONS: Record<PrescriptionStatus, readonly PrescriptionStatus[]> = {
   draft: ["issued"],
   issued: ["superseded", "voided"],
   superseded: ["voided"],

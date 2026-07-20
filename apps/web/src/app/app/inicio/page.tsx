@@ -15,9 +15,11 @@ import { metricasAgenda } from "@/lib/agenda/queries";
 import { metricasConsultas } from "@/lib/clinica/queries";
 import { mensajes } from "@/lib/i18n/es-mx";
 import { metricasPacientes } from "@/lib/pets/queries";
+import { metricasRecetas } from "@/lib/recetas/queries";
 import { etiquetasEstadoClinica } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 import { requireTenancyContext } from "@/lib/tenancy/queries";
+import { metricasVacunacion } from "@/lib/vacunacion/queries";
 
 export const metadata: Metadata = { title: mensajes.panel.nav.inicio };
 
@@ -48,6 +50,12 @@ export default async function PaginaInicioPanel({
   const pacientes = clinica ? await metricasPacientes(clinica.id) : null;
   const agenda = clinica ? await metricasAgenda(clinica.id, clinica.timezone) : null;
   const consultas = clinica ? await metricasConsultas(clinica.id, clinica.timezone) : null;
+  const [recetas, vacunacion] = clinica
+    ? await Promise.all([
+        metricasRecetas(clinica.id, clinica.timezone),
+        metricasVacunacion(clinica.id, clinica.timezone),
+      ])
+    : [null, null];
 
   return (
     <div className="flex flex-col gap-6">
@@ -183,6 +191,43 @@ export default async function PaginaInicioPanel({
                 <CardDescription>{titulo}</CardDescription>
                 <CardTitle className="text-2xl">
                   <Link className="hover:text-brand-700" href="/app/consultas">
+                    {valor}
+                  </Link>
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      ) : null}
+
+      {recetas && vacunacion ? (
+        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          {(
+            [
+              [mensajes.recetas.metricas.emitidasHoy, recetas.emitidasHoy, "/app/recetas"],
+              [
+                mensajes.recetas.metricas.borradores,
+                recetas.borradores,
+                "/app/recetas?estado=draft",
+              ],
+              [
+                mensajes.vacunacion.metricas.aplicadasHoy,
+                vacunacion.aplicadasHoy,
+                "/app/vacunacion",
+              ],
+              [mensajes.vacunacion.metricas.proximas30, vacunacion.proximas30, "/app/vacunacion"],
+              [
+                mensajes.vacunacion.metricas.recordatoriosPendientes,
+                vacunacion.recordatoriosPendientes,
+                "/app/vacunacion",
+              ],
+            ] as const
+          ).map(([titulo, valor, href]) => (
+            <Card key={titulo}>
+              <CardHeader className="p-4">
+                <CardDescription>{titulo}</CardDescription>
+                <CardTitle className="text-2xl">
+                  <Link className="hover:text-brand-700" href={href}>
                     {valor}
                   </Link>
                 </CardTitle>

@@ -15,7 +15,7 @@ clínica.
   clínica); si ya estamos dentro de la ventana, inmediato; si la fecha ya pasó, no se
   genera recordatorio extemporáneo.
 - **Idempotencia**: clave `{record_id}:{epoch_fecha_objetivo}:next_dose_due` con `ON
-  CONFLICT DO NOTHING` — reintentos y dobles envíos no duplican.
+CONFLICT DO NOTHING` — reintentos y dobles envíos no duplican.
 - Payload **operativo mínimo**: mascota, nombre de la vacuna, fecha, clínica y zona
   horaria. Sin lote, sin enfermedades, sin contenido clínico sensible.
 

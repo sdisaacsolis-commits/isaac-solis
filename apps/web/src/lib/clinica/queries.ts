@@ -34,7 +34,7 @@ export async function listarSalaDeEspera(clinicId: string, timezone: string): Pr
 }
 
 /** Nombres visibles de miembros de clínica (vía la vista de colegas). */
-async function nombresDeMiembros(memberIds: string[]): Promise<Map<string, string>> {
+export async function nombresDeMiembros(memberIds: string[]): Promise<Map<string, string>> {
   const nombres = new Map<string, string>();
   const ids = [...new Set(memberIds)].filter(Boolean);
   if (ids.length === 0) return nombres;

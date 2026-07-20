@@ -23,8 +23,13 @@ test.describe("Protección de rutas y páginas de autenticación", () => {
       "/app/agenda/nueva",
       "/app/consultas",
       "/app/consultas/nueva",
+      "/app/recetas",
+      "/app/recetas/nueva",
+      "/app/vacunacion",
+      "/app/vacunacion/nueva",
       "/app/configuracion/servicios",
       "/app/configuracion/horarios",
+      "/app/configuracion/vacunas",
     ]) {
       await page.goto(ruta);
       await expect(page).toHaveURL(/\/iniciar-sesion/);

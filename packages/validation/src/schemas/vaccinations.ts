@@ -18,10 +18,7 @@ const fechaISO = z
   .refine((v) => !Number.isNaN(Date.parse(`${v}T00:00:00Z`)), "Fecha inválida.");
 
 const listaTexto = (max: number) =>
-  z
-    .array(z.string().trim().min(1).max(120))
-    .max(max, `Máximo ${max} elementos.`)
-    .optional();
+  z.array(z.string().trim().min(1).max(120)).max(max, `Máximo ${max} elementos.`).optional();
 
 export const vaccineCatalogSchema = z.object({
   catalogId: uuidSchema.optional(), // presente al editar

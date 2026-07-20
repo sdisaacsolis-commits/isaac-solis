@@ -14,6 +14,8 @@ const enlaces = [
   { href: "/app/inicio", etiqueta: nav.inicio },
   { href: "/app/agenda", etiqueta: nav.agenda },
   { href: "/app/consultas", etiqueta: nav.consultas },
+  { href: "/app/recetas", etiqueta: nav.recetas },
+  { href: "/app/vacunacion", etiqueta: nav.vacunacion },
   { href: "/app/propietarios", etiqueta: nav.propietarios },
   { href: "/app/mascotas", etiqueta: nav.mascotas },
   { href: "/app/organizacion", etiqueta: nav.organizacion },

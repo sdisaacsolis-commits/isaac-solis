@@ -24,7 +24,7 @@ Una receta emitida es un **documento clínico-legal**: no se edita, no se borra,
   `app.prescription_admin_op` para **cualquier** cambio de estado y para **cualquier**
   update fuera de `draft` (`RECETA_INMUTABLE` / `OPERACION_RESERVADA`). Solo las RPCs
   internas (`issue`, `supersede` al emitir, `void`) fijan ese GUC, y siempre `set_config
-  (..., true)` (transaccional: se limpia solo al terminar).
+(..., true)` (transaccional: se limpia solo al terminar).
 - `enforce_prescription_item_editable`: partidas solo mutan con receta en `draft` vigente
   (`RECETA_INMUTABLE`, dispara **antes** que el WITH CHECK de RLS).
 - `prescription_documents`: trigger `enforce_document_frozen` — **ni update ni delete,

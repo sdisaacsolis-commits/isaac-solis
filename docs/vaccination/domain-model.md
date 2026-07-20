@@ -9,13 +9,13 @@ ni cuándo: el catálogo es interno y no prescriptivo, y la próxima dosis siemp
 
 ## Entidades
 
-| Tabla | Propósito |
-| --- | --- |
-| `vaccines_catalog` | Catálogo de productos **por organización** (no prescriptivo) |
-| `vaccination_records` | Evento de vacunación inmutable con snapshot del producto |
-| `vaccination_status_history` | Historial append-only (`recorded → voided`) |
-| `vaccination_documents` | Comprobante individual congelado + SHA-256 |
-| `vaccination_notifications` | Outbox de recordatorios (correo en esta fase) |
+| Tabla                        | Propósito                                                    |
+| ---------------------------- | ------------------------------------------------------------ |
+| `vaccines_catalog`           | Catálogo de productos **por organización** (no prescriptivo) |
+| `vaccination_records`        | Evento de vacunación inmutable con snapshot del producto     |
+| `vaccination_status_history` | Historial append-only (`recorded → voided`)                  |
+| `vaccination_documents`      | Comprobante individual congelado + SHA-256                   |
+| `vaccination_notifications`  | Outbox de recordatorios (correo en esta fase)                |
 
 ## Catálogo
 

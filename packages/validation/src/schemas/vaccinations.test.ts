@@ -53,8 +53,7 @@ describe("recordVaccinationSchema (aplicación en clínica)", () => {
 
   it("el lote exige caducidad", () => {
     expect(
-      recordVaccinationSchema.safeParse({ ...aplicacionValida, expirationDate: undefined })
-        .success,
+      recordVaccinationSchema.safeParse({ ...aplicacionValida, expirationDate: undefined }).success,
     ).toBe(false);
   });
 

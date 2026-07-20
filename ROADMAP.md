@@ -165,7 +165,7 @@
   validados (producto caducado rechazado), **idempotencia por `client_request_id`**,
   comprobante congelado, próxima dosis siempre confirmada por veterinario, recordatorios
   por outbox idempotente (`vaccination_notifications`, correo; claim/mark con `SKIP
-  LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica con
+LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica con
   distinción visual por fuente. UI (`/app/recetas*`, `/app/vacunacion*`,
   `/app/mascotas/[id]/{recetas,vacunacion}`, `/app/configuracion/vacunas`), impresión
   desde snapshots congelados con hash visible y firma autógrafa (sin firma digital

@@ -10,13 +10,13 @@ y obligatoriedad — nunca corrección clínica.
 
 ## Entidades
 
-| Tabla | Propósito |
-| --- | --- |
-| `prescriptions` | Receta: ciclo de vida, folio, snapshots congelados, referencias |
-| `prescription_items` | Partidas (medicamentos e indicaciones) con orden por `position` |
-| `prescription_status_history` | Historial de estados append-only (por trigger) |
-| `prescription_documents` | Documento canónico congelado al emitir + SHA-256 |
-| `prescription_folio_counters` | Contadores de folio por clínica+año (UPSERT atómico) |
+| Tabla                         | Propósito                                                       |
+| ----------------------------- | --------------------------------------------------------------- |
+| `prescriptions`               | Receta: ciclo de vida, folio, snapshots congelados, referencias |
+| `prescription_items`          | Partidas (medicamentos e indicaciones) con orden por `position` |
+| `prescription_status_history` | Historial de estados append-only (por trigger)                  |
+| `prescription_documents`      | Documento canónico congelado al emitir + SHA-256                |
+| `prescription_folio_counters` | Contadores de folio por clínica+año (UPSERT atómico)            |
 
 ## Estados
 

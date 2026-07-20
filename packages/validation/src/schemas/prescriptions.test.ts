@@ -109,12 +109,10 @@ describe("emisión, sustitución y anulación", () => {
 describe("updatePrescriptionDraftSchema (concurrencia optimista)", () => {
   it("exige versión esperada válida", () => {
     expect(
-      updatePrescriptionDraftSchema.safeParse({ prescriptionId: uuid, expectedVersion: 0 })
-        .success,
+      updatePrescriptionDraftSchema.safeParse({ prescriptionId: uuid, expectedVersion: 0 }).success,
     ).toBe(false);
     expect(
-      updatePrescriptionDraftSchema.safeParse({ prescriptionId: uuid, expectedVersion: 3 })
-        .success,
+      updatePrescriptionDraftSchema.safeParse({ prescriptionId: uuid, expectedVersion: 3 }).success,
     ).toBe(true);
   });
 
