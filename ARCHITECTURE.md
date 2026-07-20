@@ -170,7 +170,7 @@ recursión y mantener las políticas legibles. Detalle completo de la matriz de 
 | ------------------------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | CRUD simple (mascotas, servicios, personal) | PostgREST + RLS                                          | Validación Zod en cliente, `CHECK`/`NOT NULL` en BD.                                      |
 | Agendar/reprogramar cita                    | Función SQL `book_appointment(...)`                      | Valida disponibilidad y traslapes de forma atómica; restricción `EXCLUDE` como red final. |
-| Cerrar consulta / emitir receta             | Función SQL + Edge Function (PDF)                        | La receta queda inmutable al emitirse.                                                    |
+| Cerrar consulta / emitir receta             | Función SQL (`issue_prescription`); Edge Function (PDF) pendiente | La receta queda inmutable al emitirse: contenido canónico congelado + SHA-256 en la base; el PDF binario congelado es un pendiente documentado (`docs/prescriptions/documents.md`). |
 | Recordatorios                               | `pg_cron` (cada 15 min) → Edge Function `send-reminders` | Lee `notifications` pendientes, envía FCM/Resend, marca estado y reintenta con backoff.   |
 | Invitación de personal                      | Edge Function `invite-staff`                             | Crea invitación, envía correo con Resend.                                                 |
 | Auditoría                                   | Triggers `AFTER INSERT/UPDATE/DELETE` → `audit_log`      | Sobre tablas sensibles.                                                                   |

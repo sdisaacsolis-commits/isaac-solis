@@ -128,3 +128,34 @@ no diagnostica ni finaliza; finalizar y editar contenido son actos clínicos que
 `veterinarian` aunque se tenga administración. La anulación conserva el contenido intacto y
 no reutiliza el folio. Detalle y auditoría redactada: ver
 [`docs/clinical/privacy.md`](../clinical/privacy.md).
+
+## 12. Matriz de recetas y vacunación (Fase 7)
+
+✔ = permitido · ✖ = denegado por RLS/privilegios
+
+| Acción                                            | org owner/admin   | clinic_admin      | veterinario | recepcionista | asistente | sin membresía |
+| ------------------------------------------------- | ----------------- | ----------------- | ----------- | ------------- | --------- | ------------- |
+| Ver borradores de receta                          | ✖                 | ✔                 | ✔           | ✖             | ✔         | ✖             |
+| Ver recetas emitidas/sustituidas/anuladas         | ✔                 | ✔                 | ✔           | ✔             | ✔         | ✖             |
+| Crear/editar borrador de receta                   | ✖ (salvo rol vet) | ✖ (salvo rol vet) | ✔ (el prescriptor) | ✖      | ✖         | ✖             |
+| Emitir receta                                     | ✖ (salvo rol vet) | ✖ (salvo rol vet) | ✔ (el prescriptor) | ✖      | ✖         | ✖             |
+| Sustituir receta (motivo obligatorio)             | ✖ (salvo rol vet) | ✖ (salvo rol vet) | ✔           | ✖             | ✖         | ✖             |
+| Anular receta (motivo obligatorio)                | ✔                 | ✖                 | ✖           | ✖             | ✖         | ✖             |
+| Modificar contenido de receta emitida             | ✖ (nadie)         | ✖                 | ✖           | ✖             | ✖         | ✖             |
+| Imprimir receta emitida (queda en bitácora)       | ✔                 | ✔                 | ✔           | ✔             | ✔         | ✖             |
+| Administrar catálogo de vacunas                   | ✔                 | ✔                 | ✖           | ✖             | ✖         | ✖             |
+| Registrar vacuna APLICADA en clínica              | ✖ (salvo rol vet) | ✖ (salvo rol vet) | ✔           | ✖             | ✖         | ✖             |
+| Registrar vacuna histórica aportada               | ✔ (clinic_admin)  | ✔                 | ✔           | ✔             | ✖         | ✖             |
+| Confirmar próxima dosis (decisión clínica)        | ✖ (salvo rol vet) | ✖ (salvo rol vet) | ✔           | ✖             | ✖         | ✖             |
+| Consultar cartilla de vacunación                  | ✔                 | ✔                 | ✔           | ✔             | ✔         | ✖             |
+| Modificar un registro de vacunación               | ✖ (nadie)         | ✖                 | ✖           | ✖             | ✖         | ✖             |
+| Anular registro de vacunación (motivo)            | ✔                 | ✖                 | ✖           | ✖             | ✖         | ✖             |
+| Procesar recordatorios (outbox)                   | ✔                 | ✔                 | ✔           | ✔             | ✖         | ✖             |
+
+Notas: emitir una receta y registrar una aplicación son **actos clínicos** que exigen rol
+`veterinarian` vigente (la administración no los ejerce sin ese rol); la recepción consulta
+documentos emitidos e imprime cuando está autorizada, y captura registros históricos
+aportados —claramente etiquetados— pero jamás los presenta como aplicaciones verificadas ni
+confirma próximas dosis. La organización B nunca accede a recetas, lotes ni cartillas de A
+aunque compartan mascota. Autoridad: PostgreSQL (RLS + triggers + RPCs); la UI solo refleja
+estos permisos. Detalle: `docs/prescriptions/` y `docs/vaccination/`.

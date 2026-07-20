@@ -4,12 +4,14 @@ Plataforma SaaS mexicana para clínicas veterinarias, médicos veterinarios y pr
 mascotas: agenda de citas, expedientes clínicos, recetas y recordatorios — con aislamiento
 total de datos entre clínicas.
 
-> **Estado actual: Fase 6 (expediente clínico básico).**
-> Consultas clínicas con nota SOAP versionada, exploración física, signos vitales,
-> diagnósticos, tratamientos, archivos en bucket privado, finalización inmutable con
-> adendas y privacidad por rol (recepción sin contenido clínico), sobre la agenda de la
-> Fase 5. Aislamiento RLS validado con pruebas pgTAP sobre PostgreSQL local
-> (ver [ROADMAP.md](./ROADMAP.md), `docs/clinical/` y
+> **Estado actual: Fase 7 (recetas y vacunación).**
+> Recetas con folio, emisión inmutable (snapshots congelados + hash SHA-256),
+> sustitución y anulación con motivo; registro de vacunación inmutable (aplicadas en
+> clínica con lote/caducidad validados + históricas aportadas, siempre distinguidas),
+> cartilla consolidada y recordatorios por outbox — sobre el expediente clínico de la
+> Fase 6. **Dogtoralia no calcula dosis ni sugiere medicamentos.** Aislamiento RLS
+> validado con pgTAP (441 aserciones; ver [ROADMAP.md](./ROADMAP.md),
+> `docs/prescriptions/`, `docs/vaccination/` y
 > [docs/security/rls-model.md](./docs/security/rls-model.md)).
 
 ## Documentación

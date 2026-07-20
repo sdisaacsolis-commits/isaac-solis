@@ -139,11 +139,40 @@
   aserciones pgTAP nuevas (suite 11; 365 totales). Migraciones `202607195000*`.
   Documentación en `docs/clinical/` (10 documentos).
 
-## Fase 7 — Recetas
+## Fase 7 — Recetas y vacunación ✅ (2026-07-20)
 
-- Emisión de receta ligada a consulta, partidas de medicamentos, PDF (Edge Function) con
-  datos de clínica y cédula del veterinario; inmutable al emitirse.
-- **Criterio de salida**: PDF descargable e imprimible correcto; receta emitida no editable.
+- Emisión de receta ligada a consulta, partidas de medicamentos, documento con datos de
+  clínica y cédula del veterinario; inmutable al emitirse. Alcance ampliado por producto:
+  registro de vacunación (aplicadas + históricas), cartilla y recordatorios.
+- **Criterio de salida**: documento imprimible correcto; receta emitida no editable.
+  Cumplido (el PDF binario congelado queda como pendiente documentado en
+  `docs/prescriptions/documents.md`: hoy la fuente de verdad es el contenido canónico
+  congelado con hash SHA-256 y la vista imprimible determinista).
+- **Entregado**: recetas `prescriptions` + `prescription_items` (todo texto clínico lo
+  captura el veterinario: **sin cálculo de dosis ni sugerencias** en ninguna capa) con
+  folio `REC-AAAA-NNNNNN` por contador UPSERT, borrador durante la consulta y **emisión
+  solo con consulta finalizada** (`issue_prescription`: transaccional, `FOR UPDATE`,
+  idempotente), snapshots de servidor (clínica, prescriptor+cédula, mascota con peso de la
+  consulta, propietario), documento canónico congelado + SHA-256
+  (`prescription_documents`, jamás se regenera), sustitución sin ciclos con ambos
+  documentos conservados (`supersede_prescription`; el original pasa a `superseded` solo
+  al emitir el sustituto) y anulación administrativa con motivo (`void_prescription`);
+  inmutabilidad de dos capas (RLS 0-filas + triggers `RECETA_INMUTABLE` /
+  `DOCUMENTO_INMUTABLE` con GUC transaccional). Vacunación: catálogo por organización
+  **no prescriptivo** (`vaccines_catalog`; intervalo de refuerzo solo como ayuda
+  editable), registros inmutables `vaccination_records` con snapshot de producto, fuentes
+  que distinguen aplicación en clínica de registros históricos aportados, lote+caducidad
+  validados (producto caducado rechazado), **idempotencia por `client_request_id`**,
+  comprobante congelado, próxima dosis siempre confirmada por veterinario, recordatorios
+  por outbox idempotente (`vaccination_notifications`, correo; claim/mark con `SKIP
+  LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica con
+  distinción visual por fuente. UI (`/app/recetas*`, `/app/vacunacion*`,
+  `/app/mascotas/[id]/{recetas,vacunacion}`, `/app/configuracion/vacunas`), impresión
+  desde snapshots congelados con hash visible y firma autógrafa (sin firma digital
+  simulada), métricas no sensibles en dashboard, 76 aserciones pgTAP nuevas (suite 12;
+  441 totales). Migraciones `202607206000*`. Documentación en `docs/prescriptions/` (6) y
+  `docs/vaccination/` (7). Fuera de alcance: sustancias controladas, interacciones,
+  inventario, firma certificada (documentado).
 
 ## Fase 8 — App móvil de propietarios (Flutter)
 
