@@ -32,3 +32,6 @@ apps/mobile/build/
 *.log
 .vscode/
 .idea/
+.vercel
+.env*
+!.env.example
