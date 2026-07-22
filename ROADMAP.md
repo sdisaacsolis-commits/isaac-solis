@@ -174,7 +174,18 @@ LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica 
   `docs/vaccination/` (7). Fuera de alcance: sustancias controladas, interacciones,
   inventario, firma certificada (documentado).
 
-## Fase 8 — App móvil de propietarios (Flutter)
+## [Propuesta] Fase 8 (redefinida) — Portal público y reservación en línea (paridad Doctoralia)
+
+- Dirección aprobada por el propietario del producto (2026-07-21). Análisis y plan por
+  fases en `docs/product/doctoralia-parity.md`: perfiles públicos `/clinicas/[slug]` y
+  `/veterinarios/[slug]` (adelanta el post-MVP #2 confirmado), búsqueda y directorios
+  públicos por servicio/ciudad, cuentas de propietario con "Mis mascotas / Mis citas /
+  historial de solo lectura", reservación pública sobre `get_available_slots` +
+  `book_appointment` (`source='online'`, la clínica confirma) y navegación pública tipo
+  marketplace; después (8.1) reseñas verificadas post-cita. La app Flutter de
+  propietarios pasa a fase posterior.
+
+## Fase 8 (anterior) — App móvil de propietarios (Flutter)
 
 - Registro/inicio de sesión, perfil de mascotas, solicitud y cancelación de citas,
   historial (consultas, vacunas, recetas de sus mascotas), tokens FCM.
