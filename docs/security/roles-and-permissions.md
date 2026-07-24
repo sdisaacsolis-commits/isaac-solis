@@ -159,3 +159,19 @@ aportados —claramente etiquetados— pero jamás los presenta como aplicacione
 confirma próximas dosis. La organización B nunca accede a recetas, lotes ni cartillas de A
 aunque compartan mascota. Autoridad: PostgreSQL (RLS + triggers + RPCs); la UI solo refleja
 estos permisos. Detalle: `docs/prescriptions/` y `docs/vaccination/`.
+
+## 13. Portal público y propietarios (Fase 8)
+
+| Acción                                         | anon (público)                                                   | propietario vinculado                             | staff clínica          | otra organización   |
+| ---------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------- | ---------------------- | ------------------- |
+| Buscar/ver clínicas y veterinarios `is_public` | ✔ (RPC curada)                                                   | ✔                                                 | ✔                      | ✔ (solo lo público) |
+| Leer tablas base                               | ✖ (42501)                                                        | ✖ (solo RPCs curadas)                             | según rol              | ✖                   |
+| Ver huecos reales y solicitar cita             | ✔ (solo clínicas con reservación en línea; límite 5/correo/24 h) | ✔                                                 | ✔ (agenda propia)      | ✖                   |
+| Confirmar/rechazar solicitudes en línea        | ✖                                                                | ✖                                                 | ✔ (operativos)         | ✖                   |
+| Invitar al portal / vincular cuenta            | ✖                                                                | ✔ (aceptar SU token)                              | ✔ (operativos)         | ✖                   |
+| Ver mascotas/citas/historial del portal        | ✖                                                                | ✔ (solo SUS mascotas, curado, sin notas internas) | n/a                    | ✖                   |
+| Cancelar cita en línea                         | ✖                                                                | ✔ (propia, futura, ≥2 h antes)                    | ✔ (agenda)             | ✖                   |
+| Editar perfil público de veterinario           | ✖                                                                | ✖                                                 | ✔ (solo el propio vet) | ✖                   |
+
+Autoridad: PostgreSQL (RPCs SECURITY DEFINER + RLS forzado). La vinculación
+propietario↔cuenta es SIEMPRE explícita por invitación de la clínica.

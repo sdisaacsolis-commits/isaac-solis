@@ -165,3 +165,12 @@ derivada de la clínica) y sus suites pgTAP:
   folio inaccesibles; bucket `vaccination-files` con acceso derivado de la relación
   clínica–mascota; auditoría redactada (sin medicamentos, dosis ni lotes en `audit_log`).
   Suite 12 (441 aserciones totales).
+
+## 11. Extensión de la Fase 8 (portal público)
+
+`anon` no recibe ningún grant sobre tablas: la superficie pública son RPCs
+`SECURITY DEFINER` curadas que exponen SOLO clínicas `is_public` (helper
+`clinic_is_publicly_visible`) y, para reservar, `accepts_online_booking`. El portal del
+propietario también es RPC-only (evita fugas por columnas: jamás notas internas ni SOAP).
+Tokens de invitación hasheados e ilegibles; `get_available_slots` re-emitida con bypass
+GUC transaccional que solo fijan las funciones públicas validadas. Suite 13 (474 totales).

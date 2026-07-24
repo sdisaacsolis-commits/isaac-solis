@@ -174,16 +174,29 @@ LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica 
   `docs/vaccination/` (7). Fuera de alcance: sustancias controladas, interacciones,
   inventario, firma certificada (documentado).
 
-## [Propuesta] Fase 8 (redefinida) — Portal público y reservación en línea (paridad Doctoralia)
+## Fase 8 — Portal público y reservación en línea (paridad Doctoralia) ✅ (2026-07-21)
 
-- Dirección aprobada por el propietario del producto (2026-07-21). Análisis y plan por
-  fases en `docs/product/doctoralia-parity.md`: perfiles públicos `/clinicas/[slug]` y
-  `/veterinarios/[slug]` (adelanta el post-MVP #2 confirmado), búsqueda y directorios
-  públicos por servicio/ciudad, cuentas de propietario con "Mis mascotas / Mis citas /
-  historial de solo lectura", reservación pública sobre `get_available_slots` +
-  `book_appointment` (`source='online'`, la clínica confirma) y navegación pública tipo
-  marketplace; después (8.1) reseñas verificadas post-cita. La app Flutter de
-  propietarios pasa a fase posterior.
+- Dirección aprobada por el propietario del producto (2026-07-21); auditoría y plano en
+  `docs/product/doctoralia-audit.md` y `doctoralia-parity.md`.
+- **Entregado**: superficie pública 100 % por RPCs `SECURITY DEFINER` curadas (anon jamás
+  lee tablas base; solo clínicas `is_public`): búsqueda/perfiles/ciudades, perfil de
+  clínica `/clinicas/[slug]` con equipo y cédulas, perfiles públicos opt-in de
+  veterinarios `/veterinarios/[slug]` (`veterinarian_public_profiles`, slug global con
+  reservados protegidos), directorios SEO `/veterinarios/[ciudad]` y
+  `/servicios/[categoria]/[ciudad]`, huecos reales públicos (`get_available_slots`
+  re-emitida con bypass GUC transaccional solo para clínicas con
+  `accepts_online_booking`) y **reservación de invitado sin cuenta**
+  (`request_public_appointment`: propietario+mascota mínimos sin verificar, cita
+  `requested` fuente `owner_portal` que NO ocupa agenda hasta confirmarse, folio real,
+  idempotencia por request_id, límite 5/correo/24 h, rastro en
+  `public_booking_requests` + auditoría). Portal del propietario `/mi` con vinculación
+  SIEMPRE por invitación explícita de la clínica (`portal_invitations`, token hasheado,
+  7 días, un uso) y lecturas curadas (`get_my_pets/appointments/pet_history` sin notas
+  internas ni SOAP) + `cancel_my_appointment` (hasta 2 h antes, aviso por outbox).
+  Panel: solicitudes en línea en la agenda, invitar al portal desde el propietario,
+  perfil público del veterinario y visibilidad pública de la clínica. Suite pgTAP 13
+  (33 aserciones; 474 totales), Zod es-MX y E2E. Documentación en `docs/portal/`.
+  Reseñas verificadas quedan como Fase 8.1 (plan en `doctoralia-parity.md` §3-B).
 
 ## Fase 8 (anterior) — App móvil de propietarios (Flutter)
 
