@@ -58,6 +58,15 @@ export {
   updatePetSchema,
 } from "./schemas/pets";
 export {
+  acceptPortalInvitationSchema,
+  cancelMyAppointmentSchema,
+  portalInvitationSchema,
+  publicBookingSchema,
+  publicSearchSchema,
+  publicSlotsQuerySchema,
+  vetPublicProfileSchema,
+} from "./schemas/portal";
+export {
   createPrescriptionDraftSchema,
   discardPrescriptionDraftSchema,
   issuePrescriptionSchema,
