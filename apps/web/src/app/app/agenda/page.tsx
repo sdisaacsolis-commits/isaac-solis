@@ -14,11 +14,19 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { formatearFechaLarga, formatearHora, hoyEnZona, sumarDias } from "@/lib/agenda/dates";
+import {
+  formatearFechaHora,
+  formatearFechaLarga,
+  formatearHora,
+  hoyEnZona,
+  sumarDias,
+} from "@/lib/agenda/dates";
 import type { FilaCita } from "@/lib/agenda/queries";
-import { listarCitas, listarVeterinarios } from "@/lib/agenda/queries";
+import { listarCitas, listarSolicitudesEnLinea, listarVeterinarios } from "@/lib/agenda/queries";
 import { mensajes } from "@/lib/i18n/es-mx";
 import { requireTenancyContext } from "@/lib/tenancy/queries";
+
+import { SolicitudesEnLinea } from "./solicitudes-en-linea";
 
 export const metadata: Metadata = { title: mensajes.agenda.titulo };
 
@@ -104,14 +112,17 @@ export default async function PaginaAgenda({
   const vet = veterinarios.find((v) => v.clinicMemberId === params.vet)?.clinicMemberId;
 
   const dias = vista === "dia" ? 1 : 7;
-  const filas = await listarCitas({
-    clinicId: clinica.id,
-    timezone: tz,
-    desde: fecha,
-    hasta: sumarDias(fecha, dias),
-    veterinarianMemberId: vet,
-    estado,
-  });
+  const [filas, solicitudes] = await Promise.all([
+    listarCitas({
+      clinicId: clinica.id,
+      timezone: tz,
+      desde: fecha,
+      hasta: sumarDias(fecha, dias),
+      veterinarianMemberId: vet,
+      estado,
+    }),
+    listarSolicitudesEnLinea(clinica.id),
+  ]);
 
   const enlaceVista = (destino: {
     fecha?: string;
@@ -138,6 +149,17 @@ export default async function PaginaAgenda({
           <Link href="/app/agenda/nueva">{t.nuevaCita}</Link>
         </Button>
       </div>
+
+      <SolicitudesEnLinea
+        solicitudes={solicitudes.map(({ cita, mascota, propietario, servicios }) => ({
+          appointmentId: cita.id,
+          folio: cita.folio,
+          fechaLegible: formatearFechaHora(cita.scheduled_start, tz),
+          mascota: mascota?.name ?? "—",
+          propietario: propietario?.display_name ?? "—",
+          servicios: servicios.join(", "),
+        }))}
+      />
 
       <nav aria-label={t.titulo} className="flex flex-wrap items-center gap-2">
         {VISTAS.map((v) => (

@@ -196,6 +196,22 @@ export async function listarCitas(opciones: {
   return decorarCitas(data ?? []);
 }
 
+/**
+ * Solicitudes de cita en línea (status `requested`, fuente portal): visibles
+ * por RLS al personal; no ocupan agenda hasta que la clínica las confirma.
+ */
+export async function listarSolicitudesEnLinea(clinicId: string): Promise<FilaCita[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("appointments")
+    .select("*")
+    .eq("clinic_id", clinicId)
+    .eq("status", "requested")
+    .order("scheduled_start")
+    .limit(100);
+  return decorarCitas(data ?? []);
+}
+
 export interface DetalleCita {
   cita: Tables<"appointments">;
   mascota: Tables<"pets"> | null;

@@ -1,11 +1,18 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
-const PREFIJO_PRIVADO = "/app";
+// Rutas privadas: el panel (/app) y el portal del propietario (/mi). Las
+// rutas públicas del marketplace (/, /buscar, /clinicas, /veterinarios,
+// /servicios, /portal/invitacion) NUNCA exigen sesión.
+const PREFIJOS_PRIVADOS = ["/app", "/mi"] as const;
 // El usuario autenticado no debe regresar a estas rutas.
 // /actualizar-contrasena NO está aquí: el enlace de recuperación crea sesión
 // y la persona debe poder llegar a esa página ya autenticada.
 const RUTAS_SOLO_ANONIMAS = ["/iniciar-sesion", "/registro", "/recuperar-contrasena"];
+
+function esRutaPrivada(path: string): boolean {
+  return PREFIJOS_PRIVADOS.some((prefijo) => path === prefijo || path.startsWith(`${prefijo}/`));
+}
 
 /**
  * Refresca la sesión de Supabase en cada petición (patrón oficial de
@@ -20,7 +27,7 @@ export async function updateSession(request: NextRequest) {
   // Sin Supabase configurado no puede existir sesión: las rutas privadas
   // redirigen a iniciar sesión (que muestra el aviso de configuración).
   if (!url || !anonKey) {
-    if (path.startsWith(PREFIJO_PRIVADO)) {
+    if (esRutaPrivada(path)) {
       const redirectUrl = request.nextUrl.clone();
       redirectUrl.pathname = "/iniciar-sesion";
       redirectUrl.search = "";
@@ -50,7 +57,7 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user && path.startsWith(PREFIJO_PRIVADO)) {
+  if (!user && esRutaPrivada(path)) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/iniciar-sesion";
     redirectUrl.search = "";
