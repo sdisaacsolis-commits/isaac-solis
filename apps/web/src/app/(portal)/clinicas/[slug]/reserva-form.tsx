@@ -3,7 +3,7 @@
 import { PET_SPECIES } from "@dogtoralia/types";
 import { Alert, FormField, Input, Select, Textarea } from "@dogtoralia/ui";
 import Link from "next/link";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 
 import { FormAlerts, primerError } from "@/components/forms/form-alerts";
 import { SubmitButton } from "@/components/forms/submit-button";
@@ -14,12 +14,17 @@ import { type ReservaPublicaState, solicitarReservaPublica } from "@/lib/portal/
 const t = mensajes.portalPublico.reserva;
 const inicial: ReservaPublicaState = { ok: false };
 
-/** Identificador idempotente generado AL MONTAR el formulario (doble envío seguro). */
+/**
+ * Identificador idempotente estable por instancia del formulario (doble envío
+ * seguro). Se genera de forma SÍNCRONA en el inicializador de estado para que
+ * el campo oculto nunca viaje vacío: con `useEffect` había una ventana (entre la
+ * hidratación y el efecto) en la que un envío llevaba `requestId` vacío y el Zod
+ * lo rechazaba en silencio (sin campo visible, sin mensaje). El valor del cliente
+ * difiere a propósito del render del servidor, de ahí `suppressHydrationWarning`
+ * en el input.
+ */
 function useRequestId(): string {
-  const [requestId, setRequestId] = useState("");
-  useEffect(() => {
-    setRequestId(crypto.randomUUID());
-  }, []);
+  const [requestId] = useState(() => crypto.randomUUID());
   return requestId;
 }
 
@@ -69,7 +74,7 @@ export function ReservaForm({ clinicSlug, serviceId, veterinarianMemberId, slots
       <input type="hidden" name="clinicSlug" value={clinicSlug} />
       <input type="hidden" name="serviceId" value={serviceId} />
       <input type="hidden" name="veterinarianMemberId" value={veterinarianMemberId} />
-      <input type="hidden" name="requestId" value={requestId} />
+      <input type="hidden" name="requestId" value={requestId} suppressHydrationWarning />
       <FormAlerts state={state} />
 
       <fieldset className="flex flex-col gap-2 rounded-lg border border-border p-4">

@@ -93,9 +93,13 @@ export async function solicitarReservaPublica(
   });
   if (!parsed.success) {
     const errores = parsed.error.flatten();
+    // Fallback de mensaje: si la validación falla en un campo SIN control visible
+    // (p. ej. el requestId oculto), no dejar el formulario congelado en silencio.
     return {
       ok: false,
-      message: errores.fieldErrors.start ? mensajes.portalPublico.reserva.eligeHorario : undefined,
+      message: errores.fieldErrors.start
+        ? mensajes.portalPublico.reserva.eligeHorario
+        : mensajes.comun.errorInesperado,
       fieldErrors: errores.fieldErrors,
     };
   }
