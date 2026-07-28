@@ -2,9 +2,16 @@ import { defineConfig, devices } from "@playwright/test";
 
 const PORT = 3100;
 
+// Los flujos con Supabase REAL (E2E_AUTH=1) comparten UNA instancia de base de
+// datos y UN dev server; ejecutarlos en paralelo genera contención (p. ej. la
+// acción transaccional del walk-in queda a medias). En ese modo se serializan
+// con un solo worker. Las suites básicas (sin Supabase) siguen en paralelo.
+const E2E_AUTH = process.env.E2E_AUTH === "1";
+
 export default defineConfig({
   testDir: "./e2e",
-  fullyParallel: true,
+  fullyParallel: !E2E_AUTH,
+  workers: E2E_AUTH ? 1 : undefined,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? "github" : "list",
