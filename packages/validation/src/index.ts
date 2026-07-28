@@ -79,6 +79,13 @@ export {
   voidPrescriptionSchema,
 } from "./schemas/prescriptions";
 export {
+  moderateReviewSchema,
+  replyToReviewSchema,
+  reportReviewSchema,
+  submitReviewSchema,
+  updateMyReviewSchema,
+} from "./schemas/reviews";
+export {
   changeClinicMemberRoleSchema,
   changeOrganizationMemberRoleSchema,
   clinicRoleSchema,
