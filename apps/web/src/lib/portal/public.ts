@@ -12,6 +12,12 @@ import { createClient } from "@/lib/supabase/server";
  * estados vacíos (mismo criterio que el resto de la app).
  */
 
+/** Agregado de calificación de una clínica; `average` es null sin opiniones. */
+export interface RatingResumen {
+  average: number | null;
+  count: number;
+}
+
 export interface ClinicaPublicaResumen {
   slug: string;
   name: string;
@@ -22,6 +28,7 @@ export interface ClinicaPublicaResumen {
   accepts_online_booking: boolean;
   services_count: number;
   price_from_cents: number | null;
+  rating: RatingResumen;
 }
 
 export interface ServicioPublico {
@@ -54,8 +61,26 @@ export interface ClinicaPublica {
   postal_code: string | null;
   timezone: string;
   accepts_online_booking: boolean;
+  rating: RatingResumen;
   services: ServicioPublico[];
   veterinarians: VeterinarioDeClinicaPublica[];
+}
+
+/** Una opinión pública ya curada por la RPC (autor enmascarado, sin moderación). */
+export interface ResenaPublica {
+  rating: number;
+  title: string | null;
+  body: string;
+  created_at: string;
+  author: string;
+  veterinarian: string | null;
+  clinic_reply: string | null;
+  clinic_reply_at: string | null;
+}
+
+export interface ResenasDeClinica {
+  rating: RatingResumen;
+  reviews: ResenaPublica[];
 }
 
 export interface ClinicaDeVeterinarioPublico {
@@ -116,6 +141,27 @@ export async function obtenerClinicaPublica(slug: string): Promise<ClinicaPublic
   const { data, error } = await supabase.rpc("get_public_clinic", { p_slug: slug });
   if (error || !data) return null;
   return data as unknown as ClinicaPublica;
+}
+
+/**
+ * Opiniones públicas curadas de una clínica (RPC SECURITY DEFINER): solo
+ * publicadas, autor enmascarado, sin datos de moderación. Sin Supabase o ante
+ * error, degrada a vacío como el resto del sitio público.
+ */
+export async function obtenerResenasDeClinica(
+  slug: string,
+  opciones: { limit?: number; offset?: number } = {},
+): Promise<ResenasDeClinica> {
+  const vacio: ResenasDeClinica = { rating: { average: null, count: 0 }, reviews: [] };
+  if (!isSupabaseConfigured()) return vacio;
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_clinic_reviews", {
+    p_clinic_slug: slug,
+    p_limit: opciones.limit ?? 20,
+    p_offset: opciones.offset ?? 0,
+  });
+  if (error || !data) return vacio;
+  return data as unknown as ResenasDeClinica;
 }
 
 export async function obtenerVeterinarioPublico(slug: string): Promise<VeterinarioPublico | null> {

@@ -1,6 +1,7 @@
 import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@dogtoralia/ui";
 import Link from "next/link";
 
+import { RatingStars } from "@/components/portal/rating-stars";
 import { formatearPrecioMXN } from "@/lib/agenda/dates";
 import { mensajes } from "@/lib/i18n/es-mx";
 import type { ClinicaPublicaResumen } from "@/lib/portal/public";
@@ -27,6 +28,7 @@ export function ClinicaCard({ clinica }: { clinica: ClinicaPublicaResumen }) {
           ) : null}
         </div>
         {ubicacion ? <CardDescription>{ubicacion}</CardDescription> : null}
+        <RatingStars value={clinica.rating.average} count={clinica.rating.count} size="sm" showCount />
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         {clinica.description ? (
