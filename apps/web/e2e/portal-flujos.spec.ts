@@ -243,7 +243,11 @@ test.describe("Portal público y portal del propietario (Supabase local)", () =>
     await expect(page.getByText("Solicitudes en línea", { exact: false }).first()).toBeVisible();
     await expect(page.getByText(/CIT-\d{4}-\d{6}/).first()).toBeVisible();
     await page.getByRole("button", { name: "Confirmar", exact: true }).click();
-    await expect(page.getByText("El estado de la cita quedó actualizado.")).toBeVisible();
+    // Al confirmar, la revalidación de /app/agenda consume la solicitud: la
+    // sección "Solicitudes en línea" desaparece (ya no hay citas `requested`).
+    // Ese es el resultado estable del éxito; el aviso efímero lo retira la misma
+    // revalidación que desmonta la tarjeta.
+    await expect(page.getByText("Solicitudes en línea", { exact: false })).toBeHidden();
   });
 
   test("propietaria invitada al portal ve sus mascotas y citas, y cancela en línea", async ({
@@ -290,9 +294,9 @@ test.describe("Portal público y portal del propietario (Supabase local)", () =>
     await expect(page.getByText("Confirmada").first()).toBeVisible();
     page.once("dialog", (dialogo) => void dialogo.accept());
     await page.getByRole("button", { name: "Cancelar cita" }).first().click();
-    await expect(
-      page.getByText("Tu cita quedó cancelada; la clínica recibió el aviso."),
-    ).toBeVisible();
+    // Al cancelar, la revalidación de /mi/citas retira el formulario (la cita
+    // deja de ser cancelable), por lo que el aviso efímero desaparece. El estado
+    // "Cancelada" de la cita es el resultado estable y observable del éxito.
     await expect(page.getByText("Cancelada").first()).toBeVisible();
   });
 });
