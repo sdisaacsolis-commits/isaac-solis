@@ -10,8 +10,8 @@ total de datos entre clínicas.
 > clínica confirma) y portal del propietario `/mi` con vinculación por invitación
 > explícita — sobre el panel clínico de las Fases 1–7 (agenda anti-traslape, expediente
 > inmutable, recetas y vacunación). **Dogtoralia no calcula dosis ni sugiere
-> medicamentos.** Aislamiento RLS validado con pgTAP (474 aserciones; ver
-> [ROADMAP.md](./ROADMAP.md), `docs/portal/` y
+> medicamentos.** Aislamiento RLS validado con pgTAP (505 aserciones; ver
+> [ROADMAP.md](./ROADMAP.md), `docs/portal/` (incluye reseñas) y
 > [docs/security/rls-model.md](./docs/security/rls-model.md)).
 
 ## Documentación

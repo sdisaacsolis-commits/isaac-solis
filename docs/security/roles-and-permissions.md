@@ -175,3 +175,22 @@ estos permisos. Detalle: `docs/prescriptions/` y `docs/vaccination/`.
 
 Autoridad: PostgreSQL (RPCs SECURITY DEFINER + RLS forzado). La vinculación
 propietario↔cuenta es SIEMPRE explícita por invitación de la clínica.
+
+## 14. Reseñas verificadas (Fase 8.1)
+
+| Acción                                       | anon (público) | propietario (autor) | staff clínica  | admin organización  | otra organización |
+| -------------------------------------------- | -------------- | ------------------- | -------------- | ------------------- | ----------------- |
+| Ver promedio y opiniones publicadas          | ✔ (RPC curada) | ✔                   | ✔              | ✔                   | ✔ (solo público)  |
+| Reseñar una cita completada                  | ✖              | ✔ (solo la suya)    | ✖              | ✖                   | ✖                 |
+| Editar la propia reseña (≤30 días)           | ✖              | ✔                   | ✖              | ✖                   | ✖                 |
+| Responder públicamente una reseña            | ✖              | ✖                   | ✔ (operativos) | ✔                   | ✖                 |
+| Reportar una reseña (deja rastro, no oculta) | ✖              | ✖                   | ✔ (operativos) | ✔                   | ✖                 |
+| Ocultar/restaurar (con motivo, auditado)     | ✖              | ✖                   | ✖              | ✔ (elevado)         | ✖                 |
+| Editar/borrar el texto de una reseña ajena   | ✖              | ✖ (nadie)           | ✖              | ✖                   | ✖                 |
+| Leer la tabla `reviews` directamente         | ✖ (42501)      | ✔ (solo la suya)    | ✔ (su clínica) | ✔ (su organización) | ✖                 |
+
+Notas: la "verificación" es estructural (solo el propietario de una cita `completed`
+reseña, una vez). El público lee por RPCs curadas con autor enmascarado; anon nunca lee la
+tabla. Ocultar es el único camino para retirar una reseña — reservado a administración de
+la organización, con motivo y auditoría; el contenido del propietario nunca se edita ni se
+borra. Detalle: `docs/portal/reviews.md`.

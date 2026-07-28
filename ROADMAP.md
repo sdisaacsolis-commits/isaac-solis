@@ -198,6 +198,21 @@ LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica 
   (33 aserciones; 474 totales), Zod es-MX y E2E. Documentación en `docs/portal/`.
   Reseñas verificadas quedan como Fase 8.1 (plan en `doctoralia-parity.md` §3-B).
 
+## Fase 8.1 — Reseñas verificadas ✅ (2026-07-28)
+
+- **Entregado**: opiniones ligadas a una cita **completada** del propietario que asistió
+  (verificación estructural por trigger; una por cita vía índice único), calificación 1–5
+  - texto, respuesta pública de la clínica y **moderación elevada** (ocultar/restaurar solo
+    administración de la organización, con motivo y auditoría; el contenido del propietario
+    jamás se edita ni se borra). Promedio de calificación (`clinic_rating`) integrado en la
+    búsqueda y los perfiles públicos; lectura pública curada `get_clinic_reviews` (solo
+    publicadas, autor enmascarado; anon nunca lee la tabla). RPCs `submit_review`,
+    `update_my_review` (ventana 30 días), `reply_to_review`, `report_review`,
+    `set_review_visibility`, `get_my_reviewable_appointments`. UI: estrellas y opiniones en
+    perfiles y resultados, "Dejar opinión" en el portal del propietario y moderación en el
+    panel. Suite pgTAP 14 (31 aserciones; 505 totales), Zod es-MX y E2E. Migraciones
+    `202607228000*`. Documentación en `docs/portal/reviews.md`.
+
 ## Fase 8 (anterior) — App móvil de propietarios (Flutter)
 
 - Registro/inicio de sesión, perfil de mascotas, solicitud y cancelación de citas,
