@@ -247,7 +247,11 @@ test.describe("Reseñas verificadas (Supabase local)", () => {
       .getByRole("textbox", { name: "Cuéntanos tu experiencia", exact: true })
       .fill(cuerpoResena);
     await page.getByRole("button", { name: "Publicar opinión" }).click();
-    await expect(page.getByText("Tu opinión quedó publicada", { exact: false })).toBeVisible();
+    // Al publicar, la revalidación de /mi/opiniones reemplaza el formulario por
+    // la tarjeta de la reseña ya publicada (texto + opción de editar): ese es el
+    // estado observable y estable del éxito, no el aviso efímero del formulario.
+    await expect(page.getByText(cuerpoResena)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Editar" })).toBeVisible();
   });
 
   test("la reseña aparece en el perfil público de la clínica", async ({ page }) => {

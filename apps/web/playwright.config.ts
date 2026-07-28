@@ -10,6 +10,14 @@ const PORT = 3100;
 // navegación/aserción y se acota la concurrencia (una sola BD compartida) sin
 // serializar del todo. NO se debilita ninguna aserción — solo se da tiempo
 // realista a un redirect correcto bajo la carga del CI.
+//
+// Además se eleva el timeout POR PRUEBA (`timeout`): estos flujos son largos
+// (registro completo, reserva de invitado, ciclo de reseña de punta a punta) y
+// encadenan muchos pasos con compilación JIT y una BD compartida; con el tope
+// por defecto de 30 s una sola operación lenta agotaba el presupuesto de toda
+// la prueba ("Test timeout of 30000ms exceeded"). El límite por operación
+// (navegación/acción/aserción) sigue siendo estricto; solo se da margen al
+// flujo completo.
 const E2E_AUTH = process.env.E2E_AUTH === "1";
 
 export default defineConfig({
@@ -19,6 +27,7 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? "github" : "list",
+  timeout: E2E_AUTH ? 120_000 : 30_000,
   expect: { timeout: E2E_AUTH ? 20_000 : 5_000 },
   use: {
     baseURL: `http://localhost:${PORT}`,
