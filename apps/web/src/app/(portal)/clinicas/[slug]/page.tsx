@@ -15,6 +15,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { RatingStars } from "@/components/portal/rating-stars";
 import {
   formatearFechaLarga,
   formatearHora,
@@ -23,16 +24,22 @@ import {
   sumarDias,
 } from "@/lib/agenda/dates";
 import { mensajes } from "@/lib/i18n/es-mx";
-import { obtenerClinicaPublica, obtenerHuecosPublicos } from "@/lib/portal/public";
+import {
+  obtenerClinicaPublica,
+  obtenerHuecosPublicos,
+  obtenerResenasDeClinica,
+} from "@/lib/portal/public";
 
+import { ResenasClinica } from "./resenas-clinica";
 import { ReservaForm } from "./reserva-form";
 
 const t = mensajes.portalPublico.clinica;
 const tr = mensajes.portalPublico.reserva;
+const RESENAS_POR_PAGINA = 20;
 
 interface Params {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ servicio?: string; vet?: string; fecha?: string }>;
+  searchParams: Promise<{ servicio?: string; vet?: string; fecha?: string; opiniones?: string }>;
 }
 
 export async function generateMetadata({
@@ -57,6 +64,13 @@ export default async function PaginaClinicaPublica({ params, searchParams }: Par
   const [{ slug }, seleccion] = await Promise.all([params, searchParams]);
   const clinica = await obtenerClinicaPublica(slug);
   if (!clinica) notFound();
+
+  // Opiniones (paginación por enlace con offset).
+  const paginaResenas = Math.max(1, Number.parseInt(seleccion.opiniones ?? "1", 10) || 1);
+  const resenas = await obtenerResenasDeClinica(slug, {
+    limit: RESENAS_POR_PAGINA,
+    offset: (paginaResenas - 1) * RESENAS_POR_PAGINA,
+  });
 
   const direccion = [
     clinica.address_line_1,
@@ -113,6 +127,12 @@ export default async function PaginaClinicaPublica({ params, searchParams }: Par
             <Badge variant="brand">{mensajes.portalPublico.buscar.badgeReservacion}</Badge>
           ) : null}
         </div>
+        <a
+          href="#opiniones"
+          className="w-fit rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <RatingStars value={clinica.rating.average} count={clinica.rating.count} showCount />
+        </a>
         {clinica.description ? (
           <p className="max-w-3xl text-ink-muted">{clinica.description}</p>
         ) : null}
@@ -296,6 +316,13 @@ export default async function PaginaClinicaPublica({ params, searchParams }: Par
           </CardContent>
         </Card>
       ) : null}
+
+      <ResenasClinica
+        slug={clinica.slug}
+        datos={resenas}
+        pagina={paginaResenas}
+        porPagina={RESENAS_POR_PAGINA}
+      />
     </div>
   );
 }

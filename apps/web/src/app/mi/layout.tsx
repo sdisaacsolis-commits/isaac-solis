@@ -40,6 +40,12 @@ export default async function PortalPropietarioLayout({
             >
               {t.nav.citas}
             </Link>
+            <Link
+              href="/mi/opiniones"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-ink-muted hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              {t.nav.opiniones}
+            </Link>
           </nav>
           <div className="flex items-center gap-3">
             <span className="hidden text-sm text-ink-muted sm:inline">

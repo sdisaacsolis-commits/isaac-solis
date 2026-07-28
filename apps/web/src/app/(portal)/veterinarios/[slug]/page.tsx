@@ -97,6 +97,11 @@ export default async function PaginaVeterinarioOCiudad({ params }: Params) {
                     ) : null}
                   </div>
                   <div className="flex items-center gap-2">
+                    <Button asChild size="sm" variant="ghost">
+                      <Link href={`/clinicas/${encodeURIComponent(clinica.clinic_slug)}#opiniones`}>
+                        {mensajes.resenas.publico.verOpiniones}
+                      </Link>
+                    </Button>
                     {clinica.accepts_online_booking ? (
                       <>
                         <Badge variant="brand">{t.buscar.badgeReservacion}</Badge>

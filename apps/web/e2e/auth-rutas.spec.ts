@@ -14,6 +14,7 @@ test.describe("Protección de rutas y páginas de autenticación", () => {
     for (const ruta of [
       "/app",
       "/app/personal",
+      "/app/opiniones",
       "/app/organizacion",
       "/app/configuracion",
       "/app/propietarios",
@@ -33,6 +34,7 @@ test.describe("Protección de rutas y páginas de autenticación", () => {
       "/mi",
       "/mi/mascotas",
       "/mi/citas",
+      "/mi/opiniones",
     ]) {
       // Se verifica el redirect del middleware por la RESPUESTA HTTP directa
       // (sin maxRedirects): es determinista y evita la carrera de navegación

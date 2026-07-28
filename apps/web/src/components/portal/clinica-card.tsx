@@ -28,7 +28,12 @@ export function ClinicaCard({ clinica }: { clinica: ClinicaPublicaResumen }) {
           ) : null}
         </div>
         {ubicacion ? <CardDescription>{ubicacion}</CardDescription> : null}
-        <RatingStars value={clinica.rating.average} count={clinica.rating.count} size="sm" showCount />
+        <RatingStars
+          value={clinica.rating.average}
+          count={clinica.rating.count}
+          size="sm"
+          showCount
+        />
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         {clinica.description ? (

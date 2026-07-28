@@ -77,6 +77,16 @@ export function formatearFechaHora(iso: string, timeZone: string = DEFAULT_TIMEZ
   }).format(new Date(iso));
 }
 
+/** Instante ISO → fecha en español ("28 de julio de 2026"), sin la hora. */
+export function formatearFecha(iso: string, timeZone: string = DEFAULT_TIMEZONE): string {
+  return new Intl.DateTimeFormat("es-MX", {
+    timeZone,
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(iso));
+}
+
 export function formatearHora(iso: string, timeZone: string = DEFAULT_TIMEZONE): string {
   return new Intl.DateTimeFormat("es-MX", {
     timeZone,
