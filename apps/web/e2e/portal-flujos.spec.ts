@@ -227,7 +227,10 @@ test.describe("Portal público y portal del propietario (Supabase local)", () =>
       .getByRole("textbox", { name: "Correo electrónico", exact: true })
       .fill(correoInvitado);
     await page.getByRole("textbox", { name: "Nombre de tu mascota", exact: true }).fill("Rocko");
-    await page.getByLabel("Especie", { exact: true }).selectOption("dog");
+    // "Especie" es un campo requerido: su <label> incluye un " *" aria-hidden, por
+    // lo que getByLabel(exact) no coincide con el texto crudo. Se localiza por rol
+    // y nombre accesible (que excluye el asterisco), igual que los demás campos.
+    await page.getByRole("combobox", { name: "Especie", exact: true }).selectOption("dog");
     await page.getByRole("button", { name: "Solicitar cita" }).click();
 
     // Confirmación con folio y aviso de solicitud pendiente.
