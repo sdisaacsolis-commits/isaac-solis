@@ -234,12 +234,17 @@ LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica 
 - **Criterio de salida**: recordatorios entregados y registrados; fallos reintentados; nada
   se envía dos veces. ✅ (canal correo; push como cimiento).
 
-## Fase 10 — Panel administrativo y métricas
+## Fase 10 — Panel administrativo y métricas ✅ (2026-07-29)
 
-- Dashboard de clínica: resumen del día, citas pendientes de confirmar, métricas básicas
-  (citas por periodo, cancelaciones, inasistencias).
-- Panel superadmin: clínicas, activaciones, actividad global.
-- **Criterio de salida**: métricas correctas contra datos de prueba conocidos.
+- Dashboard de clínica: resumen del día, citas pendientes de confirmar y métricas por
+  periodo (completadas, canceladas, inasistencias) vía RPC `clinic_appointment_metrics`
+  (SECURITY DEFINER, solo personal operativo, bucketing por zona de la clínica).
+- Panel superadmin (`/app/admin`, gated por `current_user_is_superadmin`, ya existente):
+  panorama global (`platform_overview`), listado de clínicas (`platform_clinics`) y
+  actividad reciente del `audit_log` (`platform_recent_activity`) — todas superadmin-only.
+- Sin tablas nuevas: se agregan las entidades existentes. Pruebas: pgTAP 16 (16 aserciones;
+  543 totales) con métricas correctas contra un dataset conocido y aisladas entre clínicas.
+- **Criterio de salida**: métricas correctas contra datos de prueba conocidos. ✅
 
 ## Fase 11 — Preparación de suscripciones
 

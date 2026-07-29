@@ -4,15 +4,16 @@ Plataforma SaaS mexicana para clínicas veterinarias, médicos veterinarios y pr
 mascotas: agenda de citas, expedientes clínicos, recetas y recordatorios — con aislamiento
 total de datos entre clínicas.
 
-> **Estado actual: Fase 9 (recordatorios automáticos).**
-> Procesador programado de recordatorios (Edge Function `send-reminders` + `service_role`)
-> sobre los outbox de citas (24 h antes) y vacunas (próximas), con reintentos limitados e
-> idempotencia (nada se envía dos veces); cimientos del canal push (`device_tokens`). Encima
-> del portal público con reseñas verificadas (Fase 8/8.1) y del panel clínico de las
+> **Estado actual: Fase 10 (panel administrativo y métricas).**
+> Dashboard de clínica con resumen del día, citas por confirmar y métricas por periodo
+> (completadas, canceladas, inasistencias) vía RPC; panel superadmin (`/app/admin`) con
+> panorama global, clínicas y actividad, gated por `is_superadmin`. Sobre los recordatorios
+> automáticos (Fase 9), el portal público con reseñas (Fase 8/8.1) y el panel clínico de las
 > Fases 1–7 (agenda anti-traslape, expediente inmutable, recetas y vacunación).
 > **Dogtoralia no calcula dosis ni sugiere medicamentos.** Aislamiento RLS validado con
-> pgTAP (527 aserciones; ver [ROADMAP.md](./ROADMAP.md), `docs/notifications/reminders.md`,
-> `docs/portal/` (incluye reseñas) y [docs/security/rls-model.md](./docs/security/rls-model.md)).
+> pgTAP (543 aserciones; ver [ROADMAP.md](./ROADMAP.md), `docs/admin/`,
+> `docs/notifications/reminders.md`, `docs/portal/` y
+> [docs/security/rls-model.md](./docs/security/rls-model.md)).
 
 ## Documentación
 
