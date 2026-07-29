@@ -11,10 +11,13 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { SolicitudesEnLinea } from "@/app/app/agenda/solicitudes-en-linea";
 import { RatingStars } from "@/components/portal/rating-stars";
-import { metricasAgenda } from "@/lib/agenda/queries";
+import { formatearFechaHora } from "@/lib/agenda/dates";
+import { listarSolicitudesEnLinea, metricasAgenda } from "@/lib/agenda/queries";
 import { metricasConsultas } from "@/lib/clinica/queries";
 import { mensajes } from "@/lib/i18n/es-mx";
+import { obtenerMetricasAgenda } from "@/lib/metricas/queries";
 import { metricasPacientes } from "@/lib/pets/queries";
 import { metricasRecetas } from "@/lib/recetas/queries";
 import { metricasResenas } from "@/lib/resenas/queries";
@@ -50,7 +53,13 @@ export default async function PaginaInicioPanel({
 
   const clinica = context.activeClinic;
   const pacientes = clinica ? await metricasPacientes(clinica.id) : null;
-  const agenda = clinica ? await metricasAgenda(clinica.id, clinica.timezone) : null;
+  const [agenda, resumenAgenda, solicitudes] = clinica
+    ? await Promise.all([
+        metricasAgenda(clinica.id, clinica.timezone),
+        obtenerMetricasAgenda(clinica.id, clinica.timezone),
+        listarSolicitudesEnLinea(clinica.id),
+      ])
+    : [null, null, []];
   const consultas = clinica ? await metricasConsultas(clinica.id, clinica.timezone) : null;
   const [recetas, vacunacion] = clinica
     ? await Promise.all([
@@ -178,6 +187,53 @@ export default async function PaginaInicioPanel({
             </Card>
           ))}
         </div>
+      ) : null}
+
+      {resumenAgenda ? (
+        <section aria-label={mensajes.panel.resumenAgenda.titulo} className="flex flex-col gap-3">
+          <div>
+            <h2 className="text-lg font-semibold text-ink">
+              {mensajes.panel.resumenAgenda.titulo}
+            </h2>
+            <p className="text-sm text-ink-muted">{mensajes.panel.resumenAgenda.descripcion}</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+            {(
+              [
+                [mensajes.panel.resumenAgenda.completadas, resumenAgenda.completadas],
+                [mensajes.panel.resumenAgenda.canceladas, resumenAgenda.canceladas],
+                [mensajes.panel.resumenAgenda.noShow, resumenAgenda.noShow],
+                [mensajes.panel.resumenAgenda.totalPeriodo, resumenAgenda.totalPeriodo],
+                [mensajes.panel.resumenAgenda.porConfirmar, resumenAgenda.porConfirmar],
+                [mensajes.panel.resumenAgenda.hoy, resumenAgenda.hoy],
+              ] as const
+            ).map(([titulo, valor]) => (
+              <Card key={titulo}>
+                <CardHeader className="p-4">
+                  <CardDescription>{titulo}</CardDescription>
+                  <CardTitle className="text-2xl">
+                    <Link className="hover:text-brand-700" href="/app/agenda">
+                      {valor}
+                    </Link>
+                  </CardTitle>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {solicitudes.length > 0 ? (
+        <SolicitudesEnLinea
+          solicitudes={solicitudes.map(({ cita, mascota, propietario, servicios }) => ({
+            appointmentId: cita.id,
+            folio: cita.folio,
+            fechaLegible: formatearFechaHora(cita.scheduled_start, clinica?.timezone),
+            mascota: mascota?.name ?? "—",
+            propietario: propietario?.display_name ?? "—",
+            servicios: servicios.join(", "),
+          }))}
+        />
       ) : null}
 
       {consultas ? (

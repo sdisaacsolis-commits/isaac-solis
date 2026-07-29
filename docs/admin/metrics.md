@@ -23,11 +23,11 @@ Superadmin = `profiles.is_superadmin` (booleano protegido por trigger + auditor�
 `current_user_is_superadmin()`. La UI se protege con `requireSuperadmin()` (`notFound()` si
 no lo es) y la entrada de menú solo aparece para superadmins; las RPCs además lo verifican.
 
-| RPC                                | Devuelve                                                                 |
-| ---------------------------------- | ------------------------------------------------------------------------ |
-| `platform_overview()`              | Panorama global: organizaciones/clínicas por estado, veterinarios activos, propietarios, mascotas, citas. |
-| `platform_clinics(limit, offset)`  | Listado de clínicas con su organización, estado, público y nº de citas.  |
-| `platform_recent_activity(limit)`  | Actividad reciente del `audit_log` (global).                             |
+| RPC                               | Devuelve                                                                                                  |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `platform_overview()`             | Panorama global: organizaciones/clínicas por estado, veterinarios activos, propietarios, mascotas, citas. |
+| `platform_clinics(limit, offset)` | Listado de clínicas con su organización, estado, público y nº de citas.                                   |
+| `platform_recent_activity(limit)` | Actividad reciente del `audit_log` (global).                                                              |
 
 Todas lanzan `42501` para no-superadmin.
 
