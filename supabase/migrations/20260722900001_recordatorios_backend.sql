@@ -60,6 +60,12 @@ create policy device_tokens_update_propio on public.device_tokens
 create policy device_tokens_delete_propio on public.device_tokens
   for delete to authenticated using (user_id = (select auth.uid()));
 
+-- Privilegios de tabla (en la nube no se otorgan por defecto): las políticas RLS
+-- de arriba acotan las filas; el rol necesita además el GRANT del tipo de
+-- operación. El backend programado (service_role) los lee para enviar.
+grant select, insert, update, delete on table public.device_tokens to authenticated;
+grant all on table public.device_tokens to service_role;
+
 -- Registrar/actualizar el token del dispositivo del usuario autenticado.
 create or replace function public.register_device_token(
   p_token text,
