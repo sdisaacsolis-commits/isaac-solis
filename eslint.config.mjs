@@ -17,6 +17,9 @@ export default tseslint.config(
       "**/playwright-report/**",
       "**/test-results/**",
       "supabase/.temp/**",
+      // Edge Functions en Deno: las verifica `deno lint`/`deno check` en su
+      // propio job de CI; el ESLint de Node no resuelve globales de Deno ni JSR.
+      "supabase/functions/**",
       "**/next-env.d.ts",
     ],
   },

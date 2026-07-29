@@ -7,6 +7,8 @@ coverage/
 playwright-report/
 test-results/
 supabase/.temp/
+# Edge Functions en Deno: las formatea `deno fmt` en su propio job de CI.
+supabase/functions/
 next-env.d.ts
 # Generado por Supabase CLI (byte a byte; el CI verifica drift):
 packages/types/src/database.types.ts

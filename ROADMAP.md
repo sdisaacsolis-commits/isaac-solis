@@ -219,12 +219,20 @@ LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica 
   historial (consultas, vacunas, recetas de sus mascotas), tokens FCM.
 - **Criterio de salida**: flujo propietario completo en Android e iOS (builds de desarrollo).
 
-## Fase 9 — Recordatorios automáticos
+## Fase 9 — Recordatorios automáticos ✅ (2026-07-29)
 
-- `pg_cron` + Edge Function `send-reminders`: recordatorio de cita (24 h antes), vacunas y
-  desparasitaciones próximas; push (FCM) + correo (Resend) con estado y reintentos.
+- Edge Function `send-reminders` (Deno + `service_role`) procesa los outbox de cita
+  (recordatorio 24 h antes) y de vacuna (próxima, 7 días antes) con correo (Resend/dev);
+  RPCs batch cross-clínica reservadas a `service_role`; reintentos limitados (≤5) y estado
+  terminal; idempotencia por `idempotency_key UNIQUE`. Cimientos de push: `device_tokens`
+  (RLS por dueño) + `register_device_token`. Programación (cron) documentada para la nube
+  (`pg_cron` + `pg_net` con secreto en Supabase Vault, o Vercel Cron). Decisiones: ADR 0003;
+  guía: `docs/notifications/reminders.md`. Pruebas: pgTAP 15 (22 aserciones).
+- **[Propuesta]** de seguimiento (fuera del alcance verificable de esta fase): envío **push**
+  a propietarios (mapear propietario → usuario → tokens) y **desparasitaciones** próximas
+  (requiere la tabla base `dewormings`, aún inexistente).
 - **Criterio de salida**: recordatorios entregados y registrados; fallos reintentados; nada
-  se envía dos veces.
+  se envía dos veces. ✅ (canal correo; push como cimiento).
 
 ## Fase 10 — Panel administrativo y métricas
 

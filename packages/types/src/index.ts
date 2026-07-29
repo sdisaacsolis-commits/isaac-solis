@@ -172,6 +172,12 @@ export type VaccinationSource = Enums<"vaccination_source">;
 export const VACCINATION_NOTIFICATION_TYPES = Constants.public.Enums.vaccination_notification_type;
 export type VaccinationNotificationType = Enums<"vaccination_notification_type">;
 
+// ---------------------------------------------------------------------------
+// Recordatorios y canal push (Fase 9)
+// ---------------------------------------------------------------------------
+export const DEVICE_PLATFORMS = Constants.public.Enums.device_platform;
+export type DevicePlatform = Enums<"device_platform">;
+
 /**
  * Máquina de estados de recetas (espejo de prescription_transition_allowed en
  * SQL, que es la autoridad). issued es inmutable; superseded/voided conservan

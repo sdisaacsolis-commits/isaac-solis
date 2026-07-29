@@ -46,6 +46,12 @@ export {
 } from "./schemas/clinical";
 export { clinicSlugSchema, emailSchema, nonEmptyTextSchema, phoneMxSchema } from "./schemas/common";
 export {
+  type RegisterDeviceTokenInput,
+  registerDeviceTokenSchema,
+  type UnregisterDeviceTokenInput,
+  unregisterDeviceTokenSchema,
+} from "./schemas/devices";
+export {
   clinicSearchSchema,
   createOwnerSchema,
   createPetSchema,

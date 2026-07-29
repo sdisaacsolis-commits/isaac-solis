@@ -91,6 +91,30 @@ jobs:
             exit 1
           fi
 
+  edge-functions:
+    name: Edge Functions (Deno)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Formato (deno fmt)
+        working-directory: supabase/functions/send-reminders
+        run: deno fmt --check
+
+      - name: Lint (deno lint)
+        working-directory: supabase/functions/send-reminders
+        run: deno lint
+
+      - name: Typecheck (deno check)
+        working-directory: supabase/functions/send-reminders
+        run: deno check index.ts
+
   e2e:
     name: Pruebas E2E (Playwright)
     runs-on: ubuntu-latest
