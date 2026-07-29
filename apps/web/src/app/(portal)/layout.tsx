@@ -55,11 +55,18 @@ export default function PortalPublicoLayout({ children }: Readonly<{ children: R
               {pie.accesoPanel}
             </Link>
           </nav>
-          <div className="flex flex-col gap-2 text-sm">
+          <nav aria-label={pie.legal} className="flex flex-col gap-2 text-sm">
             <p className="font-semibold text-ink">{pie.legal}</p>
-            <p className="text-ink-muted">{pie.avisoPrivacidad}</p>
-            <p className="text-ink-muted">{pie.terminos}</p>
-          </div>
+            <Link
+              className="text-ink-muted hover:text-ink hover:underline"
+              href="/aviso-de-privacidad"
+            >
+              {pie.avisoPrivacidad}
+            </Link>
+            <Link className="text-ink-muted hover:text-ink hover:underline" href="/terminos">
+              {pie.terminos}
+            </Link>
+          </nav>
         </div>
         <div className="border-t border-border">
           <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-2 px-6 py-6 text-sm text-ink-muted sm:flex-row">
