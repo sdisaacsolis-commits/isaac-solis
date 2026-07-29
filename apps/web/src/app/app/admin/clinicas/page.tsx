@@ -14,7 +14,7 @@ import {
 import type { Metadata } from "next";
 
 import { requireSuperadmin } from "@/lib/admin/guard";
-import { listarClinicasPlataforma } from "@/lib/admin/queries";
+import { listarClinicasPlataforma, mapaPlanesPorClinica } from "@/lib/admin/queries";
 import { formatearFecha } from "@/lib/agenda/dates";
 import { mensajes } from "@/lib/i18n/es-mx";
 import { etiquetasEstadoClinica } from "@/lib/roles";
@@ -26,6 +26,7 @@ const t = mensajes.admin.clinicas;
 export default async function PaginaAdminClinicas() {
   await requireSuperadmin();
   const clinicas = await listarClinicasPlataforma();
+  const planes = await mapaPlanesPorClinica(clinicas.map((clinica) => clinica.clinic_id));
 
   return (
     <Card>
@@ -44,6 +45,7 @@ export default async function PaginaAdminClinicas() {
                   <TableHead>{t.columnas.clinica}</TableHead>
                   <TableHead>{t.columnas.organizacion}</TableHead>
                   <TableHead>{t.columnas.estado}</TableHead>
+                  <TableHead>{t.columnas.plan}</TableHead>
                   <TableHead>{t.columnas.publica}</TableHead>
                   <TableHead>{t.columnas.citas}</TableHead>
                   <TableHead>{t.columnas.alta}</TableHead>
@@ -59,6 +61,7 @@ export default async function PaginaAdminClinicas() {
                         {etiquetasEstadoClinica[clinica.clinic_status]}
                       </Badge>
                     </TableCell>
+                    <TableCell>{planes.get(clinica.clinic_id) ?? t.sinPlan}</TableCell>
                     <TableCell>{clinica.is_public ? t.publicaSi : t.publicaNo}</TableCell>
                     <TableCell>{clinica.appointment_count}</TableCell>
                     <TableCell>{formatearFecha(clinica.created_at)}</TableCell>

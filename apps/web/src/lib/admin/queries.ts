@@ -33,6 +33,13 @@ export type FilaClinicaPlataforma =
 export type FilaActividadPlataforma =
   Database["public"]["Functions"]["platform_recent_activity"]["Returns"][number];
 
+/** Conteo de clínicas por plan (una fila por `plans.code` con al menos una suscripción). */
+export interface ConteoSuscripcionPlan {
+  code: string;
+  name: string;
+  count: number;
+}
+
 function esObjeto(valor: unknown): valor is Record<string, unknown> {
   return typeof valor === "object" && valor !== null && !Array.isArray(valor);
 }
@@ -91,6 +98,60 @@ export async function listarClinicasPlataforma(
   });
   if (error) return [];
   return data ?? [];
+}
+
+/**
+ * Desglose de suscripciones por plan. El superadmin ve TODAS las `subscriptions`
+ * por RLS, así que se consulta directo con el cliente de servidor (nunca
+ * service_role) uniendo `subscriptions`+`plans` y se agrupa en memoria por
+ * `plans.code`. Ante error se devuelve un arreglo vacío.
+ */
+export async function contarSuscripcionesPorPlan(): Promise<ConteoSuscripcionPlan[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select("plan:plans!inner(code, name)");
+  if (error || !data) return [];
+
+  const acumulado = new Map<string, ConteoSuscripcionPlan>();
+  for (const fila of data) {
+    const plan = fila.plan;
+    if (!plan) continue;
+    const previo = acumulado.get(plan.code);
+    if (previo) {
+      previo.count += 1;
+    } else {
+      acumulado.set(plan.code, { code: plan.code, name: plan.name, count: 1 });
+    }
+  }
+
+  return Array.from(acumulado.values()).sort((a, b) => b.count - a.count);
+}
+
+/**
+ * Nombre del plan vigente por clínica, para un conjunto de `clinic_id`. El
+ * superadmin ve todas las `subscriptions` por RLS; se consulta directo con el
+ * cliente de servidor uniendo `subscriptions`+`plans`. Devuelve un `Map`
+ * `clinic_id -> plan_name`; ante error o clínicas sin suscripción, la entrada
+ * simplemente no existe.
+ */
+export async function mapaPlanesPorClinica(
+  clinicIds: readonly string[],
+): Promise<Map<string, string>> {
+  const mapa = new Map<string, string>();
+  if (clinicIds.length === 0) return mapa;
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select("clinic_id, plan:plans!inner(name)")
+    .in("clinic_id", [...clinicIds]);
+  if (error || !data) return mapa;
+
+  for (const fila of data) {
+    if (fila.plan) mapa.set(fila.clinic_id, fila.plan.name);
+  }
+  return mapa;
 }
 
 /** Actividad reciente (audit_log) de la plataforma. */

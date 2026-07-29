@@ -23,6 +23,7 @@ import { metricasRecetas } from "@/lib/recetas/queries";
 import { metricasResenas } from "@/lib/resenas/queries";
 import { etiquetasEstadoClinica } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
+import { obtenerPlanDeClinica } from "@/lib/suscripciones/queries";
 import { requireTenancyContext } from "@/lib/tenancy/queries";
 import { metricasVacunacion } from "@/lib/vacunacion/queries";
 
@@ -68,6 +69,7 @@ export default async function PaginaInicioPanel({
       ])
     : [null, null];
   const resenas = clinica ? await metricasResenas(clinica.id) : null;
+  const plan = clinica ? await obtenerPlanDeClinica(clinica.id) : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -134,6 +136,32 @@ export default async function PaginaInicioPanel({
           </CardContent>
         </Card>
       </div>
+
+      {plan ? (
+        <Card>
+          <CardHeader className="p-4">
+            <CardDescription>{t.plan.titulo}</CardDescription>
+            <CardTitle className="flex flex-wrap items-center gap-2 text-lg">
+              {plan.planName}
+              <Badge
+                variant={
+                  plan.status === "active" || plan.status === "trialing" ? "success" : "warning"
+                }
+              >
+                {t.plan.estados[plan.status] ?? plan.status}
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            <p className="text-sm text-ink-muted">
+              {t.plan.veterinariosIncluidos(plan.includedVeterinarians)}
+            </p>
+            {plan.withinVeterinarianLimit ? null : (
+              <p className="text-sm text-destructive">{t.plan.sobreLimite}</p>
+            )}
+          </CardContent>
+        </Card>
+      ) : null}
 
       {pacientes ? (
         <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-6">

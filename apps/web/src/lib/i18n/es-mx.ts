@@ -183,6 +183,18 @@ export const mensajes = {
       texto: "El registro de mascotas y expedientes clínicos llega en las Fases 4 y 6.",
     },
     sinClinica: "Aún no tienes una clínica activa.",
+    plan: {
+      titulo: "Plan",
+      veterinariosIncluidos: (n: number) =>
+        n === 1 ? "1 veterinario incluido" : `${n} veterinarios incluidos`,
+      sobreLimite: "Has superado los veterinarios incluidos en tu plan.",
+      estados: {
+        trialing: "En prueba",
+        active: "Activa",
+        past_due: "Pago pendiente",
+        canceled: "Cancelada",
+      } as Record<string, string>,
+    },
   },
   onboarding: {
     titulo: "Configura tu espacio de trabajo",
@@ -1754,10 +1766,12 @@ export const mensajes = {
         clinica: "Clínica",
         organizacion: "Organización",
         estado: "Estado",
+        plan: "Plan",
         publica: "Pública",
         citas: "Citas",
         alta: "Alta",
       },
+      sinPlan: "Sin plan",
       publicaSi: "Sí",
       publicaNo: "No",
     },
@@ -1770,6 +1784,12 @@ export const mensajes = {
         entidad: "Entidad",
         fecha: "Fecha",
       },
+    },
+    suscripciones: {
+      titulo: "Suscripciones por plan",
+      descripcion: "Número de clínicas activas en cada plan de la plataforma.",
+      vacio: "No hay suscripciones registradas todavía.",
+      clinicas: (n: number) => (n === 1 ? "1 clínica" : `${n} clínicas`),
     },
   },
 } as const;

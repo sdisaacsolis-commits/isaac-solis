@@ -246,11 +246,21 @@ LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica 
   543 totales) con métricas correctas contra un dataset conocido y aisladas entre clínicas.
 - **Criterio de salida**: métricas correctas contra datos de prueba conocidos. ✅
 
-## Fase 11 — Preparación de suscripciones
+## Fase 11 — Preparación de suscripciones ✅ (2026-07-29)
 
-- `plans` y `subscriptions` operativos con plan `beta` gratuito asignado automáticamente.
-- Estructura de Edge Function para webhooks de Stripe (sin activar cobros).
-- **Criterio de salida**: toda clínica tiene suscripción; el sistema puede restringir por plan.
+- `plans` (lectura pública de activos) y `subscriptions` (una por clínica; RLS: personal /
+  org-admin / superadmin leen, sin escritura de cliente) operativos, con el plan `beta`
+  gratuito **asignado automáticamente por trigger** al crear cada clínica.
+- Restricción por plan disponible pero **no bloqueante en beta**: `clinic_current_plan`,
+  `clinic_active_veterinarian_count` y `clinic_within_veterinarian_limit` (SECURITY DEFINER)
+  exponen el plan vigente y el conteo de veterinarios; la UI solo informa si se supera el
+  límite incluido.
+- Capa web: tarjeta «Plan» en el dashboard de clínica y desglose de suscripciones por plan en
+  el panel superadmin (consulta directa `subscriptions`+`plans` bajo RLS, sin service_role).
+- Scaffold de Stripe (Edge Function `stripe-webhook`) **sin activar cobros**; identificadores
+  `stripe_customer_id`/`stripe_subscription_id` nullable.
+- Pruebas: pgTAP 17 (suite 17); 556 aserciones totales.
+- **Criterio de salida**: toda clínica tiene suscripción; el sistema puede restringir por plan. ✅
 
 ## Fase 12 — Endurecimiento y beta
 

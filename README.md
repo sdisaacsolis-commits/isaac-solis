@@ -4,14 +4,15 @@ Plataforma SaaS mexicana para clínicas veterinarias, médicos veterinarios y pr
 mascotas: agenda de citas, expedientes clínicos, recetas y recordatorios — con aislamiento
 total de datos entre clínicas.
 
-> **Estado actual: Fase 10 (panel administrativo y métricas).**
-> Dashboard de clínica con resumen del día, citas por confirmar y métricas por periodo
-> (completadas, canceladas, inasistencias) vía RPC; panel superadmin (`/app/admin`) con
-> panorama global, clínicas y actividad, gated por `is_superadmin`. Sobre los recordatorios
-> automáticos (Fase 9), el portal público con reseñas (Fase 8/8.1) y el panel clínico de las
-> Fases 1–7 (agenda anti-traslape, expediente inmutable, recetas y vacunación).
+> **Estado actual: Fase 11 (preparación de suscripciones).**
+> `plans` y `subscriptions` (una por clínica, plan `beta` gratuito por trigger); restricción
+> por plan disponible pero no bloqueante en beta; tarjeta «Plan» en el dashboard y desglose de
+> suscripciones en el panel superadmin; scaffold de Stripe (`stripe-webhook`) sin cobros. Sobre
+> el panel administrativo y métricas (Fase 10), los recordatorios automáticos (Fase 9), el
+> portal público con reseñas (Fase 8/8.1) y el panel clínico de las Fases 1–7 (agenda
+> anti-traslape, expediente inmutable, recetas y vacunación).
 > **Dogtoralia no calcula dosis ni sugiere medicamentos.** Aislamiento RLS validado con
-> pgTAP (543 aserciones; ver [ROADMAP.md](./ROADMAP.md), `docs/admin/`,
+> pgTAP (556 aserciones; ver [ROADMAP.md](./ROADMAP.md), `docs/subscriptions/`, `docs/admin/`,
 > `docs/notifications/reminders.md`, `docs/portal/` y
 > [docs/security/rls-model.md](./docs/security/rls-model.md)).
 

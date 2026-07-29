@@ -2,7 +2,7 @@ import { Alert, Card, CardContent, CardDescription, CardHeader, CardTitle } from
 import type { Metadata } from "next";
 
 import { requireSuperadmin } from "@/lib/admin/guard";
-import { obtenerPanorama } from "@/lib/admin/queries";
+import { contarSuscripcionesPorPlan, obtenerPanorama } from "@/lib/admin/queries";
 import { mensajes } from "@/lib/i18n/es-mx";
 
 export const metadata: Metadata = { title: mensajes.admin.nav.panorama };
@@ -22,7 +22,10 @@ function TarjetaMetrica({ titulo, valor }: { titulo: string; valor: number }) {
 
 export default async function PaginaAdminPanorama() {
   await requireSuperadmin();
-  const panorama = await obtenerPanorama();
+  const [panorama, suscripciones] = await Promise.all([
+    obtenerPanorama(),
+    contarSuscripcionesPorPlan(),
+  ]);
 
   if (!panorama) {
     return <Alert variant="warning">{mensajes.comun.sinDatos}</Alert>;
@@ -108,6 +111,29 @@ export default async function PaginaAdminPanorama() {
               <p className="text-xl font-semibold text-ink">{valor}</p>
             </div>
           ))}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="p-4">
+          <CardTitle className="text-base">{mensajes.admin.suscripciones.titulo}</CardTitle>
+          <p className="text-sm text-ink-muted">{mensajes.admin.suscripciones.descripcion}</p>
+        </CardHeader>
+        <CardContent>
+          {suscripciones.length === 0 ? (
+            <p className="text-sm text-ink-muted">{mensajes.admin.suscripciones.vacio}</p>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {suscripciones.map((plan) => (
+                <div key={plan.code} className="rounded-lg border border-border bg-surface p-3">
+                  <p className="text-sm text-ink-muted">{plan.name}</p>
+                  <p className="text-xl font-semibold text-ink">
+                    {mensajes.admin.suscripciones.clinicas(plan.count)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
