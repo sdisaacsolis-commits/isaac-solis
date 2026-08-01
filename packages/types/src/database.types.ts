@@ -4315,6 +4315,10 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      clinic_appointment_metrics: {
+        Args: { p_clinic_id: string; p_from: string; p_to: string }
+        Returns: Json
+      }
       clinic_belongs_to_organization: {
         Args: { p_clinic_id: string; p_organization_id: string }
         Returns: boolean
@@ -4554,6 +4558,33 @@ export type Database = {
         Returns: boolean
       }
       pet_id_from_storage_path: { Args: { p_name: string }; Returns: string }
+      platform_clinics: {
+        Args: { p_limit?: number; p_offset?: number }
+        Returns: {
+          appointment_count: number
+          clinic_id: string
+          clinic_name: string
+          clinic_status: Database["public"]["Enums"]["clinic_status"]
+          created_at: string
+          is_public: boolean
+          organization_id: string
+          organization_name: string
+          organization_status: Database["public"]["Enums"]["organization_status"]
+        }[]
+      }
+      platform_overview: { Args: never; Returns: Json }
+      platform_recent_activity: {
+        Args: { p_limit?: number }
+        Returns: {
+          action: string
+          actor_user_id: string
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: number
+          organization_id: string
+        }[]
+      }
       prescription_clinic: {
         Args: { p_prescription_id: string }
         Returns: string

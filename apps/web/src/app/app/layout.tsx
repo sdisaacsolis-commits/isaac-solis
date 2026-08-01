@@ -29,6 +29,12 @@ export default async function AppLayout({ children }: Readonly<{ children: React
   // Protección de servidor (además del middleware): sin sesión → redirect.
   const { profile, email } = await requireUser();
 
+  // Nav de superadmin: la entrada solo se muestra con el flag. La autoridad real
+  // sigue en la BD (RLS + guard de la sección); esto es únicamente UX.
+  const enlacesVisibles = profile?.is_superadmin
+    ? [...enlaces, { href: "/app/admin", etiqueta: nav.administracion }]
+    : enlaces;
+
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="border-b border-border bg-surface">
@@ -41,7 +47,7 @@ export default async function AppLayout({ children }: Readonly<{ children: React
             {mensajes.marca.nombre}
           </Link>
           <nav aria-label="Navegación principal" className="flex flex-wrap items-center gap-1">
-            {enlaces.map((enlace) => (
+            {enlacesVisibles.map((enlace) => (
               <Link
                 key={enlace.href}
                 href={enlace.href}

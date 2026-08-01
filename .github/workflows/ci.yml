@@ -70,7 +70,17 @@ jobs:
       # Supabase CLI + Docker: el entorno que mejor representa producción
       # (imagen real de Postgres de Supabase, con auth, pgtap y roles).
       - name: Iniciar PostgreSQL de Supabase
-        run: pnpm exec supabase db start
+        run: |
+          # El pull de imágenes puede toparse con el rate limit de Docker/ECR;
+          # reintentar con backoff evita fallos transitorios de infraestructura.
+          intento=0
+          until pnpm exec supabase db start; do
+            intento=$((intento + 1))
+            if [ "$intento" -ge 5 ]; then echo "::error::supabase db start falló tras $intento intentos"; exit 1; fi
+            echo "supabase db start falló (intento $intento); reintentando en $((intento * 20))s…"
+            pnpm exec supabase stop --no-backup || true
+            sleep $((intento * 20))
+          done
 
       - name: Aplicar migraciones desde una base limpia
         run: pnpm exec supabase db reset
@@ -80,7 +90,18 @@ jobs:
 
       - name: Verificar que los tipos generados no tienen drift
         run: |
-          pnpm exec supabase gen types typescript --local --schema public > /tmp/database.types.ts
+          # gen types descarga la imagen postgres-meta; el rate limit de Docker/ECR
+          # es transitorio, así que se reintenta con backoff antes de comparar.
+          intento=0
+          until pnpm exec supabase gen types typescript --local --schema public \
+            > /tmp/database.types.ts 2> /tmp/gentypes.err; do
+            intento=$((intento + 1))
+            if [ "$intento" -ge 5 ]; then
+              echo "::error::supabase gen types falló tras $intento intentos"; cat /tmp/gentypes.err; exit 1
+            fi
+            echo "gen types falló (intento $intento); reintentando en $((intento * 20))s…"; cat /tmp/gentypes.err
+            sleep $((intento * 20))
+          done
           if ! diff -u packages/types/src/database.types.ts /tmp/database.types.ts; then
             echo "::error::packages/types/src/database.types.ts difiere del canónico (pnpm db:types)."
             # Volcado del archivo canónico para poder corregirlo desde entornos sin Docker:
@@ -160,7 +181,16 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Iniciar Supabase local completo
-        run: pnpm exec supabase start
+        run: |
+          # Reintento con backoff ante el rate limit transitorio de Docker/ECR.
+          intento=0
+          until pnpm exec supabase start; do
+            intento=$((intento + 1))
+            if [ "$intento" -ge 5 ]; then echo "::error::supabase start falló tras $intento intentos"; exit 1; fi
+            echo "supabase start falló (intento $intento); reintentando en $((intento * 20))s…"
+            pnpm exec supabase stop --no-backup || true
+            sleep $((intento * 20))
+          done
 
       - name: Exportar credenciales locales (no son secretos)
         run: |
