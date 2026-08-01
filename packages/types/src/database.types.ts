@@ -1353,6 +1353,36 @@ export type Database = {
           },
         ]
       }
+      device_tokens: {
+        Row: {
+          created_at: string
+          id: string
+          last_seen_at: string
+          platform: Database["public"]["Enums"]["device_platform"]
+          token: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_seen_at?: string
+          platform: Database["public"]["Enums"]["device_platform"]
+          token: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_seen_at?: string
+          platform?: Database["public"]["Enums"]["device_platform"]
+          token?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       diagnoses: {
         Row: {
           certainty: Database["public"]["Enums"]["diagnosis_certainty"]
@@ -4201,8 +4231,64 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      claim_due_appointment_notifications_batch: {
+        Args: { p_limit?: number }
+        Returns: {
+          appointment_id: string
+          attempts: number
+          channel: Database["public"]["Enums"]["notification_channel"]
+          clinic_id: string
+          created_at: string
+          id: string
+          idempotency_key: string
+          last_error: string | null
+          organization_id: string
+          payload: Json
+          recipient_email: string | null
+          recipient_name: string | null
+          scheduled_for: string
+          sent_at: string | null
+          status: Database["public"]["Enums"]["notification_status"]
+          type: Database["public"]["Enums"]["appointment_notification_type"]
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "appointment_notifications"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       claim_due_vaccination_notifications: {
         Args: { p_clinic_id: string; p_limit?: number }
+        Returns: {
+          attempts: number
+          channel: Database["public"]["Enums"]["notification_channel"]
+          clinic_id: string
+          created_at: string
+          id: string
+          idempotency_key: string
+          last_error: string | null
+          organization_id: string
+          payload: Json
+          recipient_email: string | null
+          recipient_name: string | null
+          scheduled_for: string
+          sent_at: string | null
+          status: Database["public"]["Enums"]["notification_status"]
+          type: Database["public"]["Enums"]["vaccination_notification_type"]
+          updated_at: string
+          vaccination_record_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "vaccination_notifications"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      claim_due_vaccination_notifications_batch: {
+        Args: { p_limit?: number }
         Returns: {
           attempts: number
           channel: Database["public"]["Enums"]["notification_channel"]
@@ -4438,7 +4524,15 @@ export type Database = {
         Args: { p_error?: string; p_notification_id: string; p_ok: boolean }
         Returns: undefined
       }
+      mark_appointment_notification_by_service: {
+        Args: { p_error?: string; p_notification_id: string; p_ok: boolean }
+        Returns: undefined
+      }
       mark_vaccination_notification: {
+        Args: { p_error?: string; p_notification_id: string; p_ok: boolean }
+        Returns: undefined
+      }
+      mark_vaccination_notification_by_service: {
         Args: { p_error?: string; p_notification_id: string; p_ok: boolean }
         Returns: undefined
       }
@@ -4511,6 +4605,27 @@ export type Database = {
           p_vaccine_name?: string
         }
         Returns: string
+      }
+      register_device_token: {
+        Args: {
+          p_platform: Database["public"]["Enums"]["device_platform"]
+          p_token: string
+        }
+        Returns: {
+          created_at: string
+          id: string
+          last_seen_at: string
+          platform: Database["public"]["Enums"]["device_platform"]
+          token: string
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "device_tokens"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       register_owner_with_clinic: {
         Args: {
@@ -4637,6 +4752,7 @@ export type Database = {
         }
         Returns: Database["public"]["Enums"]["appointment_status"]
       }
+      unregister_device_token: { Args: { p_token: string }; Returns: undefined }
       update_my_review: {
         Args: {
           p_body: string
@@ -4731,6 +4847,7 @@ export type Database = {
         | "share_records"
         | "portal_terms"
       contact_method: "phone" | "email" | "whatsapp" | "sms"
+      device_platform: "ios" | "android" | "web"
       diagnosis_certainty:
         | "differential"
         | "presumptive"
@@ -5013,6 +5130,7 @@ export const Constants = {
         "portal_terms",
       ],
       contact_method: ["phone", "email", "whatsapp", "sms"],
+      device_platform: ["ios", "android", "web"],
       diagnosis_certainty: [
         "differential",
         "presumptive",
