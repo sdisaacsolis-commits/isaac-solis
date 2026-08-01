@@ -115,6 +115,13 @@ jobs:
   edge-functions:
     name: Edge Functions (Deno)
     runs-on: ubuntu-latest
+    strategy:
+      # No cortar el resto de funciones si una falla: queremos ver todas.
+      fail-fast: false
+      matrix:
+        funcion:
+          - send-reminders
+          - stripe-webhook
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -125,15 +132,15 @@ jobs:
           deno-version: v2.x
 
       - name: Formato (deno fmt)
-        working-directory: supabase/functions/send-reminders
+        working-directory: supabase/functions/${{ matrix.funcion }}
         run: deno fmt --check
 
       - name: Lint (deno lint)
-        working-directory: supabase/functions/send-reminders
+        working-directory: supabase/functions/${{ matrix.funcion }}
         run: deno lint
 
       - name: Typecheck (deno check)
-        working-directory: supabase/functions/send-reminders
+        working-directory: supabase/functions/${{ matrix.funcion }}
         run: deno check index.ts
 
   e2e:

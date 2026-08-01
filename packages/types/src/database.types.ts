@@ -2462,6 +2462,54 @@ export type Database = {
           },
         ]
       }
+      plans: {
+        Row: {
+          additional_veterinarian_price_cents: number | null
+          billing_interval: Database["public"]["Enums"]["billing_interval"]
+          code: string
+          created_at: string
+          currency: string
+          features: Json
+          id: string
+          included_veterinarians: number
+          is_active: boolean
+          name: string
+          price_cents: number
+          scope: Database["public"]["Enums"]["plan_scope"]
+          updated_at: string
+        }
+        Insert: {
+          additional_veterinarian_price_cents?: number | null
+          billing_interval?: Database["public"]["Enums"]["billing_interval"]
+          code: string
+          created_at?: string
+          currency?: string
+          features?: Json
+          id?: string
+          included_veterinarians: number
+          is_active?: boolean
+          name: string
+          price_cents?: number
+          scope?: Database["public"]["Enums"]["plan_scope"]
+          updated_at?: string
+        }
+        Update: {
+          additional_veterinarian_price_cents?: number | null
+          billing_interval?: Database["public"]["Enums"]["billing_interval"]
+          code?: string
+          created_at?: string
+          currency?: string
+          features?: Json
+          id?: string
+          included_veterinarians?: number
+          is_active?: boolean
+          name?: string
+          price_cents?: number
+          scope?: Database["public"]["Enums"]["plan_scope"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       portal_invitations: {
         Row: {
           accepted_at: string | null
@@ -3467,6 +3515,70 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          clinic_id: string
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string
+          id: string
+          organization_id: string
+          plan_id: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          clinic_id: string
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string
+          id?: string
+          organization_id: string
+          plan_id: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          clinic_id?: string
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string
+          id?: string
+          organization_id?: string
+          plan_id?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: true
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vaccination_documents: {
         Row: {
           content: Json
@@ -4315,6 +4427,10 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      clinic_active_veterinarian_count: {
+        Args: { p_clinic_id: string }
+        Returns: number
+      }
       clinic_appointment_metrics: {
         Args: { p_clinic_id: string; p_from: string; p_to: string }
         Returns: Json
@@ -4323,11 +4439,16 @@ export type Database = {
         Args: { p_clinic_id: string; p_organization_id: string }
         Returns: boolean
       }
+      clinic_current_plan: { Args: { p_clinic_id: string }; Returns: Json }
       clinic_is_publicly_visible: {
         Args: { p_clinic_id: string }
         Returns: boolean
       }
       clinic_rating: { Args: { p_clinic_id: string }; Returns: Json }
+      clinic_within_veterinarian_limit: {
+        Args: { p_clinic_id: string }
+        Returns: boolean
+      }
       clinical_encounter_from_storage_path: {
         Args: { p_name: string }
         Returns: string
@@ -4838,6 +4959,7 @@ export type Database = {
         | "completed"
         | "cancelled"
         | "no_show"
+      billing_interval: "month" | "year"
       clinic_pet_source:
         | "manual"
         | "owner_registration"
@@ -4924,6 +5046,7 @@ export type Database = {
         | "other"
       pet_sex: "male" | "female" | "unknown"
       pet_species: "dog" | "cat" | "other"
+      plan_scope: "clinic" | "organization"
       prescription_status: "draft" | "issued" | "superseded" | "voided"
       review_status: "published" | "hidden"
       schedule_exception_type:
@@ -4945,6 +5068,7 @@ export type Database = {
         | "dental"
         | "emergency"
         | "other"
+      subscription_status: "trialing" | "active" | "past_due" | "canceled"
       treatment_type:
         | "medication_recommendation"
         | "procedure"
@@ -5115,6 +5239,7 @@ export const Constants = {
         "cancelled",
         "no_show",
       ],
+      billing_interval: ["month", "year"],
       clinic_pet_source: [
         "manual",
         "owner_registration",
@@ -5213,6 +5338,7 @@ export const Constants = {
       ],
       pet_sex: ["male", "female", "unknown"],
       pet_species: ["dog", "cat", "other"],
+      plan_scope: ["clinic", "organization"],
       prescription_status: ["draft", "issued", "superseded", "voided"],
       review_status: ["published", "hidden"],
       schedule_exception_type: [
@@ -5236,6 +5362,7 @@ export const Constants = {
         "emergency",
         "other",
       ],
+      subscription_status: ["trialing", "active", "past_due", "canceled"],
       treatment_type: [
         "medication_recommendation",
         "procedure",
