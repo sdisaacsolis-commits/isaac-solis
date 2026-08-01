@@ -1433,8 +1433,8 @@ export const mensajes = {
       crearCuentaPro: "Registra tu clínica",
       accesoPanel: "Acceso al panel",
       legal: "Legal",
-      avisoPrivacidad: "Aviso de privacidad (próximamente)",
-      terminos: "Términos de servicio (próximamente)",
+      avisoPrivacidad: "Aviso de privacidad",
+      terminos: "Términos y condiciones",
     },
     buscar: {
       titulo: "Clínicas veterinarias",
@@ -1791,5 +1791,12 @@ export const mensajes = {
       vacio: "No hay suscripciones registradas todavía.",
       clinicas: (n: number) => (n === 1 ? "1 clínica" : `${n} clínicas`),
     },
+  },
+  legal: {
+    volverInicio: "← Volver al inicio",
+    actualizado: (fecha: string) => `Última actualización: ${fecha}`,
+    nav: "Documentos legales",
+    avisoPrivacidad: "Aviso de privacidad",
+    terminos: "Términos y condiciones",
   },
 } as const;

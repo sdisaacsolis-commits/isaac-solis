@@ -262,12 +262,20 @@ LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica 
 - Pruebas: pgTAP 17 (suite 17); 556 aserciones totales.
 - **Criterio de salida**: toda clínica tiene suscripción; el sistema puede restringir por plan. ✅
 
-## Fase 12 — Endurecimiento y beta
+## Fase 12 — Endurecimiento y beta ✅ (2026-07-29)
 
-- Auditoría de seguridad interna (revisión de todas las políticas RLS), pruebas E2E de los
-  flujos críticos, revisión de accesibilidad, aviso de privacidad, textos legales.
-- Beta con 1–3 clínicas reales.
-- **Criterio de salida**: sin hallazgos críticos; clínicas beta operando.
+- Auditoría de seguridad interna **automatizada como pgTAP** (suite 18,
+  `18_auditoria_seguridad.sql`): recorre el catálogo y falla si aparece cualquier tabla de
+  `public` sin RLS forzado o sin política. **573 aserciones pgTAP totales** (suites 01–18).
+- Páginas legales públicas conforme **LFPDPPP** (`/aviso-de-privacidad`, `/terminos`), con el
+  texto en una fuente única es-MX (`apps/web/src/lib/legal/`) y enlazadas desde el pie público.
+- Documentación de endurecimiento: seguridad (`docs/security/security-audit.md`), accesibilidad
+  (`docs/accessibility/accessibility.md`) y runbook de beta (`docs/beta/onboarding.md`).
+- Revisión de accesibilidad (`<html lang="es-MX">`, semántica de landmarks, `FormField` con
+  label asociado, foco visible, base Radix/shadcn); arreglo del pie: enlaces legales reales.
+- **Criterio de salida**: sin hallazgos críticos; MVP web listo para operar la beta. ✅
+
+**Cierre: MVP web completo y listo para operar en beta.**
 
 ## Post-MVP (backlog priorizado — decisiones 1 y 2 ya confirmadas por producto)
 

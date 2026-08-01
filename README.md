@@ -4,17 +4,20 @@ Plataforma SaaS mexicana para clínicas veterinarias, médicos veterinarios y pr
 mascotas: agenda de citas, expedientes clínicos, recetas y recordatorios — con aislamiento
 total de datos entre clínicas.
 
-> **Estado actual: Fase 11 (preparación de suscripciones).**
-> `plans` y `subscriptions` (una por clínica, plan `beta` gratuito por trigger); restricción
-> por plan disponible pero no bloqueante en beta; tarjeta «Plan» en el dashboard y desglose de
-> suscripciones en el panel superadmin; scaffold de Stripe (`stripe-webhook`) sin cobros. Sobre
-> el panel administrativo y métricas (Fase 10), los recordatorios automáticos (Fase 9), el
-> portal público con reseñas (Fase 8/8.1) y el panel clínico de las Fases 1–7 (agenda
-> anti-traslape, expediente inmutable, recetas y vacunación).
+> **Estado actual: Fase 12 — MVP listo para beta.**
+> Endurecimiento no-BD: auditoría de seguridad interna automatizada en pgTAP (suite 18, sin
+> hallazgos críticos), páginas legales públicas conforme LFPDPPP (`/aviso-de-privacidad`,
+> `/terminos`) y documentación de accesibilidad, seguridad y beta. Sobre la preparación de
+> suscripciones (Fase 11: `plans`/`subscriptions`, plan `beta` gratuito por trigger, scaffold
+> de Stripe sin cobros), el panel administrativo y métricas (Fase 10), los recordatorios
+> automáticos (Fase 9), el portal público con reseñas (Fase 8/8.1) y el panel clínico de las
+> Fases 1–7 (agenda anti-traslape, expediente inmutable, recetas y vacunación).
 > **Dogtoralia no calcula dosis ni sugiere medicamentos.** Aislamiento RLS validado con
-> pgTAP (556 aserciones; ver [ROADMAP.md](./ROADMAP.md), `docs/subscriptions/`, `docs/admin/`,
-> `docs/notifications/reminders.md`, `docs/portal/` y
-> [docs/security/rls-model.md](./docs/security/rls-model.md)).
+> pgTAP (573 aserciones; ver [ROADMAP.md](./ROADMAP.md),
+> [docs/security/security-audit.md](./docs/security/security-audit.md), `docs/beta/`,
+> `docs/subscriptions/`, `docs/admin/`, `docs/notifications/reminders.md`, `docs/portal/` y
+> [docs/security/rls-model.md](./docs/security/rls-model.md)). Páginas legales: requieren
+> revisión de un abogado antes de producción (ver `docs/legal/README.md`).
 
 ## Documentación
 
