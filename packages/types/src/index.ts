@@ -156,3 +156,52 @@ export const ENCOUNTER_TRANSITIONS: Record<EncounterStatus, readonly EncounterSt
   finalized: ["voided"],
   voided: [],
 } as const;
+
+// ---------------------------------------------------------------------------
+// Enums de recetas y vacunación (Fase 7), derivados de la base de datos
+// ---------------------------------------------------------------------------
+export const PRESCRIPTION_STATUSES = Constants.public.Enums.prescription_status;
+export type PrescriptionStatus = Enums<"prescription_status">;
+
+export const VACCINATION_RECORD_STATUSES = Constants.public.Enums.vaccination_record_status;
+export type VaccinationRecordStatus = Enums<"vaccination_record_status">;
+
+export const VACCINATION_SOURCES = Constants.public.Enums.vaccination_source;
+export type VaccinationSource = Enums<"vaccination_source">;
+
+export const VACCINATION_NOTIFICATION_TYPES = Constants.public.Enums.vaccination_notification_type;
+export type VaccinationNotificationType = Enums<"vaccination_notification_type">;
+
+/**
+ * Máquina de estados de recetas (espejo de prescription_transition_allowed en
+ * SQL, que es la autoridad). issued es inmutable; superseded/voided conservan
+ * el contenido; no existe "desemitir". Los borradores se descartan por borrado
+ * lógico, no por transición.
+ */
+export const PRESCRIPTION_TRANSITIONS: Record<PrescriptionStatus, readonly PrescriptionStatus[]> = {
+  draft: ["issued"],
+  issued: ["superseded", "voided"],
+  superseded: ["voided"],
+  voided: [],
+} as const;
+
+/**
+ * Máquina de estados de vacunación: un registro es un evento histórico; la
+ * única transición es la anulación administrativa (corrección = anular +
+ * registrar de nuevo).
+ */
+export const VACCINATION_TRANSITIONS: Record<
+  VaccinationRecordStatus,
+  readonly VaccinationRecordStatus[]
+> = {
+  recorded: ["voided"],
+  voided: [],
+} as const;
+
+/** Fuentes de vacunación que NO son aplicación en clínica (flujo histórico). */
+export const HISTORICAL_VACCINATION_SOURCES = [
+  "historical_owner_document",
+  "external_clinic",
+  "campaign",
+  "import",
+] as const satisfies readonly VaccinationSource[];

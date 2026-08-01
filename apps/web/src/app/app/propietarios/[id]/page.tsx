@@ -23,6 +23,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireTenancyContext } from "@/lib/tenancy/queries";
 
 import { OwnerEditForm } from "./owner-edit-form";
+import { PortalInviteForm } from "./portal-invite-form";
 
 export const metadata: Metadata = { title: mensajes.pacientes.propietarios.titulo };
 
@@ -48,31 +49,43 @@ export default async function PaginaFichaPropietario({
   if (!propietario) notFound();
 
   const clinicId = context.activeClinic?.id;
-  const [{ data: relacionClinica }, { data: mascotas }, { data: consentimientos }] =
-    await Promise.all([
-      clinicId
-        ? supabase
-            .from("owner_clinic_relationships")
-            .select("*")
-            .eq("owner_id", id)
-            .eq("clinic_id", clinicId)
-            .eq("status", "active")
-            .is("deleted_at", null)
-            .maybeSingle()
-        : Promise.resolve({ data: null }),
-      supabase
-        .from("pet_owner_relationships")
-        .select("*, pets(*)")
-        .eq("owner_id", id)
-        .eq("status", "active")
-        .is("deleted_at", null),
-      supabase
-        .from("owner_consents")
-        .select("*")
-        .eq("owner_id", id)
-        .order("granted_at", { ascending: false })
-        .limit(10),
-    ]);
+  const [
+    { data: relacionClinica },
+    { data: mascotas },
+    { data: consentimientos },
+    { data: invitacionPortal },
+  ] = await Promise.all([
+    clinicId
+      ? supabase
+          .from("owner_clinic_relationships")
+          .select("*")
+          .eq("owner_id", id)
+          .eq("clinic_id", clinicId)
+          .eq("status", "active")
+          .is("deleted_at", null)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+    supabase
+      .from("pet_owner_relationships")
+      .select("*, pets(*)")
+      .eq("owner_id", id)
+      .eq("status", "active")
+      .is("deleted_at", null),
+    supabase
+      .from("owner_consents")
+      .select("*")
+      .eq("owner_id", id)
+      .order("granted_at", { ascending: false })
+      .limit(10),
+    supabase
+      .from("portal_invitations")
+      .select("id, status, expires_at")
+      .eq("owner_id", id)
+      .eq("status", "pending")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
 
   return (
     <div className="flex max-w-3xl flex-col gap-6">
@@ -151,6 +164,44 @@ export default async function PaginaFichaPropietario({
             />
           ) : (
             <p className="text-sm text-ink-muted">{mensajes.panel.sinClinica}</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">{t.portal.titulo}</CardTitle>
+          <CardDescription>{t.portal.descripcion}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          {propietario.user_id ? (
+            <Badge variant="success" className="w-fit">
+              {t.portal.vinculado}
+            </Badge>
+          ) : (
+            <>
+              {invitacionPortal && new Date(invitacionPortal.expires_at) > new Date() ? (
+                <Badge className="w-fit">
+                  {t.portal.invitacionPendiente(
+                    new Intl.DateTimeFormat("es-MX", {
+                      dateStyle: "medium",
+                      timeZone: "America/Mexico_City",
+                    }).format(new Date(invitacionPortal.expires_at)),
+                  )}
+                </Badge>
+              ) : (
+                <p className="text-sm text-ink-muted">{t.portal.sinVinculo}</p>
+              )}
+              {clinicId ? (
+                <PortalInviteForm
+                  clinicId={clinicId}
+                  ownerId={propietario.id}
+                  tieneCorreo={Boolean(propietario.email)}
+                />
+              ) : (
+                <p className="text-sm text-ink-muted">{mensajes.panel.sinClinica}</p>
+              )}
+            </>
           )}
         </CardContent>
       </Card>

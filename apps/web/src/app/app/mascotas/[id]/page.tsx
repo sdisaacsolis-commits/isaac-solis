@@ -148,6 +148,16 @@ export default async function PaginaFichaMascota({
                 {mensajes.consultas.expediente.verExpediente}
               </Link>
             </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/app/mascotas/${mascota.id}/recetas`}>
+                {mensajes.recetas.mascota.verRecetas}
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/app/mascotas/${mascota.id}/vacunacion`}>
+                {mensajes.vacunacion.cartilla.verCartilla}
+              </Link>
+            </Button>
           </div>
           <dl className="mt-3 grid gap-x-8 gap-y-1 text-sm sm:grid-cols-3">
             <div>
@@ -306,12 +316,7 @@ export default async function PaginaFichaMascota({
       </Card>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {[
-          t.proximamente.citas,
-          t.proximamente.vacunas,
-          t.proximamente.recetas,
-          t.proximamente.documentos,
-        ].map((titulo) => (
+        {[t.proximamente.citas, t.proximamente.documentos].map((titulo) => (
           <Card key={titulo}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-sm">

@@ -58,6 +58,34 @@ export {
   updatePetSchema,
 } from "./schemas/pets";
 export {
+  acceptPortalInvitationSchema,
+  cancelMyAppointmentSchema,
+  portalInvitationSchema,
+  publicBookingSchema,
+  publicSearchSchema,
+  publicSlotsQuerySchema,
+  vetPublicProfileSchema,
+} from "./schemas/portal";
+export {
+  createPrescriptionDraftSchema,
+  discardPrescriptionDraftSchema,
+  issuePrescriptionSchema,
+  prescriptionFiltersSchema,
+  prescriptionItemSchema,
+  prescriptionVersionSchema,
+  removePrescriptionItemSchema,
+  supersedePrescriptionSchema,
+  updatePrescriptionDraftSchema,
+  voidPrescriptionSchema,
+} from "./schemas/prescriptions";
+export {
+  moderateReviewSchema,
+  replyToReviewSchema,
+  reportReviewSchema,
+  submitReviewSchema,
+  updateMyReviewSchema,
+} from "./schemas/reviews";
+export {
   changeClinicMemberRoleSchema,
   changeOrganizationMemberRoleSchema,
   clinicRoleSchema,
@@ -72,3 +100,11 @@ export {
   updateClinicSchema,
   updateOrganizationSchema,
 } from "./schemas/tenancy";
+export {
+  recordHistoricalVaccinationSchema,
+  recordVaccinationSchema,
+  VACCINATION_FILE_MIME_TYPES,
+  vaccinationFiltersSchema,
+  vaccineCatalogSchema,
+  voidVaccinationSchema,
+} from "./schemas/vaccinations";

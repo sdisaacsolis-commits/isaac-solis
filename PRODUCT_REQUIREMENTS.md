@@ -79,6 +79,11 @@ Reglas transversales:
 - Emisión de receta ligada a una consulta: medicamentos, dosis, vía, frecuencia, duración,
   indicaciones. Datos del emisor (nombre y cédula profesional) y de la clínica.
 - Generación de PDF descargable/imprimible.
+- **Estado (Fase 7)**: emisión inmutable con folio, snapshots congelados, hash SHA-256,
+  sustitución y anulación entregados. El documento imprimible existe (renderizado
+  determinista desde el contenido congelado); el **PDF binario congelado** (Edge Function)
+  es un pendiente documentado en `docs/prescriptions/documents.md`. Dogtoralia documenta
+  la decisión del veterinario: **no calcula dosis ni sugiere medicamentos**.
 
 ### 3.7 Recordatorios y notificaciones
 

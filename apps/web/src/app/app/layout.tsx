@@ -14,11 +14,14 @@ const enlaces = [
   { href: "/app/inicio", etiqueta: nav.inicio },
   { href: "/app/agenda", etiqueta: nav.agenda },
   { href: "/app/consultas", etiqueta: nav.consultas },
+  { href: "/app/recetas", etiqueta: nav.recetas },
+  { href: "/app/vacunacion", etiqueta: nav.vacunacion },
   { href: "/app/propietarios", etiqueta: nav.propietarios },
   { href: "/app/mascotas", etiqueta: nav.mascotas },
   { href: "/app/organizacion", etiqueta: nav.organizacion },
   { href: "/app/clinicas", etiqueta: nav.clinicas },
   { href: "/app/personal", etiqueta: nav.personal },
+  { href: "/app/opiniones", etiqueta: nav.opiniones },
   { href: "/app/configuracion", etiqueta: nav.configuracion },
 ];
 

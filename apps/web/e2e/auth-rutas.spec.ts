@@ -14,6 +14,7 @@ test.describe("Protección de rutas y páginas de autenticación", () => {
     for (const ruta of [
       "/app",
       "/app/personal",
+      "/app/opiniones",
       "/app/organizacion",
       "/app/configuracion",
       "/app/propietarios",
@@ -23,12 +24,39 @@ test.describe("Protección de rutas y páginas de autenticación", () => {
       "/app/agenda/nueva",
       "/app/consultas",
       "/app/consultas/nueva",
+      "/app/recetas",
+      "/app/recetas/nueva",
+      "/app/vacunacion",
+      "/app/vacunacion/nueva",
       "/app/configuracion/servicios",
       "/app/configuracion/horarios",
+      "/app/configuracion/vacunas",
+      "/mi",
+      "/mi/mascotas",
+      "/mi/citas",
+      "/mi/opiniones",
     ]) {
-      await page.goto(ruta);
-      await expect(page).toHaveURL(/\/iniciar-sesion/);
+      // Se verifica el redirect del middleware por la RESPUESTA HTTP directa
+      // (sin maxRedirects): es determinista y evita la carrera de navegación
+      // del navegador (ERR_ABORTED) con muchos redirects secuenciales.
+      const respuesta = await page.request.get(ruta, { maxRedirects: 0 });
+      expect([302, 307]).toContain(respuesta.status());
+      expect(respuesta.headers()["location"]).toContain("/iniciar-sesion");
     }
+  });
+
+  test("la búsqueda pública responde sin sesión con estado vacío claro", async ({ page }) => {
+    const respuesta = await page.goto("/buscar?q=veterinaria-que-no-existe");
+    expect(respuesta?.status()).toBe(200);
+    await expect(page.getByRole("heading", { name: "Clínicas veterinarias" })).toBeVisible();
+    await expect(
+      page.getByText("No encontramos clínicas con esos criterios", { exact: false }),
+    ).toBeVisible();
+  });
+
+  test("una clínica pública inexistente responde 404 sin sesión", async ({ page }) => {
+    const respuesta = await page.goto("/clinicas/slug-inexistente");
+    expect(respuesta?.status()).toBe(404);
   });
 
   test("la página de inicio de sesión muestra el formulario", async ({ page }) => {

@@ -142,3 +142,35 @@ consentimientos) aislados por política; INSERT multi-fila solo vía RPC; `is_pr
 GRANT directo (solo la RPC de transferencia); bucket `pet-photos` privado con las mismas
 funciones. Detalle completo: `docs/pets/domain-model.md`; pruebas: pgTAP 07-08 (241
 aserciones totales).
+
+## 10. Extensión de las Fases 5–7 (agenda, expediente, recetas y vacunación)
+
+Los mismos principios se aplican a los dominios posteriores; cada fase añade sus funciones
+auxiliares `SECURITY DEFINER` (`search_path=''`, sin SQL dinámico, organización SIEMPRE
+derivada de la clínica) y sus suites pgTAP:
+
+- **Fase 5 (agenda)**: servicios, horarios, citas y outbox de notificaciones aislados por
+  clínica; escrituras con invariantes solo por RPCs; suites 09–10.
+- **Fase 6 (expediente)**: cabecera administrativa vs. contenido clínico
+  (`can_view_clinical_content` excluye a recepción por diseño); inmutabilidad de dos capas
+  con GUC transaccional; bucket `clinical-files`; suite 11.
+- **Fase 7 (recetas y vacunación)**: `can_view_prescription` (los borradores solo para
+  roles clínicos; los documentos emitidos para toda la clínica y la administración de la
+  organización), `can_edit_prescription` (solo el prescriptor con borrador vigente),
+  `can_view_vaccination_record` (cartilla operativa para el personal activo),
+  `can_manage_vaccine_catalog`; escritura de recetas emitidas y registros de vacunación
+  IMPOSIBLE para clientes (columnas sin grant + triggers `RECETA_INMUTABLE` /
+  `VACUNACION_INMUTABLE` / `DOCUMENTO_INMUTABLE` que bloquean incluso a roles que omiten
+  RLS); historial y documentos append-only también para `service_role`; contadores de
+  folio inaccesibles; bucket `vaccination-files` con acceso derivado de la relación
+  clínica–mascota; auditoría redactada (sin medicamentos, dosis ni lotes en `audit_log`).
+  Suite 12 (441 aserciones totales).
+
+## 11. Extensión de la Fase 8 (portal público)
+
+`anon` no recibe ningún grant sobre tablas: la superficie pública son RPCs
+`SECURITY DEFINER` curadas que exponen SOLO clínicas `is_public` (helper
+`clinic_is_publicly_visible`) y, para reservar, `accepts_online_booking`. El portal del
+propietario también es RPC-only (evita fugas por columnas: jamás notas internas ni SOAP).
+Tokens de invitación hasheados e ilegibles; `get_available_slots` re-emitida con bypass
+GUC transaccional que solo fijan las funciones públicas validadas. Suite 13 (474 totales).

@@ -139,13 +139,81 @@
   aserciones pgTAP nuevas (suite 11; 365 totales). Migraciones `202607195000*`.
   Documentación en `docs/clinical/` (10 documentos).
 
-## Fase 7 — Recetas
+## Fase 7 — Recetas y vacunación ✅ (2026-07-20)
 
-- Emisión de receta ligada a consulta, partidas de medicamentos, PDF (Edge Function) con
-  datos de clínica y cédula del veterinario; inmutable al emitirse.
-- **Criterio de salida**: PDF descargable e imprimible correcto; receta emitida no editable.
+- Emisión de receta ligada a consulta, partidas de medicamentos, documento con datos de
+  clínica y cédula del veterinario; inmutable al emitirse. Alcance ampliado por producto:
+  registro de vacunación (aplicadas + históricas), cartilla y recordatorios.
+- **Criterio de salida**: documento imprimible correcto; receta emitida no editable.
+  Cumplido (el PDF binario congelado queda como pendiente documentado en
+  `docs/prescriptions/documents.md`: hoy la fuente de verdad es el contenido canónico
+  congelado con hash SHA-256 y la vista imprimible determinista).
+- **Entregado**: recetas `prescriptions` + `prescription_items` (todo texto clínico lo
+  captura el veterinario: **sin cálculo de dosis ni sugerencias** en ninguna capa) con
+  folio `REC-AAAA-NNNNNN` por contador UPSERT, borrador durante la consulta y **emisión
+  solo con consulta finalizada** (`issue_prescription`: transaccional, `FOR UPDATE`,
+  idempotente), snapshots de servidor (clínica, prescriptor+cédula, mascota con peso de la
+  consulta, propietario), documento canónico congelado + SHA-256
+  (`prescription_documents`, jamás se regenera), sustitución sin ciclos con ambos
+  documentos conservados (`supersede_prescription`; el original pasa a `superseded` solo
+  al emitir el sustituto) y anulación administrativa con motivo (`void_prescription`);
+  inmutabilidad de dos capas (RLS 0-filas + triggers `RECETA_INMUTABLE` /
+  `DOCUMENTO_INMUTABLE` con GUC transaccional). Vacunación: catálogo por organización
+  **no prescriptivo** (`vaccines_catalog`; intervalo de refuerzo solo como ayuda
+  editable), registros inmutables `vaccination_records` con snapshot de producto, fuentes
+  que distinguen aplicación en clínica de registros históricos aportados, lote+caducidad
+  validados (producto caducado rechazado), **idempotencia por `client_request_id`**,
+  comprobante congelado, próxima dosis siempre confirmada por veterinario, recordatorios
+  por outbox idempotente (`vaccination_notifications`, correo; claim/mark con `SKIP
+LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica con
+  distinción visual por fuente. UI (`/app/recetas*`, `/app/vacunacion*`,
+  `/app/mascotas/[id]/{recetas,vacunacion}`, `/app/configuracion/vacunas`), impresión
+  desde snapshots congelados con hash visible y firma autógrafa (sin firma digital
+  simulada), métricas no sensibles en dashboard, 76 aserciones pgTAP nuevas (suite 12;
+  441 totales). Migraciones `202607206000*`. Documentación en `docs/prescriptions/` (6) y
+  `docs/vaccination/` (7). Fuera de alcance: sustancias controladas, interacciones,
+  inventario, firma certificada (documentado).
 
-## Fase 8 — App móvil de propietarios (Flutter)
+## Fase 8 — Portal público y reservación en línea (paridad Doctoralia) ✅ (2026-07-21)
+
+- Dirección aprobada por el propietario del producto (2026-07-21); auditoría y plano en
+  `docs/product/doctoralia-audit.md` y `doctoralia-parity.md`.
+- **Entregado**: superficie pública 100 % por RPCs `SECURITY DEFINER` curadas (anon jamás
+  lee tablas base; solo clínicas `is_public`): búsqueda/perfiles/ciudades, perfil de
+  clínica `/clinicas/[slug]` con equipo y cédulas, perfiles públicos opt-in de
+  veterinarios `/veterinarios/[slug]` (`veterinarian_public_profiles`, slug global con
+  reservados protegidos), directorios SEO `/veterinarios/[ciudad]` y
+  `/servicios/[categoria]/[ciudad]`, huecos reales públicos (`get_available_slots`
+  re-emitida con bypass GUC transaccional solo para clínicas con
+  `accepts_online_booking`) y **reservación de invitado sin cuenta**
+  (`request_public_appointment`: propietario+mascota mínimos sin verificar, cita
+  `requested` fuente `owner_portal` que NO ocupa agenda hasta confirmarse, folio real,
+  idempotencia por request_id, límite 5/correo/24 h, rastro en
+  `public_booking_requests` + auditoría). Portal del propietario `/mi` con vinculación
+  SIEMPRE por invitación explícita de la clínica (`portal_invitations`, token hasheado,
+  7 días, un uso) y lecturas curadas (`get_my_pets/appointments/pet_history` sin notas
+  internas ni SOAP) + `cancel_my_appointment` (hasta 2 h antes, aviso por outbox).
+  Panel: solicitudes en línea en la agenda, invitar al portal desde el propietario,
+  perfil público del veterinario y visibilidad pública de la clínica. Suite pgTAP 13
+  (33 aserciones; 474 totales), Zod es-MX y E2E. Documentación en `docs/portal/`.
+  Reseñas verificadas quedan como Fase 8.1 (plan en `doctoralia-parity.md` §3-B).
+
+## Fase 8.1 — Reseñas verificadas ✅ (2026-07-28)
+
+- **Entregado**: opiniones ligadas a una cita **completada** del propietario que asistió
+  (verificación estructural por trigger; una por cita vía índice único), calificación 1–5
+  - texto, respuesta pública de la clínica y **moderación elevada** (ocultar/restaurar solo
+    administración de la organización, con motivo y auditoría; el contenido del propietario
+    jamás se edita ni se borra). Promedio de calificación (`clinic_rating`) integrado en la
+    búsqueda y los perfiles públicos; lectura pública curada `get_clinic_reviews` (solo
+    publicadas, autor enmascarado; anon nunca lee la tabla). RPCs `submit_review`,
+    `update_my_review` (ventana 30 días), `reply_to_review`, `report_review`,
+    `set_review_visibility`, `get_my_reviewable_appointments`. UI: estrellas y opiniones en
+    perfiles y resultados, "Dejar opinión" en el portal del propietario y moderación en el
+    panel. Suite pgTAP 14 (31 aserciones; 505 totales), Zod es-MX y E2E. Migraciones
+    `202607228000*`. Documentación en `docs/portal/reviews.md`.
+
+## Fase 8 (anterior) — App móvil de propietarios (Flutter)
 
 - Registro/inicio de sesión, perfil de mascotas, solicitud y cancelación de citas,
   historial (consultas, vacunas, recetas de sus mascotas), tokens FCM.

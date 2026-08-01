@@ -2432,6 +2432,549 @@ export type Database = {
           },
         ]
       }
+      portal_invitations: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          clinic_id: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string | null
+          organization_id: string
+          owner_id: string
+          status: Database["public"]["Enums"]["invitation_status"]
+          token_hash: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          clinic_id: string
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          invited_by?: string | null
+          organization_id: string
+          owner_id: string
+          status?: Database["public"]["Enums"]["invitation_status"]
+          token_hash: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          clinic_id?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          organization_id?: string
+          owner_id?: string
+          status?: Database["public"]["Enums"]["invitation_status"]
+          token_hash?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_invitations_accepted_by_fkey"
+            columns: ["accepted_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_invitations_accepted_by_fkey"
+            columns: ["accepted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_invitations_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_invitations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_invitations_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "pet_owners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prescription_documents: {
+        Row: {
+          content: Json
+          created_at: string
+          generated_at: string
+          generated_by: string | null
+          id: string
+          mime_type: string | null
+          prescription_id: string
+          sha256: string
+          size_bytes: number | null
+          storage_path: string | null
+          template_version: number
+        }
+        Insert: {
+          content: Json
+          created_at?: string
+          generated_at?: string
+          generated_by?: string | null
+          id?: string
+          mime_type?: string | null
+          prescription_id: string
+          sha256: string
+          size_bytes?: number | null
+          storage_path?: string | null
+          template_version?: number
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          generated_at?: string
+          generated_by?: string | null
+          id?: string
+          mime_type?: string | null
+          prescription_id?: string
+          sha256?: string
+          size_bytes?: number | null
+          storage_path?: string | null
+          template_version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prescription_documents_generated_by_fkey"
+            columns: ["generated_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescription_documents_generated_by_fkey"
+            columns: ["generated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescription_documents_prescription_id_fkey"
+            columns: ["prescription_id"]
+            isOneToOne: true
+            referencedRelation: "prescriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prescription_folio_counters: {
+        Row: {
+          clinic_id: string
+          counter: number
+          year: number
+        }
+        Insert: {
+          clinic_id: string
+          counter?: number
+          year: number
+        }
+        Update: {
+          clinic_id?: string
+          counter?: number
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prescription_folio_counters_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prescription_items: {
+        Row: {
+          active_ingredient: string | null
+          as_needed: boolean
+          concentration: string | null
+          created_at: string
+          dosage_text: string
+          duration_text: string
+          end_date: string | null
+          frequency_text: string
+          id: string
+          instructions: string | null
+          medication_name: string
+          notes: string | null
+          position: number
+          prescription_id: string
+          presentation: string | null
+          quantity_text: string | null
+          route_text: string
+          start_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          active_ingredient?: string | null
+          as_needed?: boolean
+          concentration?: string | null
+          created_at?: string
+          dosage_text: string
+          duration_text: string
+          end_date?: string | null
+          frequency_text: string
+          id?: string
+          instructions?: string | null
+          medication_name: string
+          notes?: string | null
+          position: number
+          prescription_id: string
+          presentation?: string | null
+          quantity_text?: string | null
+          route_text: string
+          start_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active_ingredient?: string | null
+          as_needed?: boolean
+          concentration?: string | null
+          created_at?: string
+          dosage_text?: string
+          duration_text?: string
+          end_date?: string | null
+          frequency_text?: string
+          id?: string
+          instructions?: string | null
+          medication_name?: string
+          notes?: string | null
+          position?: number
+          prescription_id?: string
+          presentation?: string | null
+          quantity_text?: string | null
+          route_text?: string
+          start_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prescription_items_prescription_id_fkey"
+            columns: ["prescription_id"]
+            isOneToOne: false
+            referencedRelation: "prescriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prescription_status_history: {
+        Row: {
+          changed_by: string | null
+          clinic_id: string
+          created_at: string
+          from_status: Database["public"]["Enums"]["prescription_status"] | null
+          id: string
+          metadata: Json | null
+          organization_id: string
+          prescription_id: string
+          reason: string | null
+          to_status: Database["public"]["Enums"]["prescription_status"]
+        }
+        Insert: {
+          changed_by?: string | null
+          clinic_id: string
+          created_at?: string
+          from_status?:
+            | Database["public"]["Enums"]["prescription_status"]
+            | null
+          id?: string
+          metadata?: Json | null
+          organization_id: string
+          prescription_id: string
+          reason?: string | null
+          to_status: Database["public"]["Enums"]["prescription_status"]
+        }
+        Update: {
+          changed_by?: string | null
+          clinic_id?: string
+          created_at?: string
+          from_status?:
+            | Database["public"]["Enums"]["prescription_status"]
+            | null
+          id?: string
+          metadata?: Json | null
+          organization_id?: string
+          prescription_id?: string
+          reason?: string | null
+          to_status?: Database["public"]["Enums"]["prescription_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prescription_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescription_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescription_status_history_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescription_status_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescription_status_history_prescription_id_fkey"
+            columns: ["prescription_id"]
+            isOneToOne: false
+            referencedRelation: "prescriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prescriptions: {
+        Row: {
+          clinic_id: string
+          clinic_pet_relationship_id: string
+          clinic_snapshot: Json | null
+          clinical_indication: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          encounter_id: string
+          folio: string | null
+          general_instructions: string | null
+          id: string
+          issued_at: string | null
+          issued_by: string | null
+          organization_id: string
+          owner_snapshot: Json | null
+          pet_id: string
+          pet_snapshot: Json | null
+          prescriber_clinic_member_id: string
+          prescriber_snapshot: Json | null
+          responsible_owner_id: string
+          status: Database["public"]["Enums"]["prescription_status"]
+          superseded_by_prescription_id: string | null
+          supersedes_prescription_id: string | null
+          updated_at: string
+          valid_until: string | null
+          version: number
+          void_reason: string | null
+          voided_at: string | null
+          voided_by: string | null
+        }
+        Insert: {
+          clinic_id: string
+          clinic_pet_relationship_id: string
+          clinic_snapshot?: Json | null
+          clinical_indication?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          encounter_id: string
+          folio?: string | null
+          general_instructions?: string | null
+          id?: string
+          issued_at?: string | null
+          issued_by?: string | null
+          organization_id: string
+          owner_snapshot?: Json | null
+          pet_id: string
+          pet_snapshot?: Json | null
+          prescriber_clinic_member_id: string
+          prescriber_snapshot?: Json | null
+          responsible_owner_id: string
+          status?: Database["public"]["Enums"]["prescription_status"]
+          superseded_by_prescription_id?: string | null
+          supersedes_prescription_id?: string | null
+          updated_at?: string
+          valid_until?: string | null
+          version?: number
+          void_reason?: string | null
+          voided_at?: string | null
+          voided_by?: string | null
+        }
+        Update: {
+          clinic_id?: string
+          clinic_pet_relationship_id?: string
+          clinic_snapshot?: Json | null
+          clinical_indication?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          encounter_id?: string
+          folio?: string | null
+          general_instructions?: string | null
+          id?: string
+          issued_at?: string | null
+          issued_by?: string | null
+          organization_id?: string
+          owner_snapshot?: Json | null
+          pet_id?: string
+          pet_snapshot?: Json | null
+          prescriber_clinic_member_id?: string
+          prescriber_snapshot?: Json | null
+          responsible_owner_id?: string
+          status?: Database["public"]["Enums"]["prescription_status"]
+          superseded_by_prescription_id?: string | null
+          supersedes_prescription_id?: string | null
+          updated_at?: string
+          valid_until?: string | null
+          version?: number
+          void_reason?: string | null
+          voided_at?: string | null
+          voided_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prescriptions_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_clinic_pet_relationship_id_fkey"
+            columns: ["clinic_pet_relationship_id"]
+            isOneToOne: false
+            referencedRelation: "clinic_pet_relationships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_encounter_id_fkey"
+            columns: ["encounter_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_encounters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_issued_by_fkey"
+            columns: ["issued_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_issued_by_fkey"
+            columns: ["issued_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_prescriber_clinic_member_id_fkey"
+            columns: ["prescriber_clinic_member_id"]
+            isOneToOne: false
+            referencedRelation: "clinic_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_responsible_owner_id_fkey"
+            columns: ["responsible_owner_id"]
+            isOneToOne: false
+            referencedRelation: "pet_owners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_superseded_by_prescription_id_fkey"
+            columns: ["superseded_by_prescription_id"]
+            isOneToOne: false
+            referencedRelation: "prescriptions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_supersedes_prescription_id_fkey"
+            columns: ["supersedes_prescription_id"]
+            isOneToOne: false
+            referencedRelation: "prescriptions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_voided_by_fkey"
+            columns: ["voided_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_voided_by_fkey"
+            columns: ["voided_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -2477,6 +3020,78 @@ export type Database = {
         }
         Relationships: []
       }
+      public_booking_requests: {
+        Row: {
+          appointment_id: string
+          clinic_id: string
+          created_at: string
+          guest_email: string
+          id: string
+          organization_id: string
+          owner_id: string
+          pet_id: string
+          request_id: string | null
+        }
+        Insert: {
+          appointment_id: string
+          clinic_id: string
+          created_at?: string
+          guest_email: string
+          id?: string
+          organization_id: string
+          owner_id: string
+          pet_id: string
+          request_id?: string | null
+        }
+        Update: {
+          appointment_id?: string
+          clinic_id?: string
+          created_at?: string
+          guest_email?: string
+          id?: string
+          organization_id?: string
+          owner_id?: string
+          pet_id?: string
+          request_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_booking_requests_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_booking_requests_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_booking_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_booking_requests_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "pet_owners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_booking_requests_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reserved_slugs: {
         Row: {
           created_at: string
@@ -2494,6 +3109,255 @@ export type Database = {
           slug?: string
         }
         Relationships: []
+      }
+      review_moderation_events: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          clinic_id: string
+          created_at: string
+          id: string
+          organization_id: string
+          reason: string | null
+          review_id: string
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          clinic_id: string
+          created_at?: string
+          id?: string
+          organization_id: string
+          reason?: string | null
+          review_id: string
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          clinic_id?: string
+          created_at?: string
+          id?: string
+          organization_id?: string
+          reason?: string | null
+          review_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_moderation_events_actor_user_id_fkey"
+            columns: ["actor_user_id"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_moderation_events_actor_user_id_fkey"
+            columns: ["actor_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_moderation_events_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_moderation_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_moderation_events_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          appointment_id: string
+          author_user_id: string
+          body: string
+          clinic_id: string
+          clinic_reply: string | null
+          clinic_reply_at: string | null
+          clinic_reply_by: string | null
+          created_at: string
+          deleted_at: string | null
+          hidden_at: string | null
+          hidden_by: string | null
+          hidden_reason: string | null
+          id: string
+          organization_id: string
+          owner_id: string
+          pet_id: string
+          rating: number
+          report_reason: string | null
+          reported_at: string | null
+          reported_by: string | null
+          status: Database["public"]["Enums"]["review_status"]
+          title: string | null
+          updated_at: string
+          veterinarian_clinic_member_id: string
+        }
+        Insert: {
+          appointment_id: string
+          author_user_id: string
+          body: string
+          clinic_id: string
+          clinic_reply?: string | null
+          clinic_reply_at?: string | null
+          clinic_reply_by?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          hidden_at?: string | null
+          hidden_by?: string | null
+          hidden_reason?: string | null
+          id?: string
+          organization_id: string
+          owner_id: string
+          pet_id: string
+          rating: number
+          report_reason?: string | null
+          reported_at?: string | null
+          reported_by?: string | null
+          status?: Database["public"]["Enums"]["review_status"]
+          title?: string | null
+          updated_at?: string
+          veterinarian_clinic_member_id: string
+        }
+        Update: {
+          appointment_id?: string
+          author_user_id?: string
+          body?: string
+          clinic_id?: string
+          clinic_reply?: string | null
+          clinic_reply_at?: string | null
+          clinic_reply_by?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          hidden_at?: string | null
+          hidden_by?: string | null
+          hidden_reason?: string | null
+          id?: string
+          organization_id?: string
+          owner_id?: string
+          pet_id?: string
+          rating?: number
+          report_reason?: string | null
+          reported_at?: string | null
+          reported_by?: string | null
+          status?: Database["public"]["Enums"]["review_status"]
+          title?: string | null
+          updated_at?: string
+          veterinarian_clinic_member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: true
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_author_user_id_fkey"
+            columns: ["author_user_id"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_author_user_id_fkey"
+            columns: ["author_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_clinic_reply_by_fkey"
+            columns: ["clinic_reply_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_clinic_reply_by_fkey"
+            columns: ["clinic_reply_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_hidden_by_fkey"
+            columns: ["hidden_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_hidden_by_fkey"
+            columns: ["hidden_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "pet_owners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_veterinarian_clinic_member_id_fkey"
+            columns: ["veterinarian_clinic_member_id"]
+            isOneToOne: false
+            referencedRelation: "clinic_members"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       schedule_exceptions: {
         Row: {
@@ -2569,6 +3433,540 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vaccination_documents: {
+        Row: {
+          content: Json
+          created_at: string
+          generated_at: string
+          generated_by: string | null
+          id: string
+          mime_type: string | null
+          sha256: string
+          size_bytes: number | null
+          storage_path: string | null
+          template_version: number
+          vaccination_record_id: string
+        }
+        Insert: {
+          content: Json
+          created_at?: string
+          generated_at?: string
+          generated_by?: string | null
+          id?: string
+          mime_type?: string | null
+          sha256: string
+          size_bytes?: number | null
+          storage_path?: string | null
+          template_version?: number
+          vaccination_record_id: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          generated_at?: string
+          generated_by?: string | null
+          id?: string
+          mime_type?: string | null
+          sha256?: string
+          size_bytes?: number | null
+          storage_path?: string | null
+          template_version?: number
+          vaccination_record_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vaccination_documents_generated_by_fkey"
+            columns: ["generated_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_documents_generated_by_fkey"
+            columns: ["generated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_documents_vaccination_record_id_fkey"
+            columns: ["vaccination_record_id"]
+            isOneToOne: true
+            referencedRelation: "vaccination_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vaccination_notifications: {
+        Row: {
+          attempts: number
+          channel: Database["public"]["Enums"]["notification_channel"]
+          clinic_id: string
+          created_at: string
+          id: string
+          idempotency_key: string
+          last_error: string | null
+          organization_id: string
+          payload: Json
+          recipient_email: string | null
+          recipient_name: string | null
+          scheduled_for: string
+          sent_at: string | null
+          status: Database["public"]["Enums"]["notification_status"]
+          type: Database["public"]["Enums"]["vaccination_notification_type"]
+          updated_at: string
+          vaccination_record_id: string
+        }
+        Insert: {
+          attempts?: number
+          channel?: Database["public"]["Enums"]["notification_channel"]
+          clinic_id: string
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          last_error?: string | null
+          organization_id: string
+          payload?: Json
+          recipient_email?: string | null
+          recipient_name?: string | null
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["notification_status"]
+          type: Database["public"]["Enums"]["vaccination_notification_type"]
+          updated_at?: string
+          vaccination_record_id: string
+        }
+        Update: {
+          attempts?: number
+          channel?: Database["public"]["Enums"]["notification_channel"]
+          clinic_id?: string
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          last_error?: string | null
+          organization_id?: string
+          payload?: Json
+          recipient_email?: string | null
+          recipient_name?: string | null
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["notification_status"]
+          type?: Database["public"]["Enums"]["vaccination_notification_type"]
+          updated_at?: string
+          vaccination_record_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vaccination_notifications_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_notifications_vaccination_record_id_fkey"
+            columns: ["vaccination_record_id"]
+            isOneToOne: false
+            referencedRelation: "vaccination_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vaccination_records: {
+        Row: {
+          administered_at: string
+          administered_by_clinic_member_id: string | null
+          application_site: string | null
+          client_request_id: string | null
+          clinic_id: string
+          clinic_pet_relationship_id: string
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          diseases_snapshot: string[]
+          dose_text: string | null
+          encounter_id: string | null
+          expiration_date: string | null
+          historical_document_path: string | null
+          historical_document_reference: string | null
+          historical_provider_name: string | null
+          id: string
+          lot_missing_reason: string | null
+          lot_number: string | null
+          manufacturer_snapshot: string | null
+          next_due_at: string | null
+          notes: string | null
+          organization_id: string
+          pet_id: string
+          route_text: string | null
+          source: Database["public"]["Enums"]["vaccination_source"]
+          status: Database["public"]["Enums"]["vaccination_record_status"]
+          updated_at: string
+          vaccine_catalog_id: string | null
+          vaccine_name_snapshot: string
+          void_reason: string | null
+          voided_at: string | null
+          voided_by: string | null
+        }
+        Insert: {
+          administered_at: string
+          administered_by_clinic_member_id?: string | null
+          application_site?: string | null
+          client_request_id?: string | null
+          clinic_id: string
+          clinic_pet_relationship_id: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          diseases_snapshot?: string[]
+          dose_text?: string | null
+          encounter_id?: string | null
+          expiration_date?: string | null
+          historical_document_path?: string | null
+          historical_document_reference?: string | null
+          historical_provider_name?: string | null
+          id?: string
+          lot_missing_reason?: string | null
+          lot_number?: string | null
+          manufacturer_snapshot?: string | null
+          next_due_at?: string | null
+          notes?: string | null
+          organization_id: string
+          pet_id: string
+          route_text?: string | null
+          source: Database["public"]["Enums"]["vaccination_source"]
+          status?: Database["public"]["Enums"]["vaccination_record_status"]
+          updated_at?: string
+          vaccine_catalog_id?: string | null
+          vaccine_name_snapshot: string
+          void_reason?: string | null
+          voided_at?: string | null
+          voided_by?: string | null
+        }
+        Update: {
+          administered_at?: string
+          administered_by_clinic_member_id?: string | null
+          application_site?: string | null
+          client_request_id?: string | null
+          clinic_id?: string
+          clinic_pet_relationship_id?: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          diseases_snapshot?: string[]
+          dose_text?: string | null
+          encounter_id?: string | null
+          expiration_date?: string | null
+          historical_document_path?: string | null
+          historical_document_reference?: string | null
+          historical_provider_name?: string | null
+          id?: string
+          lot_missing_reason?: string | null
+          lot_number?: string | null
+          manufacturer_snapshot?: string | null
+          next_due_at?: string | null
+          notes?: string | null
+          organization_id?: string
+          pet_id?: string
+          route_text?: string | null
+          source?: Database["public"]["Enums"]["vaccination_source"]
+          status?: Database["public"]["Enums"]["vaccination_record_status"]
+          updated_at?: string
+          vaccine_catalog_id?: string | null
+          vaccine_name_snapshot?: string
+          void_reason?: string | null
+          voided_at?: string | null
+          voided_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vaccination_records_administered_by_clinic_member_id_fkey"
+            columns: ["administered_by_clinic_member_id"]
+            isOneToOne: false
+            referencedRelation: "clinic_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_records_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_records_clinic_pet_relationship_id_fkey"
+            columns: ["clinic_pet_relationship_id"]
+            isOneToOne: false
+            referencedRelation: "clinic_pet_relationships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_records_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_records_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_records_encounter_id_fkey"
+            columns: ["encounter_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_encounters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_records_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_records_vaccine_catalog_id_fkey"
+            columns: ["vaccine_catalog_id"]
+            isOneToOne: false
+            referencedRelation: "vaccines_catalog"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_records_voided_by_fkey"
+            columns: ["voided_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_records_voided_by_fkey"
+            columns: ["voided_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vaccination_status_history: {
+        Row: {
+          changed_by: string | null
+          clinic_id: string
+          created_at: string
+          from_status:
+            | Database["public"]["Enums"]["vaccination_record_status"]
+            | null
+          id: string
+          metadata: Json | null
+          organization_id: string
+          reason: string | null
+          to_status: Database["public"]["Enums"]["vaccination_record_status"]
+          vaccination_record_id: string
+        }
+        Insert: {
+          changed_by?: string | null
+          clinic_id: string
+          created_at?: string
+          from_status?:
+            | Database["public"]["Enums"]["vaccination_record_status"]
+            | null
+          id?: string
+          metadata?: Json | null
+          organization_id: string
+          reason?: string | null
+          to_status: Database["public"]["Enums"]["vaccination_record_status"]
+          vaccination_record_id: string
+        }
+        Update: {
+          changed_by?: string | null
+          clinic_id?: string
+          created_at?: string
+          from_status?:
+            | Database["public"]["Enums"]["vaccination_record_status"]
+            | null
+          id?: string
+          metadata?: Json | null
+          organization_id?: string
+          reason?: string | null
+          to_status?: Database["public"]["Enums"]["vaccination_record_status"]
+          vaccination_record_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vaccination_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_status_history_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_status_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccination_status_history_vaccination_record_id_fkey"
+            columns: ["vaccination_record_id"]
+            isOneToOne: false
+            referencedRelation: "vaccination_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vaccines_catalog: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          default_booster_interval_days: number | null
+          deleted_at: string | null
+          diseases_covered: string[]
+          id: string
+          manufacturer: string | null
+          name: string
+          organization_id: string
+          presentation: string | null
+          target_species: Database["public"]["Enums"]["pet_species"][]
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          default_booster_interval_days?: number | null
+          deleted_at?: string | null
+          diseases_covered?: string[]
+          id?: string
+          manufacturer?: string | null
+          name: string
+          organization_id: string
+          presentation?: string | null
+          target_species?: Database["public"]["Enums"]["pet_species"][]
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          default_booster_interval_days?: number | null
+          deleted_at?: string | null
+          diseases_covered?: string[]
+          id?: string
+          manufacturer?: string | null
+          name?: string
+          organization_id?: string
+          presentation?: string | null
+          target_species?: Database["public"]["Enums"]["pet_species"][]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vaccines_catalog_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccines_catalog_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vaccines_catalog_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      veterinarian_public_profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          deleted_at: string | null
+          headline: string | null
+          id: string
+          is_public: boolean
+          slug: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          headline?: string | null
+          id?: string
+          is_public?: boolean
+          slug: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          headline?: string | null
+          id?: string
+          is_public?: boolean
+          slug?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "veterinarian_public_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "colleague_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "veterinarian_public_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -2686,6 +4084,7 @@ export type Database = {
     }
     Functions: {
       accept_clinic_invitation: { Args: { p_token: string }; Returns: string }
+      accept_portal_invitation: { Args: { p_token: string }; Returns: string }
       add_pet_owner: {
         Args: {
           p_owner_id: string
@@ -2727,12 +4126,20 @@ export type Database = {
         Args: { p_encounter_id: string }
         Returns: boolean
       }
+      can_edit_prescription: {
+        Args: { p_prescription_id: string }
+        Returns: boolean
+      }
       can_finalize_clinical_encounter: {
         Args: { p_encounter_id: string }
         Returns: boolean
       }
       can_manage_owner: { Args: { p_owner_id: string }; Returns: boolean }
       can_manage_pet: { Args: { p_pet_id: string }; Returns: boolean }
+      can_manage_vaccine_catalog: {
+        Args: { p_organization_id: string }
+        Returns: boolean
+      }
       can_record_vitals: { Args: { p_encounter_id: string }; Returns: boolean }
       can_view_clinical_content: {
         Args: { p_encounter_id: string }
@@ -2742,12 +4149,28 @@ export type Database = {
         Args: { p_encounter_id: string }
         Returns: boolean
       }
+      can_view_prescription: {
+        Args: { p_prescription_id: string }
+        Returns: boolean
+      }
+      can_view_vaccination_record: {
+        Args: { p_record_id: string }
+        Returns: boolean
+      }
       cancel_appointment: {
         Args: { p_appointment_id: string; p_reason: string }
         Returns: Database["public"]["Enums"]["appointment_status"]
       }
+      cancel_my_appointment: {
+        Args: { p_appointment_id: string; p_reason?: string }
+        Returns: Database["public"]["Enums"]["appointment_status"]
+      }
       cancel_pending_appointment_notifications: {
         Args: { p_appointment_id: string }
+        Returns: undefined
+      }
+      cancel_pending_vaccination_notifications: {
+        Args: { p_record_id: string }
         Returns: undefined
       }
       claim_due_appointment_notifications: {
@@ -2778,10 +4201,43 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      claim_due_vaccination_notifications: {
+        Args: { p_clinic_id: string; p_limit?: number }
+        Returns: {
+          attempts: number
+          channel: Database["public"]["Enums"]["notification_channel"]
+          clinic_id: string
+          created_at: string
+          id: string
+          idempotency_key: string
+          last_error: string | null
+          organization_id: string
+          payload: Json
+          recipient_email: string | null
+          recipient_name: string | null
+          scheduled_for: string
+          sent_at: string | null
+          status: Database["public"]["Enums"]["notification_status"]
+          type: Database["public"]["Enums"]["vaccination_notification_type"]
+          updated_at: string
+          vaccination_record_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "vaccination_notifications"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       clinic_belongs_to_organization: {
         Args: { p_clinic_id: string; p_organization_id: string }
         Returns: boolean
       }
+      clinic_is_publicly_visible: {
+        Args: { p_clinic_id: string }
+        Returns: boolean
+      }
+      clinic_rating: { Args: { p_clinic_id: string }; Returns: Json }
       clinical_encounter_from_storage_path: {
         Args: { p_name: string }
         Returns: string
@@ -2832,6 +4288,14 @@ export type Database = {
         }
         Returns: string
       }
+      create_portal_invitation: {
+        Args: { p_clinic_id: string; p_owner_id: string }
+        Returns: string
+      }
+      create_prescription_draft: {
+        Args: { p_encounter_id: string }
+        Returns: string
+      }
       create_walk_in_encounter: {
         Args: {
           p_chief_complaint?: string
@@ -2846,6 +4310,10 @@ export type Database = {
         Returns: string
       }
       current_user_is_superadmin: { Args: never; Returns: boolean }
+      discard_prescription_draft: {
+        Args: { p_prescription_id: string }
+        Returns: undefined
+      }
       encounter_clinic: { Args: { p_encounter_id: string }; Returns: string }
       encounter_transition_allowed: {
         Args: {
@@ -2859,6 +4327,10 @@ export type Database = {
           p_appointment_id: string
           p_kind: Database["public"]["Enums"]["appointment_notification_type"]
         }
+        Returns: undefined
+      }
+      enqueue_vaccination_reminder: {
+        Args: { p_record_id: string }
         Returns: undefined
       }
       finalize_clinical_encounter: {
@@ -2878,6 +4350,26 @@ export type Database = {
           slot_start: string
         }[]
       }
+      get_clinic_reviews: {
+        Args: { p_clinic_slug: string; p_limit?: number; p_offset?: number }
+        Returns: Json
+      }
+      get_my_appointments: { Args: never; Returns: Json }
+      get_my_pet_history: { Args: { p_pet_id: string }; Returns: Json }
+      get_my_pets: { Args: never; Returns: Json }
+      get_my_reviewable_appointments: { Args: never; Returns: Json }
+      get_public_available_slots: {
+        Args: {
+          p_clinic_slug: string
+          p_from: string
+          p_service_id: string
+          p_to: string
+          p_veterinarian_clinic_member_id: string
+        }
+        Returns: Json
+      }
+      get_public_clinic: { Args: { p_slug: string }; Returns: Json }
+      get_public_veterinarian: { Args: { p_slug: string }; Returns: Json }
       has_active_clinic_pet_relationship: {
         Args: { p_clinic_id: string; p_pet_id: string }
         Returns: boolean
@@ -2916,6 +4408,10 @@ export type Database = {
         Args: { p_organization_id: string }
         Returns: boolean
       }
+      issue_prescription: {
+        Args: { p_prescription_id: string }
+        Returns: string
+      }
       link_pet_to_clinic: {
         Args: {
           p_clinic_id: string
@@ -2925,11 +4421,24 @@ export type Database = {
         }
         Returns: string
       }
+      list_public_cities: { Args: never; Returns: Json }
       log_clinical_record_access: {
         Args: { p_access_type: string; p_encounter_id: string }
         Returns: undefined
       }
+      log_prescription_access: {
+        Args: { p_access_type: string; p_prescription_id: string }
+        Returns: undefined
+      }
+      log_vaccination_access: {
+        Args: { p_access_type: string; p_record_id: string }
+        Returns: undefined
+      }
       mark_appointment_notification: {
+        Args: { p_error?: string; p_notification_id: string; p_ok: boolean }
+        Returns: undefined
+      }
+      mark_vaccination_notification: {
         Args: { p_error?: string; p_notification_id: string; p_ok: boolean }
         Returns: undefined
       }
@@ -2941,12 +4450,68 @@ export type Database = {
         Args: { p_clinic_id: string; p_year: number }
         Returns: string
       }
+      next_prescription_folio: {
+        Args: { p_clinic_id: string; p_year: number }
+        Returns: string
+      }
       organization_of_clinic: { Args: { p_clinic_id: string }; Returns: string }
       pet_belongs_to_accessible_clinic: {
         Args: { p_pet_id: string }
         Returns: boolean
       }
       pet_id_from_storage_path: { Args: { p_name: string }; Returns: string }
+      prescription_clinic: {
+        Args: { p_prescription_id: string }
+        Returns: string
+      }
+      prescription_transition_allowed: {
+        Args: {
+          p_from: Database["public"]["Enums"]["prescription_status"]
+          p_to: Database["public"]["Enums"]["prescription_status"]
+        }
+        Returns: boolean
+      }
+      record_historical_vaccination: {
+        Args: {
+          p_administered_on: string
+          p_clinic_id: string
+          p_diseases?: string[]
+          p_document_path?: string
+          p_document_reference?: string
+          p_expiration_date?: string
+          p_lot_number?: string
+          p_manufacturer?: string
+          p_next_due_at?: string
+          p_notes?: string
+          p_pet_id: string
+          p_provider_name?: string
+          p_request_id?: string
+          p_source: Database["public"]["Enums"]["vaccination_source"]
+          p_vaccine_name: string
+        }
+        Returns: string
+      }
+      record_vaccination: {
+        Args: {
+          p_application_site?: string
+          p_clinic_id: string
+          p_diseases?: string[]
+          p_dose_text?: string
+          p_encounter_id?: string
+          p_expiration_date?: string
+          p_lot_missing_reason?: string
+          p_lot_number?: string
+          p_manufacturer?: string
+          p_next_due_at?: string
+          p_notes?: string
+          p_pet_id: string
+          p_request_id?: string
+          p_route_text?: string
+          p_vaccine_catalog_id?: string
+          p_vaccine_name?: string
+        }
+        Returns: string
+      }
       register_owner_with_clinic: {
         Args: {
           p_address_line_1?: string
@@ -2987,6 +4552,31 @@ export type Database = {
         }
         Returns: string
       }
+      reply_to_review: {
+        Args: { p_reply: string; p_review_id: string }
+        Returns: undefined
+      }
+      report_review: {
+        Args: { p_reason: string; p_review_id: string }
+        Returns: undefined
+      }
+      request_public_appointment: {
+        Args: {
+          p_clinic_slug: string
+          p_email: string
+          p_first_name: string
+          p_last_name: string
+          p_pet_name: string
+          p_pet_species: Database["public"]["Enums"]["pet_species"]
+          p_phone: string
+          p_reason?: string
+          p_request_id?: string
+          p_service_id: string
+          p_start: string
+          p_veterinarian_clinic_member_id: string
+        }
+        Returns: Json
+      }
       reschedule_appointment: {
         Args: {
           p_appointment_id: string
@@ -3000,9 +4590,23 @@ export type Database = {
         Args: { p_invitation_id: string }
         Returns: string
       }
+      search_public_clinics: {
+        Args: {
+          p_category?: Database["public"]["Enums"]["service_category"]
+          p_city?: string
+          p_limit?: number
+          p_offset?: number
+          p_q?: string
+        }
+        Returns: Json
+      }
       set_primary_pet_owner: {
         Args: { p_owner_id: string; p_pet_id: string }
         Returns: undefined
+      }
+      set_review_visibility: {
+        Args: { p_hidden: boolean; p_reason: string; p_review_id: string }
+        Returns: Database["public"]["Enums"]["review_status"]
       }
       shares_active_organization_with: {
         Args: { p_profile_id: string }
@@ -3010,6 +4614,19 @@ export type Database = {
       }
       start_encounter_from_appointment: {
         Args: { p_appointment_id: string }
+        Returns: string
+      }
+      submit_review: {
+        Args: {
+          p_appointment_id: string
+          p_body: string
+          p_rating: number
+          p_title?: string
+        }
+        Returns: string
+      }
+      supersede_prescription: {
+        Args: { p_prescription_id: string; p_reason: string }
         Returns: string
       }
       transition_appointment_status: {
@@ -3020,9 +4637,34 @@ export type Database = {
         }
         Returns: Database["public"]["Enums"]["appointment_status"]
       }
+      update_my_review: {
+        Args: {
+          p_body: string
+          p_rating: number
+          p_review_id: string
+          p_title?: string
+        }
+        Returns: undefined
+      }
+      vaccination_pet_from_storage_path: {
+        Args: { p_name: string }
+        Returns: string
+      }
+      vaccination_record_clinic: {
+        Args: { p_record_id: string }
+        Returns: string
+      }
       void_clinical_encounter: {
         Args: { p_encounter_id: string; p_reason: string }
         Returns: Database["public"]["Enums"]["encounter_status"]
+      }
+      void_prescription: {
+        Args: { p_prescription_id: string; p_reason: string }
+        Returns: Database["public"]["Enums"]["prescription_status"]
+      }
+      void_vaccination_record: {
+        Args: { p_reason: string; p_record_id: string }
+        Returns: Database["public"]["Enums"]["vaccination_record_status"]
       }
     }
     Enums: {
@@ -3134,6 +4776,8 @@ export type Database = {
         | "other"
       pet_sex: "male" | "female" | "unknown"
       pet_species: "dog" | "cat" | "other"
+      prescription_status: "draft" | "issued" | "superseded" | "voided"
+      review_status: "published" | "hidden"
       schedule_exception_type:
         | "vacation"
         | "sick_leave"
@@ -3162,6 +4806,14 @@ export type Database = {
         | "referral"
         | "follow_up"
         | "other"
+      vaccination_notification_type: "next_dose_due"
+      vaccination_record_status: "recorded" | "voided"
+      vaccination_source:
+        | "administered_in_clinic"
+        | "historical_owner_document"
+        | "external_clinic"
+        | "campaign"
+        | "import"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3412,6 +5064,8 @@ export const Constants = {
       ],
       pet_sex: ["male", "female", "unknown"],
       pet_species: ["dog", "cat", "other"],
+      prescription_status: ["draft", "issued", "superseded", "voided"],
+      review_status: ["published", "hidden"],
       schedule_exception_type: [
         "vacation",
         "sick_leave",
@@ -3442,6 +5096,15 @@ export const Constants = {
         "referral",
         "follow_up",
         "other",
+      ],
+      vaccination_notification_type: ["next_dose_due"],
+      vaccination_record_status: ["recorded", "voided"],
+      vaccination_source: [
+        "administered_in_clinic",
+        "historical_owner_document",
+        "external_clinic",
+        "campaign",
+        "import",
       ],
     },
   },

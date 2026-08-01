@@ -128,9 +128,16 @@ export default async function PaginaDetalleConsulta({
           <Badge variant="destructive">{t.urgencia}</Badge>
         ) : null}
         {consulta.status === "finalized" ? (
-          <Button asChild variant="outline" size="sm">
-            <Link href={`/app/consultas/${consulta.id}/imprimir`}>{d.verDocumento}</Link>
-          </Button>
+          <>
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/app/consultas/${consulta.id}/imprimir`}>{d.verDocumento}</Link>
+            </Button>
+            <Button asChild size="sm">
+              <Link href={`/app/recetas/nueva?consulta=${consulta.id}`}>
+                {mensajes.recetas.crearDesdeConsulta}
+              </Link>
+            </Button>
+          </>
         ) : null}
       </div>
 
