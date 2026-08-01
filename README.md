@@ -21,13 +21,14 @@ total de datos entre clínicas.
 
 ## Documentación
 
-| Documento                                            | Contenido                                                       |
-| ---------------------------------------------------- | --------------------------------------------------------------- |
-| [PRODUCT_REQUIREMENTS.md](./PRODUCT_REQUIREMENTS.md) | Alcance del MVP, roles, riesgos, decisiones de producto         |
-| [ARCHITECTURE.md](./ARCHITECTURE.md)                 | Stack, principios, estructura del monorepo, seguridad y pruebas |
-| [DATABASE_DESIGN.md](./DATABASE_DESIGN.md)           | Modelo de datos, multi-tenancy con RLS, matriz de permisos      |
-| [ROADMAP.md](./ROADMAP.md)                           | Fases de desarrollo con criterios de salida verificables        |
-| [CLAUDE.md](./CLAUDE.md)                             | Reglas de ingeniería obligatorias para todo el proyecto         |
+| Documento                                                        | Contenido                                                          |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [PRODUCT_REQUIREMENTS.md](./PRODUCT_REQUIREMENTS.md)             | Alcance del MVP, roles, riesgos, decisiones de producto            |
+| [ARCHITECTURE.md](./ARCHITECTURE.md)                             | Stack, principios, estructura del monorepo, seguridad y pruebas    |
+| [DATABASE_DESIGN.md](./DATABASE_DESIGN.md)                       | Modelo de datos, multi-tenancy con RLS, matriz de permisos         |
+| [ROADMAP.md](./ROADMAP.md)                                       | Fases de desarrollo con criterios de salida verificables           |
+| [CLAUDE.md](./CLAUDE.md)                                         | Reglas de ingeniería obligatorias para todo el proyecto            |
+| [docs/deployment/production.md](./docs/deployment/production.md) | Runbook de publicación en producción (Vercel + Supabase + dominio) |
 
 ## Requisitos previos
 
