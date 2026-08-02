@@ -8,8 +8,19 @@ Runbook para publicar Dogtoralia en tu dominio. Arquitectura de despliegue:
 - **Recordatorios programados** → `pg_cron` + `pg_net` dentro de Supabase (golpean la Edge Function
   `send-reminders`).
 
-> **Ejemplo de dominio usado en este documento:** `dogtoralia.mx`. **Sustitúyelo** por tu dominio
-> real en todos los pasos (Site URL, redirect URLs, DNS, remitente de correo).
+> **Estado real de este despliegue (ago 2026):**
+>
+> - **Dominio:** `dogtoralia.mx` (registrado y con DNS en **Hostinger / hPanel**).
+> - **Web ya desplegada en Vercel**, accesible temporalmente en `https://dogtoralia-chi.vercel.app`.
+> - **Supabase de producción:** proyecto `izixhghxlmsfjwsbohxt`
+>   (`https://izixhghxlmsfjwsbohxt.supabase.co`), ya cableado en Vercel
+>   (`NEXT_PUBLIC_SUPABASE_URL`).
+> - **Decisión de dominio:** la app **reemplaza la raíz** — `dogtoralia.mx` (+`www`) apuntará a
+>   Vercel y sustituirá al sitio WordPress que hoy sirve Hostinger en esa dirección. Ver el paso 8,
+>   que está escrito para este caso concreto.
+>
+> Donde el documento diga `<PROJECT_REF>`, usa `izixhghxlmsfjwsbohxt` (no es secreto: ya aparece en
+> la cabecera CSP pública del sitio).
 
 > **Regla de oro (CLAUDE.md §1-2):** ningún secreto se commitea. La `service_role key`, el
 > `CRON_SECRET` y el `RESEND_API_KEY` viven **solo** en el gestor de secretos de cada plataforma
@@ -233,24 +244,76 @@ diferencia de local). El correo de confirmación lo enviará el SMTP que configu
 
 ---
 
-## 8. Conectar tu dominio
+## 8. Conectar `dogtoralia.mx` a Vercel (reemplazando el WordPress de Hostinger)
 
-1. En el proyecto de Vercel → **Settings → Domains → Add** → escribe `dogtoralia.mx`.
-2. Vercel te indicará los registros DNS. Configúralos en tu proveedor de DNS:
+> ⚠️ **Esto es destructivo para el sitio actual:** al cambiar el registro `A` de la raíz, el
+> WordPress que hoy sirve Hostinger en `dogtoralia.mx` **dejará de verse** en esa dirección (los
+> archivos siguen en tu hosting; es reversible volviendo a apuntar el DNS). Haz los pasos en este
+> orden para no quedar caído ni romper el login.
 
-   | Tipo    | Nombre     | Valor                  | Para                |
-   | ------- | ---------- | ---------------------- | ------------------- |
-   | `A`     | `@` (apex) | `76.76.21.21`          | `dogtoralia.mx`     |
-   | `CNAME` | `www`      | `cname.vercel-dns.com` | `www.dogtoralia.mx` |
+### 8.1 Añadir los dominios en Vercel
 
-   > Los valores exactos los confirma Vercel en su pantalla de dominios; usa esos si difieren. Elige un
-   > dominio canónico (p. ej. redirige `www` → apex, o al revés) en la misma pantalla.
+En el proyecto de Vercel → **Settings → Domains → Add**, agrega **los dos**:
 
-3. Espera la propagación DNS (minutos a algunas horas). Vercel emite el certificado **TLS**
-   automáticamente. Cuando el dominio aparezca como _Valid_, tu sitio está en línea.
-4. **Coherencia**: `NEXT_PUBLIC_APP_URL` (paso 7) y el **Site URL / Redirect URLs** de Supabase
-   (paso 5) deben apuntar al **mismo** dominio canónico que elegiste aquí. Si cambias de `www` a apex
-   o viceversa, actualiza ambos y vuelve a desplegar.
+- `dogtoralia.mx`
+- `www.dogtoralia.mx`
+
+Elige el **canónico** en esa misma pantalla (recomendado: apex `dogtoralia.mx`, con `www` →
+redirección a apex). Vercel mostrará la configuración DNS esperada y el estado (`Invalid` hasta que
+el DNS apunte a Vercel).
+
+### 8.2 Cambiar el DNS en Hostinger (hPanel)
+
+En **hPanel → Dominios → `dogtoralia.mx` → DNS / Nameservers → Zona DNS** (si tus nameservers son de
+Hostinger, `nsX.dns-parking.com`; si los cambiaste a otro proveedor, edita ahí):
+
+1. **Registro `A` de la raíz** — edita el existente (hoy apunta a la IP de tu hosting):
+
+   | Tipo | Nombre        | Valor (Vercel) | TTL       |
+   | ---- | ------------- | -------------- | --------- |
+   | `A`  | `@` (o vacío) | `76.76.21.21`  | 300 (5 m) |
+
+2. **`www`** — elimina cualquier `A`/`CNAME` de `www` que exista y crea:
+
+   | Tipo    | Nombre | Valor (Vercel)         | TTL |
+   | ------- | ------ | ---------------------- | --- |
+   | `CNAME` | `www`  | `cname.vercel-dns.com` | 300 |
+
+> Los valores exactos (IP del `A` y destino del `CNAME`) los confirma **la pantalla de Vercel**; usa
+> esos si difieren de los de arriba.
+>
+> **NO toques los registros `MX`** ni los `TXT`/`CNAME` de correo (SPF/DKIM) si usas correo con
+> `@dogtoralia.mx` en Hostinger: cambiar el `A` web no afecta al correo, y esos registros los
+> necesitas también para Resend (paso 6).
+>
+> **CAA:** si Hostinger tiene un registro `CAA` que restringe emisores de certificados, añade
+> `0 issue "letsencrypt.org"` o elimínalo, o Vercel no podrá emitir el TLS.
+
+### 8.3 Esperar validación + TLS
+
+Baja el TTL antes ayuda a que propague rápido (minutos a un par de horas). Cuando en Vercel ambos
+dominios aparezcan como **Valid** y con **certificado emitido**, `https://dogtoralia.mx` ya sirve la
+app. Verifícalo:
+
+```bash
+curl -sI https://dogtoralia.mx | grep -i "server\|x-powered-by"
+# Debe decir "server: Vercel" y YA NO "x-powered-by: PHP" (eso sería el WordPress viejo aún cacheado).
+```
+
+### 8.4 Apuntar la app y Auth al dominio final
+
+Solo cuando el dominio ya sirva la app por HTTPS:
+
+1. **Vercel → Settings → Environment Variables**: pon
+   `NEXT_PUBLIC_APP_URL = https://dogtoralia.mx` (Production) y **redeploy** (Deployments → ⋯ →
+   Redeploy) para que la nueva URL entre al bundle y a la CSP.
+2. **Supabase → Authentication → URL Configuration** (paso 5): **Site URL** = `https://dogtoralia.mx`
+   y añade a **Redirect URLs** `https://dogtoralia.mx/confirmar` y
+   `https://dogtoralia.mx/actualizar-contrasena`. Deja también las de `dogtoralia-chi.vercel.app`
+   durante la transición (no estorban) y quítalas cuando ya no las uses.
+
+> **Coherencia:** `NEXT_PUBLIC_APP_URL` y el **Site URL** de Supabase deben ser el **mismo** dominio
+> canónico (`https://dogtoralia.mx`). Si eliges `www` como canónico, usa esa variante en ambos.
 
 ---
 
