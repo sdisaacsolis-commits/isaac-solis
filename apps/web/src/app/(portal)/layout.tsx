@@ -13,7 +13,7 @@ const pie = portalPublico.footer;
 export default function PortalPublicoLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="flex min-h-dvh flex-col">
-      <header className="border-b border-border bg-surface">
+      <header className="sticky top-0 z-40 border-b border-border bg-surface/80 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-6 py-4">
           <Link
             href="/"

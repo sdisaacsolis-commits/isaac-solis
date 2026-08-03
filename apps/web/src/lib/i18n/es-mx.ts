@@ -1393,37 +1393,105 @@ export const mensajes = {
       enLineaProximamente: "Consulta en línea disponible próximamente",
     },
     portada: {
+      // Hero
       tituloBuscador: "Encuentra a tu veterinario y agenda tu cita",
-      categorias: "Servicios populares",
-      ciudades: "Ciudades con clínicas veterinarias",
-      clinicasEn: (n: number) => (n === 1 ? "1 clínica" : `${n} clínicas`),
-      propuestaTitulo: "Cuidar a tu mascota nunca fue tan sencillo",
-      propuesta: [
+      heroEtiqueta: "Plataforma veterinaria mexicana",
+      heroTituloInicio: "Encuentra a tu veterinario y agenda",
+      heroTituloEnfasis: "con cariño",
+      heroTituloFin: ", en un solo lugar.",
+      heroSubtitulo:
+        "Explora clínicas verificadas por ciudad y servicio, con precios claros y equipo con cédula visible. Reserva en línea aunque no tengas cuenta.",
+      heroNota: "Sin registro para reservar · La clínica confirma · Recordatorios automáticos",
+      // Métricas reales (solo se muestran si hay datos)
+      metricaClinicas: (n: number) =>
+        n === 1 ? "1 clínica verificada" : `${n} clínicas verificadas`,
+      metricaCiudades: (n: number) => (n === 1 ? "en 1 ciudad" : `en ${n} ciudades`),
+      // Confianza
+      confianza: [
+        { titulo: "Cédula profesional visible", texto: "Verificamos a cada veterinario" },
+        { titulo: "Opiniones verificadas", texto: "Solo de citas realmente atendidas" },
+        { titulo: "Datos aislados por clínica", texto: "Tu información, protegida" },
+        { titulo: "Reserva sin cuenta", texto: "Agenda en menos de un minuto" },
+      ],
+      // Cómo funciona
+      pasosEtiqueta: "Para dueños de mascotas",
+      pasosTitulo: "Cuidar a tu mascota, en tres pasos",
+      pasosSubtitulo: "Del «necesito un veterinario» a «cita confirmada», sin llamadas ni esperas.",
+      pasos: [
         {
-          titulo: "Encuentra al veterinario indicado",
+          titulo: "Busca",
           descripcion:
-            "Explora clínicas veterinarias por ciudad y servicio, con precios claros y equipo profesional con cédula visible.",
+            "Filtra por servicio y ciudad. Compara clínicas por precio, equipo y opiniones reales de otros dueños.",
         },
         {
-          titulo: "Reserva en línea al instante",
+          titulo: "Reserva",
           descripcion:
-            "Elige un horario real de la agenda de la clínica y solicita tu cita sin llamadas ni esperas.",
+            "Elige veterinario, fecha y un horario disponible de verdad. Envías tu solicitud con o sin cuenta.",
         },
         {
-          titulo: "La clínica confirma tu solicitud",
+          titulo: "Cuida",
           descripcion:
-            "Tu solicitud llega directo a la clínica, que la confirma y te contacta si necesita ajustar algo.",
-        },
-        {
-          titulo: "Historial de tus mascotas",
-          descripcion:
-            "Con tu cuenta del portal consultas citas, cartilla de vacunación y recetas de tus mascotas en un solo lugar.",
+            "Recibe recordatorios de la cita y de las vacunas, y consulta el historial de tu mascota cuando quieras.",
         },
       ],
-      bannerProTitulo: "¿Eres veterinario o tienes una clínica?",
-      bannerProTexto:
-        "Administra agenda, expedientes, recetas y recordatorios con Dogtoralia, y recibe solicitudes de cita en línea.",
-      bannerProBoton: "Crear cuenta profesional",
+      // Servicios
+      categorias: "Servicios populares",
+      serviciosTitulo: "Todo el cuidado, en una búsqueda",
+      // Ciudades
+      ciudades: "Clínicas veterinarias por ciudad",
+      clinicasEn: (n: number) => (n === 1 ? "1 clínica" : `${n} clínicas`),
+      // Opiniones verificadas
+      opinionesEtiqueta: "Opiniones verificadas",
+      opinionesTitulo: "Reseñas en las que puedes confiar",
+      opinionesTexto:
+        "Cada opinión proviene de una cita realmente atendida. Sin reseñas falsas: solo quien asistió puede calificar, y la clínica puede responder públicamente.",
+      opinionesPuntos: ["Solo de citas completadas", "Autor verificado", "La clínica responde"],
+      // Doble audiencia
+      audienciaEtiqueta: "Una plataforma, dos mundos",
+      audienciaTitulo: "Hecha para dueños y para clínicas",
+      duenosTitulo: "Para dueños de mascotas",
+      duenosTexto:
+        "Un directorio real de clínicas verificadas, con reserva en línea y el historial de tu mascota en un solo lugar.",
+      duenosPuntos: [
+        {
+          titulo: "Horarios reales, no solicitudes al aire",
+          texto: "Ves la disponibilidad de cada veterinario.",
+        },
+        { titulo: "Recordatorios automáticos", texto: "De la cita y de las próximas vacunas." },
+        {
+          titulo: "Historial siempre a la mano",
+          texto: "Consultas, recetas y cartilla de vacunación.",
+        },
+      ],
+      duenosCta: "Buscar veterinario",
+      clinicasTitulo: "Para clínicas y veterinarios",
+      clinicasTexto:
+        "Agenda, expediente y recetas en un sistema pensado para México, con el aislamiento de datos como base.",
+      clinicasPuntos: [
+        {
+          titulo: "Agenda anti-traslape",
+          texto: "Citas por veterinario, sin encimarse, con confirmación.",
+        },
+        {
+          titulo: "Expediente inmutable",
+          texto: "Consultas cerradas y recetas con folio; correcciones por adenda.",
+        },
+        {
+          titulo: "Recordatorios que salen solos",
+          texto: "Citas y vacunas, aunque nadie abra el panel.",
+        },
+        {
+          titulo: "Datos aislados por clínica",
+          texto: "Nadie ve lo que no le toca. Garantizado en la base de datos.",
+        },
+      ],
+      clinicasCta: "Registra tu clínica",
+      // CTA final
+      ctaTitulo: "¿Tienes una clínica? Publícala en Dogtoralia.",
+      ctaTexto:
+        "Empieza gratis en beta. Agenda, expediente y recordatorios listos desde el primer día.",
+      ctaBotonPro: "Registrar mi clínica",
+      ctaBotonBuscar: "Buscar veterinario",
     },
     footer: {
       duenos: "Dueños de mascotas",
