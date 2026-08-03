@@ -371,3 +371,10 @@ Tras la configuración inicial, Vercel **redespliega solo** en cada push a `main
 esquema en el futuro: añade una migración nueva en `supabase/migrations/`, y tras fusionar a `main`
 ejecuta `pnpm exec supabase db push` contra producción (las migraciones son inmutables una vez
 fusionadas — CLAUDE.md §15). Regenera tipos en el mismo PR (`pnpm db:types`).
+
+> **Requisito**: el despliegue continuo depende de que el proyecto de Vercel tenga el repositorio
+> de GitHub conectado (**Settings → Git → Connected Git Repository** = este repo, **Production
+> Branch** = `main`). Sin esa conexión, fusionar a `main` NO publica nada y el sitio queda
+> congelado en el último build manual — verificado durante la puesta en producción (ago 2026).
+> Síntoma típico: rutas nuevas (p. ej. `/aviso-de-privacidad`) responden 404 en el dominio aunque
+> ya estén en `main`.
