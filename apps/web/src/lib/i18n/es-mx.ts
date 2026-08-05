@@ -1382,6 +1382,10 @@ export const mensajes = {
       descripcionDirectorio: (titulo: string) =>
         `${titulo}: clínicas veterinarias con servicios, precios y reservación en línea en Dogtoralia.`,
     },
+    seo: {
+      // Textos de los datos estructurados (Schema.org); no son UI visible.
+      puestoVeterinario: "Médico veterinario",
+    },
     buscador: {
       etiquetaQue: "Servicio, padecimiento o nombre de la clínica",
       placeholderQue: "Vacunación, consulta, estética…",

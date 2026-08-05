@@ -12,6 +12,7 @@ import {
   resolverCiudadPublica,
   slugificarCiudad,
 } from "@/lib/portal/public";
+import { datosBreadcrumbs, JsonLd } from "@/lib/seo/jsonld";
 
 const t = mensajes.portalPublico;
 
@@ -35,7 +36,14 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     mensajes.servicios.categorias[cat] ?? cat,
     ciudadPublica.city,
   );
-  return { title: titulo, description: t.meta.descripcionDirectorio(titulo) };
+  const descripcion = t.meta.descripcionDirectorio(titulo);
+  const ruta = `/servicios/${cat}/${slugificarCiudad(ciudadPublica.city)}`;
+  return {
+    title: titulo,
+    description: descripcion,
+    alternates: { canonical: ruta },
+    openGraph: { title: titulo, description: descripcion, url: ruta },
+  };
 }
 
 export default async function PaginaServicioCiudad({ params }: Params) {
@@ -55,6 +63,13 @@ export default async function PaginaServicioCiudad({ params }: Params) {
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10">
+      <JsonLd
+        data={datosBreadcrumbs([
+          { nombre: t.directorios.inicio, ruta: "/" },
+          { nombre: etiquetaCategoria, ruta: `/buscar?categoria=${cat}` },
+          { nombre: ciudadPublica.city },
+        ])}
+      />
       <nav
         aria-label={t.directorios.servicioEn(etiquetaCategoria, ciudadPublica.city)}
         className="text-sm text-ink-muted"

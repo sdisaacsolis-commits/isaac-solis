@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: avisoPrivacidad.titulo,
   description:
     "Aviso de Privacidad Integral de Dogtoralia conforme a la LFPDPPP: datos que tratamos, finalidades, transferencias y derechos ARCO.",
+  alternates: { canonical: "/aviso-de-privacidad" },
 };
 
 export default function PaginaAvisoPrivacidad() {

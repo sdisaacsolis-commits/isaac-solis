@@ -15,6 +15,7 @@ const POR_PAGINA = 12;
 export const metadata: Metadata = {
   title: mensajes.portalPublico.meta.tituloBuscar,
   description: mensajes.portalPublico.meta.descripcionBuscar,
+  alternates: { canonical: "/buscar" },
 };
 
 export default async function PaginaBuscar({

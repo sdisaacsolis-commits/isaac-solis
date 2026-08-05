@@ -28,7 +28,9 @@ import {
   obtenerClinicaPublica,
   obtenerHuecosPublicos,
   obtenerResenasDeClinica,
+  slugificarCiudad,
 } from "@/lib/portal/public";
+import { datosBreadcrumbs, datosClinica, JsonLd } from "@/lib/seo/jsonld";
 
 import { ResenasClinica } from "./resenas-clinica";
 import { ReservaForm } from "./reserva-form";
@@ -50,13 +52,15 @@ export async function generateMetadata({
   const { slug } = await params;
   const clinica = await obtenerClinicaPublica(slug);
   if (!clinica) return { title: mensajes.meta.tituloPorDefecto };
+  const titulo = mensajes.portalPublico.meta.tituloClinica(clinica.name);
+  const descripcion =
+    clinica.description ?? mensajes.portalPublico.meta.descripcionDirectorio(titulo);
+  const ruta = `/clinicas/${encodeURIComponent(clinica.slug)}`;
   return {
-    title: mensajes.portalPublico.meta.tituloClinica(clinica.name),
-    description:
-      clinica.description ??
-      mensajes.portalPublico.meta.descripcionDirectorio(
-        mensajes.portalPublico.meta.tituloClinica(clinica.name),
-      ),
+    title: titulo,
+    description: descripcion,
+    alternates: { canonical: ruta },
+    openGraph: { title: titulo, description: descripcion, url: ruta },
   };
 }
 
@@ -120,6 +124,23 @@ export default async function PaginaClinicaPublica({ params, searchParams }: Par
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10">
+      <JsonLd
+        data={[
+          datosClinica(clinica),
+          datosBreadcrumbs([
+            { nombre: mensajes.portalPublico.directorios.inicio, ruta: "/" },
+            ...(clinica.city
+              ? [
+                  {
+                    nombre: mensajes.portalPublico.meta.tituloVeterinariosEn(clinica.city),
+                    ruta: `/veterinarios/${slugificarCiudad(clinica.city)}`,
+                  },
+                ]
+              : []),
+            { nombre: clinica.name },
+          ]),
+        ]}
+      />
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-3xl font-bold tracking-tight text-ink">{clinica.name}</h1>

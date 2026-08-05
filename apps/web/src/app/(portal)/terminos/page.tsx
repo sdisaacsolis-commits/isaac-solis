@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: terminos.titulo,
   description:
     "Términos y Condiciones del servicio Dogtoralia: objeto, cuenta y roles, uso aceptable, responsabilidad profesional del veterinario y ley aplicable en México.",
+  alternates: { canonical: "/terminos" },
 };
 
 export default function PaginaTerminos() {

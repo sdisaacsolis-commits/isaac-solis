@@ -13,6 +13,18 @@ export const metadata: Metadata = {
   },
   description: mensajes.meta.descripcion,
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  openGraph: {
+    type: "website",
+    siteName: mensajes.marca.nombre,
+    locale: "es_MX",
+    title: mensajes.meta.tituloPorDefecto,
+    description: mensajes.meta.descripcion,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: mensajes.meta.tituloPorDefecto,
+    description: mensajes.meta.descripcion,
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
