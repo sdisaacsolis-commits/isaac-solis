@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { BuscadorPublico } from "@/components/portal/buscador-publico";
 import { mensajes } from "@/lib/i18n/es-mx";
 import { listarCiudadesPublicas, slugificarCiudad } from "@/lib/portal/public";
+import { datosOrganizacionYSitio, JsonLd } from "@/lib/seo/jsonld";
 
 const { portalPublico, servicios } = mensajes;
 const t = portalPublico.portada;
@@ -14,6 +15,12 @@ const t = portalPublico.portada;
 export const metadata: Metadata = {
   title: { absolute: portalPublico.meta.tituloPortada },
   description: portalPublico.meta.descripcionPortada,
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: portalPublico.meta.tituloPortada,
+    description: portalPublico.meta.descripcionPortada,
+    url: "/",
+  },
 };
 
 /** Íconos de línea por categoría de servicio (SVG en línea, heredan currentColor). */
@@ -125,6 +132,7 @@ export default async function PaginaInicio() {
 
   return (
     <>
+      <JsonLd data={datosOrganizacionYSitio()} />
       {/* ============================ HERO ============================ */}
       <section className="relative overflow-hidden border-b border-border">
         <div

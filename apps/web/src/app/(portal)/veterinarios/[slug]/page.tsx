@@ -13,6 +13,7 @@ import {
   resolverCiudadPublica,
   slugificarCiudad,
 } from "@/lib/portal/public";
+import { datosBreadcrumbs, datosVeterinario, JsonLd } from "@/lib/seo/jsonld";
 
 const t = mensajes.portalPublico;
 
@@ -29,20 +30,26 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const veterinario = await obtenerVeterinarioPublico(slug);
   if (veterinario) {
+    const titulo = t.meta.tituloVeterinario(veterinario.display_name ?? veterinario.slug);
+    const descripcion = veterinario.headline ?? t.meta.descripcionDirectorio(titulo);
+    const ruta = `/veterinarios/${encodeURIComponent(veterinario.slug)}`;
     return {
-      title: t.meta.tituloVeterinario(veterinario.display_name ?? veterinario.slug),
-      description:
-        veterinario.headline ??
-        t.meta.descripcionDirectorio(
-          t.meta.tituloVeterinario(veterinario.display_name ?? veterinario.slug),
-        ),
+      title: titulo,
+      description: descripcion,
+      alternates: { canonical: ruta },
+      openGraph: { title: titulo, description: descripcion, url: ruta },
     };
   }
   const ciudad = await resolverCiudadPublica(slug);
   if (ciudad) {
+    const titulo = t.meta.tituloVeterinariosEn(ciudad.city);
+    const descripcion = t.meta.descripcionDirectorio(titulo);
+    const ruta = `/veterinarios/${slugificarCiudad(ciudad.city)}`;
     return {
-      title: t.meta.tituloVeterinariosEn(ciudad.city),
-      description: t.meta.descripcionDirectorio(t.meta.tituloVeterinariosEn(ciudad.city)),
+      title: titulo,
+      description: descripcion,
+      alternates: { canonical: ruta },
+      openGraph: { title: titulo, description: descripcion, url: ruta },
     };
   }
   return { title: mensajes.meta.tituloPorDefecto };
@@ -55,6 +62,7 @@ export default async function PaginaVeterinarioOCiudad({ params }: Params) {
   if (veterinario) {
     return (
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-10">
+        <JsonLd data={datosVeterinario(veterinario)} />
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold tracking-tight text-ink">
             {veterinario.display_name ?? veterinario.slug}
@@ -142,6 +150,13 @@ export default async function PaginaVeterinarioOCiudad({ params }: Params) {
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10">
+      <JsonLd
+        data={datosBreadcrumbs([
+          { nombre: t.directorios.inicio, ruta: "/" },
+          { nombre: t.directorios.breadcrumbVeterinarios, ruta: "/buscar" },
+          { nombre: ciudad.city },
+        ])}
+      />
       <nav aria-label={t.directorios.breadcrumbVeterinarios} className="text-sm text-ink-muted">
         <Link className="hover:underline" href="/">
           {t.directorios.inicio}
