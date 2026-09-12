@@ -143,6 +143,22 @@ export function datosVeterinario(veterinario: VeterinarioPublico): JsonLdObject 
   });
 }
 
+/**
+ * Preguntas frecuentes (FAQPage) de los directorios: el markup refleja
+ * EXACTAMENTE las preguntas y respuestas visibles en la página.
+ */
+export function datosFaq(faqs: Array<{ pregunta: string; respuesta: string }>): JsonLdObject {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.pregunta,
+      acceptedAnswer: { "@type": "Answer", text: faq.respuesta },
+    })),
+  };
+}
+
 /** Migas de pan de los directorios: cada item con nombre y URL absoluta. */
 export function datosBreadcrumbs(items: Array<{ nombre: string; ruta?: string }>): JsonLdObject {
   return {

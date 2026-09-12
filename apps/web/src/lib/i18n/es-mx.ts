@@ -1386,6 +1386,193 @@ export const mensajes = {
       // Textos de los datos estructurados (Schema.org); no son UI visible.
       puestoVeterinario: "Médico veterinario",
     },
+    directorioServicios: {
+      // Contenido editorial ÚNICO por categoría para /servicios/[categoria]/[ciudad]
+      // (SEO). Regla dura: nada de precios ni pautas médicas inventadas — costos
+      // "según la clínica" y decisiones clínicas "las define el veterinario"
+      // (Dogtoralia no calcula dosis ni sugiere tratamientos).
+      faqTitulo: (categoria: string, ciudad: string) =>
+        `Preguntas frecuentes sobre ${categoria.toLowerCase()} en ${ciudad}`,
+      porCategoria: {
+        consultation: {
+          intro: (ciudad: string) =>
+            `La consulta veterinaria es la base del cuidado preventivo: exploración física completa, revisión de peso y una guía clara para la salud de tu mascota. Las clínicas de ${ciudad} en Dogtoralia publican sus precios y su agenda real, para que compares y reserves sin llamadas.`,
+          faqs: [
+            {
+              pregunta: (ciudad: string) => `¿Cuánto cuesta una consulta veterinaria en ${ciudad}?`,
+              respuesta: () =>
+                "El precio varía según la clínica y el tipo de consulta. En Dogtoralia cada clínica publica el precio exacto de sus servicios, así puedes compararlos antes de reservar.",
+            },
+            {
+              pregunta: () => "¿Qué incluye una consulta general?",
+              respuesta: () =>
+                "Normalmente una exploración física completa, revisión de peso y condición corporal, y las recomendaciones del veterinario. Si hace falta algún estudio o tratamiento, la clínica te lo explica antes de realizarlo.",
+            },
+            {
+              pregunta: () => "¿Cada cuánto debo llevar a mi mascota a consulta?",
+              respuesta: () =>
+                "Depende de su edad y estado de salud; la frecuencia la define el veterinario. Como referencia general se recomienda al menos una revisión al año, y con mayor frecuencia en cachorros y en adultos mayores.",
+            },
+          ],
+        },
+        vaccination: {
+          intro: (ciudad: string) =>
+            `Mantener la cartilla al día protege a tu mascota y a tu familia. Las clínicas de ${ciudad} en Dogtoralia registran cada aplicación con lote y caducidad verificados, y te recuerdan automáticamente la próxima dosis.`,
+          faqs: [
+            {
+              pregunta: () => "¿Qué vacunas necesita mi perro o mi gato?",
+              respuesta: () =>
+                "El esquema exacto lo define el veterinario según la edad, el historial y el estilo de vida de tu mascota. En la consulta te indican qué vacunas aplicar y cuándo.",
+            },
+            {
+              pregunta: (ciudad: string) => `¿Cuánto cuesta vacunar a mi mascota en ${ciudad}?`,
+              respuesta: () =>
+                "Depende de la vacuna y de la clínica; cada clínica publica los precios de sus servicios en su perfil de Dogtoralia para que compares antes de agendar.",
+            },
+            {
+              pregunta: () => "¿Me avisan cuándo toca la siguiente dosis?",
+              respuesta: () =>
+                "Sí. Al registrarse la aplicación en Dogtoralia, la cartilla de tu mascota queda al día y recibes recordatorios automáticos de la próxima dosis.",
+            },
+          ],
+        },
+        surgery: {
+          intro: (ciudad: string) =>
+            `De la esterilización a los procedimientos programados: encuentra en ${ciudad} clínicas con quirófano y equipo veterinario con cédula profesional visible, y agenda la valoración en línea.`,
+          faqs: [
+            {
+              pregunta: (ciudad: string) => `¿Cuánto cuesta una cirugía veterinaria en ${ciudad}?`,
+              respuesta: () =>
+                "Varía según el procedimiento, el tamaño de la mascota y la clínica. Compara los precios publicados en Dogtoralia y confirma el presupuesto en la valoración prequirúrgica.",
+            },
+            {
+              pregunta: () => "¿Qué necesita mi mascota antes de una cirugía?",
+              respuesta: () =>
+                "Normalmente una valoración previa y el ayuno que indique el veterinario; cada clínica te da instrucciones exactas para antes y después del procedimiento.",
+            },
+            {
+              pregunta: () => "¿La esterilización es segura?",
+              respuesta: () =>
+                "Es uno de los procedimientos más comunes de la medicina veterinaria. El veterinario evalúa a tu mascota en la valoración previa y resuelve todas tus dudas antes de programarla.",
+            },
+          ],
+        },
+        grooming: {
+          intro: (ciudad: string) =>
+            `Baño, corte e higiene con profesionales que también cuidan la piel y el pelaje. Compara estéticas caninas y felinas en ${ciudad} con precios claros y reserva en línea.`,
+          faqs: [
+            {
+              pregunta: () => "¿Cada cuánto conviene bañar a mi perro?",
+              respuesta: () =>
+                "Depende de la raza, el tipo de pelaje y su estilo de vida. El equipo de estética te recomienda la frecuencia ideal para tu mascota.",
+            },
+            {
+              pregunta: () => "¿Qué incluye un servicio de estética?",
+              respuesta: () =>
+                "Varía por clínica: usualmente baño, secado, corte, limpieza de oídos y corte de uñas. Revisa el detalle y el precio publicados en el perfil de cada clínica.",
+            },
+            {
+              pregunta: () => "¿Puedo combinar la estética con una revisión veterinaria?",
+              respuesta: () =>
+                "Sí. Muchas clínicas ofrecen ambos servicios; puedes agendar lo que necesites en la misma visita.",
+            },
+          ],
+        },
+        laboratory: {
+          intro: (ciudad: string) =>
+            `Análisis clínicos veterinarios en ${ciudad}: biometrías, químicas sanguíneas y más, siempre interpretados por el veterinario de tu mascota.`,
+          faqs: [
+            {
+              pregunta: () => "¿Para qué sirven los análisis de laboratorio?",
+              respuesta: () =>
+                "Permiten detectar a tiempo problemas que no se ven en la exploración física. El veterinario indica cuáles estudios conviene realizar y es quien interpreta los resultados.",
+            },
+            {
+              pregunta: () => "¿Mi mascota necesita ayuno para los estudios?",
+              respuesta: () =>
+                "Algunos estudios lo requieren y otros no; la clínica te lo indica al momento de agendar.",
+            },
+            {
+              pregunta: () => "¿Cuánto tardan los resultados?",
+              respuesta: () =>
+                "Depende del estudio y del laboratorio con el que trabaje cada clínica. Pregunta el tiempo estimado al reservar tu cita.",
+            },
+          ],
+        },
+        imaging: {
+          intro: (ciudad: string) =>
+            `Rayos X y ultrasonido para diagnosticar sin adivinar. Encuentra clínicas con imagenología en ${ciudad} y agenda tu estudio en línea.`,
+          faqs: [
+            {
+              pregunta: () => "¿Cuándo se necesita una radiografía o un ultrasonido?",
+              respuesta: () =>
+                "Cuando el veterinario necesita ver más allá de la exploración física: huesos, tórax, abdomen o seguimiento de gestaciones, entre otros casos.",
+            },
+            {
+              pregunta: () => "¿Es necesario sedar a mi mascota para el estudio?",
+              respuesta: () =>
+                "No siempre; depende del estudio y del temperamento del paciente. El veterinario lo decide priorizando la seguridad y el bienestar de tu mascota.",
+            },
+            {
+              pregunta: () => "¿Me entregan los estudios realizados?",
+              respuesta: () =>
+                "Cada clínica maneja la entrega de estudios y su interpretación; pregúntalo al agendar tu cita.",
+            },
+          ],
+        },
+        dental: {
+          intro: (ciudad: string) =>
+            `La salud bucal previene dolor y enfermedades silenciosas. Agenda limpiezas y valoraciones dentales en ${ciudad} con equipo veterinario profesional.`,
+          faqs: [
+            {
+              pregunta: () => "¿Por qué es importante la limpieza dental?",
+              respuesta: () =>
+                "El sarro acumulado causa dolor, mal aliento e infecciones que pueden afectar otros órganos. La limpieza profesional ayuda a prevenirlo.",
+            },
+            {
+              pregunta: () => "¿La limpieza dental requiere anestesia?",
+              respuesta: () =>
+                "Generalmente sí, para realizarla de forma completa y segura. El veterinario evalúa antes a tu mascota y te explica el procedimiento.",
+            },
+            {
+              pregunta: () => "¿Con qué frecuencia se recomienda?",
+              respuesta: () =>
+                "Depende de la especie, la raza y el cuidado en casa. El veterinario te da una pauta personalizada en la valoración.",
+            },
+          ],
+        },
+        emergency: {
+          intro: (ciudad: string) =>
+            `Cuando cada minuto cuenta, ubica clínicas con atención de urgencias en ${ciudad}: en cada perfil ves el teléfono y la dirección para actuar rápido.`,
+          faqs: [
+            {
+              pregunta: () => "¿Qué se considera una urgencia veterinaria?",
+              respuesta: () =>
+                "Dificultad para respirar, sangrado abundante, convulsiones, sospecha de intoxicación, golpes fuertes o dolor intenso, entre otros. Ante la duda, contacta de inmediato a una clínica.",
+            },
+            {
+              pregunta: () => "¿Debo llamar antes de llegar a la clínica?",
+              respuesta: () =>
+                "Si es posible, sí: así la clínica se prepara para recibir a tu mascota y puede indicarte los primeros pasos en el camino.",
+            },
+            {
+              pregunta: () => "¿Qué información conviene tener a la mano?",
+              respuesta: () =>
+                "El peso aproximado, padecimientos y medicamentos actuales, y qué ocurrió (qué comió, hace cuánto tiempo). Tener la cartilla y el historial en Dogtoralia ayuda a responder rápido.",
+            },
+          ],
+        },
+      } as Record<
+        string,
+        {
+          intro: (ciudad: string) => string;
+          faqs: Array<{
+            pregunta: (ciudad: string) => string;
+            respuesta: (ciudad: string) => string;
+          }>;
+        }
+      >,
+    },
     buscador: {
       etiquetaQue: "Servicio, padecimiento o nombre de la clínica",
       placeholderQue: "Vacunación, consulta, estética…",
