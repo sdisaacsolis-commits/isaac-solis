@@ -12,7 +12,7 @@ import {
   resolverCiudadPublica,
   slugificarCiudad,
 } from "@/lib/portal/public";
-import { datosBreadcrumbs, JsonLd } from "@/lib/seo/jsonld";
+import { datosBreadcrumbs, datosFaq, JsonLd } from "@/lib/seo/jsonld";
 
 const t = mensajes.portalPublico;
 
@@ -61,14 +61,30 @@ export default async function PaginaServicioCiudad({ params }: Params) {
   const otrasCiudades = ciudades.filter((c) => c.city !== ciudadPublica.city);
   const otrasCategorias = SERVICE_CATEGORIES.filter((c) => c !== cat);
 
+  // Contenido editorial único de la categoría (intro + FAQ) con la ciudad
+  // interpolada; si una categoría no tiene contenido, la página no lo muestra.
+  const contenido = mensajes.portalPublico.directorioServicios.porCategoria[cat];
+  const faqs =
+    contenido?.faqs.map((faq) => ({
+      pregunta: faq.pregunta(ciudadPublica.city),
+      respuesta: faq.respuesta(ciudadPublica.city),
+    })) ?? [];
+  const tituloFaq = mensajes.portalPublico.directorioServicios.faqTitulo(
+    etiquetaCategoria,
+    ciudadPublica.city,
+  );
+
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10">
       <JsonLd
-        data={datosBreadcrumbs([
-          { nombre: t.directorios.inicio, ruta: "/" },
-          { nombre: etiquetaCategoria, ruta: `/buscar?categoria=${cat}` },
-          { nombre: ciudadPublica.city },
-        ])}
+        data={[
+          datosBreadcrumbs([
+            { nombre: t.directorios.inicio, ruta: "/" },
+            { nombre: etiquetaCategoria, ruta: `/buscar?categoria=${cat}` },
+            { nombre: ciudadPublica.city },
+          ]),
+          ...(faqs.length > 0 ? [datosFaq(faqs)] : []),
+        ]}
       />
       <nav
         aria-label={t.directorios.servicioEn(etiquetaCategoria, ciudadPublica.city)}
@@ -88,6 +104,10 @@ export default async function PaginaServicioCiudad({ params }: Params) {
         {t.directorios.servicioEn(etiquetaCategoria, ciudadPublica.city)}
       </h1>
 
+      {contenido ? (
+        <p className="max-w-3xl text-lg text-ink-muted">{contenido.intro(ciudadPublica.city)}</p>
+      ) : null}
+
       {clinicas.length === 0 ? (
         <p className="rounded-lg border border-border bg-surface-muted px-4 py-6 text-ink-muted">
           {t.directorios.sinClinicas}
@@ -99,6 +119,25 @@ export default async function PaginaServicioCiudad({ params }: Params) {
           ))}
         </div>
       )}
+
+      {faqs.length > 0 ? (
+        <section aria-label={tituloFaq}>
+          <h2 className="mb-3 text-lg font-semibold text-ink">{tituloFaq}</h2>
+          <div className="flex flex-col gap-3">
+            {faqs.map((faq) => (
+              <details
+                key={faq.pregunta}
+                className="group rounded-xl border border-border bg-surface px-5 py-4"
+              >
+                <summary className="cursor-pointer list-item font-medium text-ink marker:text-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                  {faq.pregunta}
+                </summary>
+                <p className="mt-2 text-sm text-ink-muted">{faq.respuesta}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section aria-label={t.directorios.serviciosEnCiudad(ciudadPublica.city)}>
         <h2 className="mb-3 text-lg font-semibold text-ink">
