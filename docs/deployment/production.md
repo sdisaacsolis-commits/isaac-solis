@@ -378,3 +378,13 @@ fusionadas — CLAUDE.md §15). Regenera tipos en el mismo PR (`pnpm db:types`).
 > congelado en el último build manual — verificado durante la puesta en producción (ago 2026).
 > Síntoma típico: rutas nuevas (p. ej. `/aviso-de-privacidad`) responden 404 en el dominio aunque
 > ya estén en `main`.
+
+### Bitácora de la base de producción
+
+Las migraciones de las Fases 8.1–11 (`resenas`, `rpc_resenas`, `recordatorios_backend`,
+`metricas_admin`, `suscripciones`) se aplicaron al proyecto `izixhghxlmsfjwsbohxt` el
+12-sep-2026 vía el Management API de Supabase, con las versiones registradas idénticas a los
+archivos de `supabase/migrations/` (verificado: `supabase_migrations.schema_migrations`).
+Cualquier `supabase db push` futuro parte de ese estado sin re-aplicar nada. Verificación
+post-aplicación: RLS forzada en las 53 tablas (0 hallazgos), plan `beta` sembrado, backfill de
+suscripciones completo y `/buscar` en 200.
