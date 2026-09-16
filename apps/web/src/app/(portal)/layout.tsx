@@ -14,19 +14,24 @@ export default function PortalPublicoLayout({ children }: Readonly<{ children: R
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-40 border-b border-border bg-surface/80 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-6 py-4">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-4 py-4 sm:px-6">
           <Link
             href="/"
-            className="text-xl font-bold tracking-tight text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="whitespace-nowrap text-lg font-bold tracking-tight text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-xl"
           >
-            <span aria-hidden="true">🐾 </span>
+            <span aria-hidden="true" className="hidden min-[360px]:inline">
+              🐾{" "}
+            </span>
             {marca.nombre}
           </Link>
           <div className="flex items-center gap-2">
-            <Button asChild variant="ghost">
-              <Link href="/iniciar-sesion">{inicio.entrar}</Link>
+            <Button asChild variant="ghost" className="px-3 sm:px-4">
+              <Link href="/iniciar-sesion">
+                <span className="sm:hidden">{inicio.entrarCorto}</span>
+                <span className="hidden sm:inline">{inicio.entrar}</span>
+              </Link>
             </Button>
-            <Button asChild>
+            <Button asChild className="px-3 sm:px-4">
               <Link href="/registro">{inicio.crearCuenta}</Link>
             </Button>
           </div>
