@@ -40,6 +40,8 @@ export const mensajes = {
     botonProximamente: "Próximamente",
     tituloBotonProximamente: "Disponible próximamente",
     entrar: "Iniciar sesión",
+    // Variante corta para el encabezado en pantallas angostas (misma acción).
+    entrarCorto: "Entrar",
     crearCuenta: "Crear cuenta",
     etiquetaSeccionModulos: "Módulos en desarrollo",
     enDesarrollo: "En desarrollo",
