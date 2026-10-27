@@ -1,11 +1,12 @@
-// Webhook de Stripe (Edge Function, Deno) — SCAFFOLD de la Fase 11.
+// Webhook de Stripe (Edge Function, Deno) — Fase 11 (scaffold) + Fase 13 (cobro).
 //
-// IMPORTANTE: el cobro NO está activo en el MVP. Esta función verifica la
-// firma del webhook y ENRUTA los eventos de suscripción, pero los handlers
-// están detrás del flag `COBRO_ACTIVO`: mientras esté en `false` solo
-// registran (sin datos sensibles) y NO mutan `public.subscriptions`. La
-// activación real del cobro (Stripe Checkout/Billing) llega en una fase
-// posterior; ver README.md.
+// El flag `COBRO_ACTIVO` ahora se lee del entorno (secreto de la función):
+// mientras no esté en "true" los handlers solo registran (sin datos sensibles)
+// y NO mutan `public.subscriptions`; con el cobro activo, `checkout.session.
+// completed` vincula la suscripción de Stripe con la clínica (metadata
+// clinic_id/plan_code) y los eventos `customer.subscription.*` e
+// `invoice.payment_failed` mantienen estado y periodos. Runbook de activación:
+// docs/subscriptions/billing.md.
 //
 // Reglas de este proyecto que se respetan aquí:
 //  - La service_role solo vive en Edge Functions/CI, nunca llega a un cliente.
@@ -19,12 +20,13 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 // --- Flag de cobro ---------------------------------------------------------
 
 /**
- * El MVP NO cobra: las suscripciones nacen en plan `beta` por trigger. Mientras
- * este flag esté en `false`, los handlers solo registran el enrutamiento y NO
- * mutan `public.subscriptions`. Se activará (junto con el flujo de Checkout)
- * en una fase posterior documentada en el ROADMAP.
+ * Mientras este flag (secreto `COBRO_ACTIVO` de la función) no sea "true", los
+ * handlers solo registran el enrutamiento y NO mutan `public.subscriptions`.
+ * Se enciende al activar el cobro real (Fase 13): junto con el flujo de
+ * Checkout del panel y los precios creados en Stripe por
+ * `scripts/stripe/setup-precios.mjs`.
  */
-const COBRO_ACTIVO = false;
+const COBRO_ACTIVO = (Deno.env.get("COBRO_ACTIVO") ?? "false") === "true";
 
 // --- Configuración desde el entorno ----------------------------------------
 
@@ -70,6 +72,14 @@ interface StripeSubscriptionObject {
 interface StripeInvoiceObject {
   id: string;
   subscription?: string | null;
+}
+
+/** Interfaz mínima del objeto `checkout.session` de Stripe que consumimos. */
+interface StripeCheckoutSessionObject {
+  id: string;
+  customer?: string | null;
+  subscription?: string | null;
+  metadata?: Record<string, string> | null;
 }
 
 /** Interfaz mínima del sobre del evento de Stripe. */
@@ -275,6 +285,84 @@ async function manejarSuscripcion(
   });
 }
 
+/**
+ * Handler de `checkout.session.completed`: vincula la suscripción creada en
+ * Stripe con la clínica (metadata `clinic_id`/`plan_code` que puso el panel al
+ * crear la sesión). Si hay `STRIPE_SECRET_KEY` se consulta la suscripción para
+ * copiar estado y periodos exactos; si no, se marca `active` y el siguiente
+ * `customer.subscription.updated` corrige los periodos. Nunca crea filas: la
+ * suscripción 1:1 de la clínica existe desde su alta.
+ */
+async function manejarCheckoutCompletado(
+  supabase: SupabaseClient | null,
+  objeto: unknown,
+): Promise<void> {
+  const sesion = comoObjeto(objeto) as unknown as StripeCheckoutSessionObject;
+  const metadata = comoObjeto(sesion.metadata);
+  const clinicId = typeof metadata.clinic_id === "string" ? metadata.clinic_id : null;
+  const planCode = typeof metadata.plan_code === "string" ? metadata.plan_code : null;
+  const stripeCustomerId = typeof sesion.customer === "string" ? sesion.customer : null;
+  const stripeSubscriptionId = typeof sesion.subscription === "string" ? sesion.subscription : null;
+
+  if (clinicId === null || stripeSubscriptionId === null) {
+    console.log("[webhook] checkout.session.completed sin clinic_id/subscription; ignorado");
+    return;
+  }
+  if (!COBRO_ACTIVO || supabase === null) {
+    console.log(
+      `[scaffold] checkout completado para la clínica ${clinicId} (mutación desactivada: COBRO_ACTIVO=false)`,
+    );
+    return;
+  }
+
+  const cambios: Record<string, unknown> = {
+    stripe_subscription_id: stripeSubscriptionId,
+    status: "active",
+    current_period_start: new Date().toISOString(),
+    current_period_end: null,
+  };
+  if (stripeCustomerId !== null) cambios.stripe_customer_id = stripeCustomerId;
+
+  // Plan contratado (por código estable del catálogo).
+  if (planCode !== null) {
+    const { data: plan, error: errorPlan } = await supabase
+      .from("plans")
+      .select("id")
+      .eq("code", planCode)
+      .maybeSingle();
+    if (errorPlan) {
+      throw new Error(`no se pudo resolver el plan ${planCode}: ${errorPlan.message}`);
+    }
+    if (plan !== null) cambios.plan_id = plan.id;
+  }
+
+  // Con la llave de Stripe, el estado y los periodos exactos de la suscripción.
+  const stripeKey = Deno.env.get("STRIPE_SECRET_KEY") ?? "";
+  if (stripeKey.length > 0) {
+    const respuesta = await fetch(
+      `https://api.stripe.com/v1/subscriptions/${encodeURIComponent(stripeSubscriptionId)}`,
+      { headers: { authorization: `Bearer ${stripeKey}` } },
+    );
+    if (respuesta.ok) {
+      const sub = comoObjeto(await respuesta.json()) as unknown as StripeSubscriptionObject;
+      if (typeof sub.status === "string") cambios.status = mapearEstado(sub.status);
+      const inicio = epochAIso(sub.current_period_start);
+      const fin = epochAIso(sub.current_period_end);
+      if (inicio !== null) cambios.current_period_start = inicio;
+      if (fin !== null) cambios.current_period_end = fin;
+    } else {
+      console.error(
+        `[webhook] no se pudo consultar la suscripción en Stripe (HTTP ${respuesta.status}); se usa estado optimista`,
+      );
+    }
+  }
+
+  const { error } = await supabase.from("subscriptions").update(cambios).eq("clinic_id", clinicId);
+  if (error) {
+    throw new Error(`no se pudo vincular la suscripción de la clínica: ${error.message}`);
+  }
+}
+
 /** Handler de `invoice.payment_failed`. */
 async function manejarPagoFallido(
   supabase: SupabaseClient | null,
@@ -304,6 +392,9 @@ async function enrutarEvento(
 ): Promise<void> {
   const objeto = evento.data.object;
   switch (evento.type) {
+    case "checkout.session.completed":
+      await manejarCheckoutCompletado(supabase, objeto);
+      break;
     case "customer.subscription.created":
     case "customer.subscription.updated":
       await manejarSuscripcion(supabase, objeto, false);

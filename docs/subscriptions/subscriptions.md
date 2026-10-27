@@ -1,8 +1,14 @@
 # Suscripciones (Fase 11 — preparación)
 
-Estado: **preparación**. La Fase 11 deja el modelo de suscripciones operativo y usable en la
-capa web, pero **sin cobros reales**: en beta todo es gratuito y la restricción por plan es
-informativa, no bloqueante. El cobro con Stripe Billing es post-MVP (ver `ROADMAP.md`).
+> **Actualización (Fase 13, 2026-10-27):** el cobro ya está implementado. El plan por defecto
+> ahora es `profesional` en **prueba de 14 días**, `beta` quedó inactivo (con 60 días de gracia
+> para las suscripciones existentes) y al vencer el panel pasa a **solo lectura** por triggers
+> en la base. Este documento conserva el modelo de la Fase 11; el modelo comercial, el checkout
+> y el runbook de activación viven en `docs/subscriptions/billing.md` y en el ADR 0005.
+
+Estado original (Fase 11): **preparación**. La Fase 11 deja el modelo de suscripciones operativo
+y usable en la capa web, pero **sin cobros reales**: en beta todo es gratuito y la restricción
+por plan es informativa, no bloqueante.
 
 ## Modelo
 

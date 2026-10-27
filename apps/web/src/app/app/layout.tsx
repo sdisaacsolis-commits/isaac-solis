@@ -22,6 +22,7 @@ const enlaces = [
   { href: "/app/clinicas", etiqueta: nav.clinicas },
   { href: "/app/personal", etiqueta: nav.personal },
   { href: "/app/opiniones", etiqueta: nav.opiniones },
+  { href: "/app/facturacion", etiqueta: nav.facturacion },
   { href: "/app/configuracion", etiqueta: nav.configuracion },
 ];
 

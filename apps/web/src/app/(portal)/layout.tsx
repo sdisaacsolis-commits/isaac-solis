@@ -56,6 +56,9 @@ export default function PortalPublicoLayout({ children }: Readonly<{ children: R
             <Link className="text-ink-muted hover:text-ink hover:underline" href="/registro">
               {pie.crearCuentaPro}
             </Link>
+            <Link className="text-ink-muted hover:text-ink hover:underline" href="/precios">
+              {pie.precios}
+            </Link>
             <Link className="text-ink-muted hover:text-ink hover:underline" href="/iniciar-sesion">
               {pie.accesoPanel}
             </Link>
