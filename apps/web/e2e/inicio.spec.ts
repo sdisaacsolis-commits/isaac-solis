@@ -5,9 +5,10 @@ test.describe("Página de inicio", () => {
     await page.goto("/");
 
     await expect(page).toHaveTitle(/Dogtoralia/);
+    // Hero del home premium (i18n portalPublico.portada.heroTitulo*).
     await expect(
       page.getByRole("heading", {
-        name: "Gestión veterinaria, agenda y cuidado de mascotas en un solo lugar",
+        name: /Encuentra a tu veterinario y agenda/,
       }),
     ).toBeVisible();
 

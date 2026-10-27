@@ -4445,6 +4445,10 @@ export type Database = {
         Returns: boolean
       }
       clinic_rating: { Args: { p_clinic_id: string }; Returns: Json }
+      clinic_subscription_is_current: {
+        Args: { p_clinic_id: string }
+        Returns: boolean
+      }
       clinic_within_veterinarian_limit: {
         Args: { p_clinic_id: string }
         Returns: boolean
@@ -4633,6 +4637,18 @@ export type Database = {
         Returns: string
       }
       list_public_cities: { Args: never; Returns: Json }
+      list_public_plans: {
+        Args: never
+        Returns: {
+          additional_veterinarian_price_cents: number
+          billing_interval: string
+          code: string
+          features: Json
+          included_veterinarians: number
+          name: string
+          price_cents: number
+        }[]
+      }
       log_clinical_record_access: {
         Args: { p_access_type: string; p_encounter_id: string }
         Returns: undefined

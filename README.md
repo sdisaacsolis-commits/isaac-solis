@@ -4,16 +4,16 @@ Plataforma SaaS mexicana para clínicas veterinarias, médicos veterinarios y pr
 mascotas: agenda de citas, expedientes clínicos, recetas y recordatorios — con aislamiento
 total de datos entre clínicas.
 
-> **Estado actual: Fase 12 — MVP listo para beta.**
-> Endurecimiento no-BD: auditoría de seguridad interna automatizada en pgTAP (suite 18, sin
-> hallazgos críticos), páginas legales públicas conforme LFPDPPP (`/aviso-de-privacidad`,
-> `/terminos`) y documentación de accesibilidad, seguridad y beta. Sobre la preparación de
-> suscripciones (Fase 11: `plans`/`subscriptions`, plan `beta` gratuito por trigger, scaffold
-> de Stripe sin cobros), el panel administrativo y métricas (Fase 10), los recordatorios
-> automáticos (Fase 9), el portal público con reseñas (Fase 8/8.1) y el panel clínico de las
-> Fases 1–7 (agenda anti-traslape, expediente inmutable, recetas y vacunación).
+> **Estado actual: Fase 13 — cobro de membresía activo, en producción (dogtoralia.mx).**
+> Plan **Profesional**: $599 MXN/mes + IVA por clínica (1 veterinario incluido; +$399/vet
+> adicional; anual $5,990), prueba de 14 días sin tarjeta, 60 días de gracia para clínicas
+> beta y **solo lectura al vencer** aplicado en la base (los datos jamás se tocan). Checkout
+> con Stripe tras interfaz desacoplada, webhook activable y páginas `/precios` +
+> `/app/facturacion` (ver `docs/subscriptions/billing.md` y ADR 0005). Sobre el MVP completo
+> de las Fases 1–12: agenda anti-traslape, expediente inmutable, recetas y vacunación, portal
+> público con reseñas y SEO, recordatorios, métricas, panel admin y endurecimiento legal/beta.
 > **Dogtoralia no calcula dosis ni sugiere medicamentos.** Aislamiento RLS validado con
-> pgTAP (573 aserciones; ver [ROADMAP.md](./ROADMAP.md),
+> pgTAP (590 aserciones; ver [ROADMAP.md](./ROADMAP.md),
 > [docs/security/security-audit.md](./docs/security/security-audit.md), `docs/beta/`,
 > `docs/subscriptions/`, `docs/admin/`, `docs/notifications/reminders.md`, `docs/portal/` y
 > [docs/security/rls-model.md](./docs/security/rls-model.md)). Páginas legales: requieren

@@ -28,6 +28,13 @@ export {
   updatePasswordSchema,
 } from "./schemas/auth";
 export {
+  type IniciarCheckoutInput,
+  iniciarCheckoutSchema,
+  PLAN_CODES,
+  type PlanCode,
+  planCodeSchema,
+} from "./schemas/billing";
+export {
   addendumSchema,
   CLINICAL_FILE_MIME_TYPES,
   clinicalFileSchema,

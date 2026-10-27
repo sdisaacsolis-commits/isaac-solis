@@ -20,6 +20,9 @@ export const env = createEnv({
     EMAIL_REPLY_TO: z.string().email().optional(),
     // "resend" envía correos reales; "dev" solo registra una versión redactada.
     EMAIL_MODE: z.enum(["resend", "dev"]).default("dev"),
+    // Llave secreta de Stripe (sk_…): SOLO servidor, para crear sesiones de
+    // Checkout. El webhook vive en una Edge Function con su propio secreto.
+    STRIPE_SECRET_KEY: z.string().min(1).optional(),
     // Secreto para el procesador programado de recordatorios (Edge Function /
     // cron; reservado, ver docs/appointments/notifications.md). Sin valor, el
     // outbox se procesa de forma oportunista desde el panel.
@@ -43,6 +46,7 @@ export const env = createEnv({
     EMAIL_FROM: process.env.EMAIL_FROM,
     EMAIL_REPLY_TO: process.env.EMAIL_REPLY_TO,
     EMAIL_MODE: process.env.EMAIL_MODE,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     CRON_SECRET: process.env.CRON_SECRET,
     PET_PHOTO_SIGNED_URL_SECONDS: process.env.PET_PHOTO_SIGNED_URL_SECONDS,
     CLINICAL_FILE_MAX_MB: process.env.CLINICAL_FILE_MAX_MB,

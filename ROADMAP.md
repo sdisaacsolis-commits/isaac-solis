@@ -277,6 +277,27 @@ LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica 
 
 **Cierre: MVP web completo y listo para operar en beta.**
 
+## Fase 13 — Cobro de membresía ✅ (2026-10-27)
+
+- Modelo comercial aprobado por el propietario: plan **Profesional** $599 MXN/mes + IVA por
+  clínica (1 veterinario incluido; +$399/mes por veterinario adicional); anual $5,990
+  (≈2 meses gratis). Referencia: <50 % del Starter de Doctoralia MX ($1,230/mes/profesional).
+- Clínicas nuevas: **prueba de 14 días sin tarjeta** (`trialing`); clínicas beta existentes:
+  **60 días de gracia**; plan `beta` deja de ofrecerse (`is_active = false`).
+- **Solo lectura al vencer, en la base**: `clinic_subscription_is_current` (tolerancia
+  `past_due` de 7 días) + triggers `SUSCRIPCION_VENCIDA` sobre las tablas operativas (y sus
+  hijas vía padre); lecturas y administración del equipo intactas; el backend (sin `auth.uid()`)
+  nunca se bloquea. Los datos clínicos jamás se tocan.
+- Cobro con **Stripe Checkout** detrás de la interfaz `ProveedorDePagos` (REST por `fetch`,
+  sin SDK); webhook `stripe-webhook` activable por secreto `COBRO_ACTIVO` + handler de
+  `checkout.session.completed`; catálogo en Stripe por `scripts/stripe/setup-precios.mjs`
+  (lookup keys estables). Página pública `/precios` (RPC curada `list_public_plans`, FAQ con
+  JSON-LD) y panel `/app/facturacion` (estado de la membresía + contratación, solo admins).
+- Pruebas: suite 19 nueva (16 aserciones) + suite 17 actualizada; **590 aserciones pgTAP
+  totales**. ADR 0005; runbook de activación en `docs/subscriptions/billing.md`.
+- **Criterio de salida**: catálogo público visible; alta en prueba de 14 días; escrituras
+  bloqueadas al vencer sin tocar datos; reactivación restaura la operación. ✅
+
 ## Post-MVP (backlog priorizado — decisiones 1 y 2 ya confirmadas por producto)
 
 1. Recordatorios y confirmación de citas por **WhatsApp** — proveedor confirmado:
@@ -284,6 +305,6 @@ LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica 
 2. Perfiles públicos de clínicas y veterinarios (`/clinicas/[slug]`, `/veterinarios/[slug]`)
    con SEO y reservación pública — confirmado.
 3. App/interfaz móvil para veterinarios.
-4. Cobro real de suscripciones con Stripe Billing.
+4. ~~Cobro real de suscripciones con Stripe Billing~~ — hecho en la Fase 13.
 5. Exportación ARCO de datos del propietario.
 6. Inventario básico y punto de venta.

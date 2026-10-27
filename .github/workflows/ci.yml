@@ -91,7 +91,10 @@ jobs:
       - name: Verificar que los tipos generados no tienen drift
         run: |
           # gen types descarga la imagen postgres-meta; el rate limit de Docker/ECR
-          # es transitorio, así que se reintenta con backoff antes de comparar.
+          # es transitorio, así que se reintenta con backoff antes de comparar. Si el
+          # fallo es la cuota de ECR ("toomanyrequests"), se trae la MISMA imagen del
+          # espejo oficial en Docker Hub y se re-etiqueta con el nombre de ECR para
+          # que la CLI la encuentre localmente (sin debilitar el chequeo).
           intento=0
           until pnpm exec supabase gen types typescript --local --schema public \
             > /tmp/database.types.ts 2> /tmp/gentypes.err; do
@@ -100,6 +103,12 @@ jobs:
               echo "::error::supabase gen types falló tras $intento intentos"; cat /tmp/gentypes.err; exit 1
             fi
             echo "gen types falló (intento $intento); reintentando en $((intento * 20))s…"; cat /tmp/gentypes.err
+            img=$(grep -oE "public\.ecr\.aws/[a-z0-9./_-]+:[A-Za-z0-9._-]+" /tmp/gentypes.err | head -1)
+            if [ -n "$img" ]; then
+              espejo="docker.io/${img#public.ecr.aws/}"
+              echo "Intentando el espejo $espejo para $img…"
+              docker pull "$espejo" && docker tag "$espejo" "$img" || true
+            fi
             sleep $((intento * 20))
           done
           if ! diff -u packages/types/src/database.types.ts /tmp/database.types.ts; then

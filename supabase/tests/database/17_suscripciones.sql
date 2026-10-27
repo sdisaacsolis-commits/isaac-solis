@@ -1,10 +1,11 @@
 -- ============================================================================
 -- pgTAP 17 — Fase 11: preparación de suscripciones
 -- ============================================================================
--- Verifica: toda clínica recibe automáticamente una suscripción al plan beta;
--- el plan vigente se consulta; el sistema PUEDE restringir por plan (límite de
--- veterinarios) aunque beta no bloquea; RLS de suscripciones (aislamiento entre
--- clínicas, superadmin ve todo, cliente no escribe); planes activos públicos.
+-- Verifica: toda clínica recibe automáticamente una suscripción al plan por
+-- defecto (desde la Fase 13: Profesional, en prueba de 14 días); el plan
+-- vigente se consulta; el sistema PUEDE restringir por plan (límite de
+-- veterinarios); RLS de suscripciones (aislamiento entre clínicas, superadmin
+-- ve todo, cliente no escribe); planes activos públicos.
 -- ============================================================================
 begin;
 set search_path = public, extensions;
@@ -72,12 +73,12 @@ select is(
 select is(
   (select p.code from public.subscriptions s join public.plans p on p.id = s.plan_id
    where s.clinic_id = current_setting('vars.clinicA')::uuid),
-  'beta', 'suscripciones 2: el plan por defecto es beta'
+  'profesional', 'suscripciones 2: el plan por defecto es Profesional (Fase 13)'
 );
 select is(
   (select status::text from public.subscriptions
    where clinic_id = current_setting('vars.clinicA')::uuid),
-  'active', 'suscripciones 3: la suscripción nace activa'
+  'trialing', 'suscripciones 3: la suscripción nace en prueba (trialing)'
 );
 select is(
   (select count(*)::int from public.clinics c
@@ -87,20 +88,20 @@ select is(
 );
 
 -- ----------------------------------------------------------------------------
--- Plan vigente y restricción por plan (beta no bloquea)
+-- Plan vigente y restricción por plan
 -- ----------------------------------------------------------------------------
 select pg_temp.login('00000000-0000-4000-8000-0000000011a1');
 select is(
   (public.clinic_current_plan(current_setting('vars.clinicA')::uuid) ->> 'plan_code'),
-  'beta', 'plan 1: clinic_current_plan devuelve el plan vigente'
+  'profesional', 'plan 1: clinic_current_plan devuelve el plan vigente'
 );
 select is(
   public.clinic_active_veterinarian_count(current_setting('vars.clinicA')::uuid), 2,
   'plan 2: cuenta los veterinarios activos'
 );
 select ok(
-  public.clinic_within_veterinarian_limit(current_setting('vars.clinicA')::uuid),
-  'plan 3: con 2 vets el plan beta (999 incluidos) NO bloquea'
+  not public.clinic_within_veterinarian_limit(current_setting('vars.clinicA')::uuid),
+  'plan 3: con 2 vets y Profesional (1 incluido) el sistema detecta el exceso'
 );
 
 -- El sistema PUEDE restringir: un plan restrictivo (1 incluido) sí marca exceso.
@@ -135,7 +136,7 @@ select is(
 -- Un cliente no puede escribir suscripciones (sin política de INSERT).
 select throws_ok(
   format($$insert into public.subscriptions (clinic_id, organization_id, plan_id, status)
-           values (%L, %L, (select id from public.plans where code = 'beta'), 'active')$$,
+           values (%L, %L, (select id from public.plans where code = 'solo_uno'), 'active')$$,
          '00000000-0000-4000-8000-0000000011ff', current_setting('vars.orgA')),
   '42501', null,
   'rls 3: un cliente autenticado NO puede insertar suscripciones'
@@ -157,8 +158,9 @@ select cmp_ok(
 select pg_temp.logout();
 select set_config('role', 'anon', true);
 select ok(
-  (select count(*) from public.plans where code = 'beta') = 1,
-  'planes 1: los planes activos son de lectura pública (anon)'
+  (select count(*) from public.plans where code = 'profesional') = 1
+  and (select count(*) from public.plans where code = 'beta') = 0,
+  'planes 1: anon lee los planes activos; beta (inactivo) ya no es público'
 );
 
 select * from finish();

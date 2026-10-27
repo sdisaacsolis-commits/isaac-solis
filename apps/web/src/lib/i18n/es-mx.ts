@@ -156,6 +156,7 @@ export const mensajes = {
       clinicas: "Clínicas",
       personal: "Personal",
       opiniones: "Opiniones",
+      facturacion: "Facturación",
       configuracion: "Configuración",
       administracion: "Administración",
     },
@@ -196,6 +197,46 @@ export const mensajes = {
         past_due: "Pago pendiente",
         canceled: "Cancelada",
       } as Record<string, string>,
+    },
+    facturacion: {
+      titulo: "Facturación",
+      descripcion: "Administra la membresía de tu clínica: plan, estado y renovación.",
+      sinClinica: "Crea o selecciona una clínica para administrar su membresía.",
+      estadoTitulo: "Estado de la membresía",
+      pruebaTermina: (fecha: string) => `Tu prueba gratuita termina el ${fecha}.`,
+      vigenteHasta: (fecha: string) => `Periodo vigente hasta el ${fecha}.`,
+      pagoPendiente:
+        "Hay un pago pendiente. Tienes unos días de tolerancia mientras se reintenta el cobro; después el panel pasa a solo lectura.",
+      vencida:
+        "La membresía está vencida: el panel está en solo lectura y tus datos siguen intactos. Actívala para continuar trabajando.",
+      soloLecturaNota:
+        "Al vencer una membresía los datos clínicos jamás se tocan: solo se pausan las escrituras hasta reactivarla.",
+      planesTitulo: "Activa tu membresía",
+      porClinica: "por clínica",
+      incluido: "1 veterinario incluido",
+      masIva: "+ IVA",
+      porMes: (precio: string) => `${precio} / mes`,
+      porAnio: (precio: string) => `${precio} / año`,
+      ahorroAnual: "≈ 2 meses gratis frente al plan mensual",
+      vetAdicional: (precio: string) => `Veterinario adicional: ${precio}`,
+      resumenCobro: (extra: number) =>
+        extra === 0
+          ? "Se cobrará el plan base de tu clínica."
+          : extra === 1
+            ? "Se cobrará el plan base más 1 veterinario adicional."
+            : `Se cobrará el plan base más ${extra} veterinarios adicionales.`,
+      pagar: "Contratar este plan",
+      soloAdmins: "Solo quien administra la clínica puede contratar o cambiar el plan.",
+      checkoutExito:
+        "¡Listo! Tu pago se está procesando; el estado de la membresía se actualizará en unos momentos.",
+      checkoutCancelado:
+        "Cancelaste el proceso de pago. Puedes intentarlo de nuevo cuando quieras.",
+      checkoutError: "No se pudo iniciar el pago. Intenta de nuevo en unos minutos.",
+      noConfigurado: "El cobro en línea aún no está habilitado en este entorno.",
+      errores: {
+        sinPermiso: "Solo quien administra la clínica puede contratar el plan.",
+        planInvalido: "Selecciona un plan válido.",
+      },
     },
   },
   onboarding: {
@@ -1692,10 +1733,59 @@ export const mensajes = {
       miPortal: "Mi portal",
       profesionales: "Profesionales",
       crearCuentaPro: "Registra tu clínica",
+      precios: "Precios",
       accesoPanel: "Acceso al panel",
       legal: "Legal",
       avisoPrivacidad: "Aviso de privacidad",
       terminos: "Términos y condiciones",
+    },
+    precios: {
+      metaTitulo: "Precios",
+      metaDescripcion:
+        "Membresía Dogtoralia para clínicas veterinarias: agenda, expediente, recetas y portal público desde $599 MXN al mes + IVA. Prueba 14 días gratis, sin tarjeta.",
+      heroTitulo: "Un precio simple para toda tu clínica",
+      heroTexto:
+        "Todo Dogtoralia — agenda, expediente clínico, recetas, vacunación, recordatorios y tu perfil público — en un solo plan por clínica, no por computadora.",
+      prueba: "14 días de prueba gratis. Sin tarjeta.",
+      porClinica: "por clínica",
+      masIva: "+ IVA",
+      porMes: "al mes",
+      porAnio: "al año",
+      ahorroAnual: "≈ 2 meses gratis",
+      incluido: "1 veterinario incluido",
+      vetAdicionalMes: (precio: string) => `Veterinario adicional: ${precio} al mes`,
+      vetAdicionalAnio: (precio: string) => `Veterinario adicional: ${precio} al año`,
+      incluye: [
+        "Agenda con reservación en línea",
+        "Expediente clínico completo",
+        "Recetas y carnet de vacunación",
+        "Recordatorios automáticos",
+        "Perfil público en el directorio",
+        "Opiniones verificadas de clientes",
+      ],
+      comparativa:
+        "Menos de la mitad de lo que cuestan las plataformas equivalentes en México, y el precio es por clínica, no por profesional.",
+      ctaTitulo: "Empieza hoy, gratis",
+      ctaTexto: "Crea tu cuenta, publica tu clínica y prueba todo el panel 14 días sin tarjeta.",
+      ctaBoton: "Registrar mi clínica",
+      faqTitulo: "Preguntas frecuentes",
+      faq: [
+        {
+          pregunta: "¿Necesito tarjeta para probar Dogtoralia?",
+          respuesta:
+            "No. La prueba de 14 días incluye todas las funciones y no pide tarjeta. Al terminar, decides si contratas el plan mensual o anual.",
+        },
+        {
+          pregunta: "¿Qué pasa con mis datos si no renuevo?",
+          respuesta:
+            "Nada se borra. El panel pasa a solo lectura: puedes seguir consultando expedientes, citas y recetas, y al reactivar la membresía todo vuelve a funcionar como antes.",
+        },
+        {
+          pregunta: "¿Cómo se cobra si tengo varios veterinarios?",
+          respuesta:
+            "El plan incluye 1 veterinario activo. Cada veterinario adicional cuesta $399 MXN al mes (o $3,990 al año). Los precios son más IVA y se facturan por clínica.",
+        },
+      ],
     },
     buscar: {
       titulo: "Clínicas veterinarias",
