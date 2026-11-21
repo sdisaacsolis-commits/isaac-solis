@@ -106,8 +106,7 @@ test.describe("Recetas y vacunación (Supabase local)", () => {
     await page.getByRole("textbox", { name: "Nombre", exact: true }).fill("Fabiola");
     await page.getByLabel("Apellidos").fill("Fase Siete");
     await page.getByLabel("Correo electrónico").fill(correoAdmin);
-    await page.getByRole("textbox", { name: "Contraseña", exact: true }).fill(contrasena);
-    await page.getByLabel("Confirma tu contraseña").fill(contrasena);
+    await page.getByLabel(/^Contraseña/).fill(contrasena);
     await page.getByLabel(/Acepto los términos/).check();
     await page.getByRole("button", { name: "Crear cuenta" }).click();
     await expect(page).toHaveURL(/\/app\/onboarding/);

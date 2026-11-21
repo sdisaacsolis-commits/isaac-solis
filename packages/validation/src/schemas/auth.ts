@@ -22,21 +22,15 @@ const nameSchema = z
   .min(1, "Este campo es obligatorio.")
   .max(100, "No puede exceder 100 caracteres.");
 
-export const registerSchema = z
-  .object({
-    firstName: nameSchema,
-    lastName: nameSchema,
-    email: emailSchema,
-    password: passwordSchema,
-    confirmPassword: z.string({ required_error: "Confirma tu contraseña." }),
-    acceptTerms: z.literal(true, {
-      errorMap: () => ({ message: "Debes aceptar los términos y el aviso de privacidad." }),
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Las contraseñas no coinciden.",
-    path: ["confirmPassword"],
-  });
+export const registerSchema = z.object({
+  firstName: nameSchema,
+  lastName: nameSchema,
+  email: emailSchema,
+  password: passwordSchema,
+  acceptTerms: z.literal(true, {
+    errorMap: () => ({ message: "Debes aceptar los términos y el aviso de privacidad." }),
+  }),
+});
 
 export const loginSchema = z.object({
   email: emailSchema,

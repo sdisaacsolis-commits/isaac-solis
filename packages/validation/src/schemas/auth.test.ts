@@ -14,7 +14,6 @@ const validRegister = {
   lastName: "Aguilar",
   email: "Ana@Ejemplo.MX",
   password: "segura123",
-  confirmPassword: "segura123",
   acceptTerms: true as const,
 };
 
@@ -24,12 +23,9 @@ describe("registerSchema", () => {
     expect(result.email).toBe("ana@ejemplo.mx");
   });
 
-  it("rechaza contraseñas que no coinciden", () => {
-    const result = registerSchema.safeParse({ ...validRegister, confirmPassword: "otra123x" });
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.issues[0]?.message).toBe("Las contraseñas no coinciden.");
-    }
+  it("acepta una sola contraseña sin confirmación duplicada", () => {
+    expect(registerSchema.safeParse(validRegister).success).toBe(true);
+    expect(registerSchema.safeParse({ ...validRegister, password: "débil" }).success).toBe(false);
   });
 
   it("rechaza el registro sin aceptar términos", () => {

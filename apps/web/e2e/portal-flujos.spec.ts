@@ -126,8 +126,7 @@ test.describe("Portal público y portal del propietario (Supabase local)", () =>
     await page.getByRole("textbox", { name: "Nombre", exact: true }).fill("Patricia");
     await page.getByLabel("Apellidos").fill("Portal");
     await page.getByLabel("Correo electrónico").fill(correoAdmin);
-    await page.getByRole("textbox", { name: "Contraseña", exact: true }).fill(contrasena);
-    await page.getByLabel("Confirma tu contraseña").fill(contrasena);
+    await page.getByLabel(/^Contraseña/).fill(contrasena);
     await page.getByLabel(/Acepto los términos/).check();
     await page.getByRole("button", { name: "Crear cuenta" }).click();
     await expect(page).toHaveURL(/\/app\/onboarding/);
@@ -273,8 +272,7 @@ test.describe("Portal público y portal del propietario (Supabase local)", () =>
     await page.getByRole("textbox", { name: "Nombre", exact: true }).fill("Paula");
     await page.getByLabel("Apellidos").fill("Propietaria");
     await page.getByLabel("Correo electrónico").fill(correoPropietario);
-    await page.getByRole("textbox", { name: "Contraseña", exact: true }).fill(contrasena);
-    await page.getByLabel("Confirma tu contraseña").fill(contrasena);
+    await page.getByLabel(/^Contraseña/).fill(contrasena);
     await page.getByLabel(/Acepto los términos/).check();
     await page.getByRole("button", { name: "Crear cuenta" }).click();
 

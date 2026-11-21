@@ -131,8 +131,7 @@ test.describe("Reseñas verificadas (Supabase local)", () => {
     await page.getByRole("textbox", { name: "Nombre", exact: true }).fill("Renata");
     await page.getByLabel("Apellidos").fill("Reseña");
     await page.getByLabel("Correo electrónico").fill(correoAdmin);
-    await page.getByRole("textbox", { name: "Contraseña", exact: true }).fill(contrasena);
-    await page.getByLabel("Confirma tu contraseña").fill(contrasena);
+    await page.getByLabel(/^Contraseña/).fill(contrasena);
     await page.getByLabel(/Acepto los términos/).check();
     await page.getByRole("button", { name: "Crear cuenta" }).click();
     await expect(page).toHaveURL(/\/app\/onboarding/);
@@ -226,8 +225,7 @@ test.describe("Reseñas verificadas (Supabase local)", () => {
     await page.getByRole("textbox", { name: "Nombre", exact: true }).fill("Pamela");
     await page.getByLabel("Apellidos").fill("Propietaria");
     await page.getByLabel("Correo electrónico").fill(correoPropietario);
-    await page.getByRole("textbox", { name: "Contraseña", exact: true }).fill(contrasena);
-    await page.getByLabel("Confirma tu contraseña").fill(contrasena);
+    await page.getByLabel(/^Contraseña/).fill(contrasena);
     await page.getByLabel(/Acepto los términos/).check();
     await page.getByRole("button", { name: "Crear cuenta" }).click();
 

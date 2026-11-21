@@ -33,7 +33,6 @@ export async function registrarse(_prev: FormState, formData: FormData): Promise
     lastName: valor(formData, "lastName"),
     email: valor(formData, "email"),
     password: valor(formData, "password"),
-    confirmPassword: valor(formData, "confirmPassword"),
     acceptTerms: formData.get("acceptTerms") === "on",
   });
   if (!parsed.success) {

@@ -26,8 +26,7 @@ test.describe("Propietarios y mascotas (Supabase local)", () => {
     await page.getByRole("textbox", { name: "Nombre", exact: true }).fill("Rebeca");
     await page.getByLabel("Apellidos").fill("Prueba");
     await page.getByLabel("Correo electrónico").fill(correo);
-    await page.getByRole("textbox", { name: "Contraseña", exact: true }).fill(contrasena);
-    await page.getByLabel("Confirma tu contraseña").fill(contrasena);
+    await page.getByLabel(/^Contraseña/).fill(contrasena);
     await page.getByLabel(/Acepto los términos/).check();
     await page.getByRole("button", { name: "Crear cuenta" }).click();
     await expect(page).toHaveURL(/\/app\/onboarding/);

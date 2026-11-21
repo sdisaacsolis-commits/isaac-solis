@@ -69,12 +69,56 @@ test.describe("Protección de rutas y páginas de autenticación", () => {
     await expect(page.getByRole("button", { name: "Iniciar sesión" })).toBeVisible();
   });
 
-  test("la página de registro muestra el formulario completo", async ({ page }) => {
+  test("el registro móvil pide una sola contraseña y conserva el consentimiento", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/registro");
-    await expect(page.getByLabel(/Nombre/).first()).toBeVisible();
-    await expect(page.getByLabel(/Apellidos/)).toBeVisible();
-    await expect(page.getByLabel(/Correo electrónico/)).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Crea tu cuenta" })).toBeVisible();
+    await expect(page.getByLabel(/Correo electrónico/)).toHaveAttribute("autocomplete", "email");
+    const password = page.getByLabel(/^Contraseña/);
+    await expect(password).toHaveCount(1);
+    await expect(password).toHaveAttribute("type", "password");
+    await page.getByRole("button", { name: "Mostrar contraseña" }).click();
+    await expect(password).toHaveAttribute("type", "text");
+    await page.getByRole("button", { name: "Ocultar contraseña" }).click();
+    await expect(password).toHaveAttribute("type", "password");
+    await expect(page.getByRole("checkbox")).not.toBeChecked();
+    await expect(page.getByRole("link", { name: "términos de servicio" })).toHaveAttribute(
+      "href",
+      "/terminos",
+    );
+    await expect(page.getByRole("link", { name: "aviso de privacidad" })).toHaveAttribute(
+      "href",
+      "/aviso-de-privacidad",
+    );
+    await expect(
+      page.getByRole("link", { name: "Busca una clínica sin crear cuenta" }),
+    ).toHaveAttribute("href", "/buscar");
     await expect(page.getByRole("button", { name: "Crear cuenta" })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      390,
+    );
+  });
+
+  test("el registro conserva el acceso a invitaciones y no reenvía destinos externos", async ({
+    page,
+  }) => {
+    const token = "a".repeat(64);
+    for (const prefix of ["/invitaciones", "/portal/invitacion"]) {
+      const next = `${prefix}/${token}`;
+      await page.goto(`/registro?next=${encodeURIComponent(next)}`);
+      await expect(
+        page.getByText("Usa el correo al que llegó la invitación para continuar."),
+      ).toBeVisible();
+      await expect(page.locator('input[name="next"]')).toHaveValue(next);
+      await expect(page.getByRole("link", { name: "Inicia sesión" })).toHaveAttribute(
+        "href",
+        `/iniciar-sesion?next=${encodeURIComponent(next)}`,
+      );
+    }
+    await page.goto("/registro?next=https%3A%2F%2Fejemplo.mx");
+    await expect(page.locator('input[name="next"]')).toHaveCount(0);
   });
 
   test("la recuperación de contraseña está disponible", async ({ page }) => {
