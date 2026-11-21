@@ -1,6 +1,7 @@
 import { SERVICE_CATEGORIES } from "@dogtoralia/types";
 import { Button } from "@dogtoralia/ui";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -145,38 +146,51 @@ export default async function PaginaInicio() {
               "radial-gradient(62% 72% at 50% -15%, var(--color-brand-100), transparent 72%)",
           }}
         />
-        <div className="relative mx-auto w-full max-w-6xl px-6 pb-16 pt-16 sm:pt-24">
-          <p className="inline-flex items-center gap-2 rounded-full bg-brand-100 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-brand-800">
-            <span aria-hidden="true">🇲🇽</span> {t.heroEtiqueta}
-          </p>
-          <h1 className="mt-5 max-w-[16ch] text-4xl font-extrabold leading-[1.08] tracking-tight text-ink sm:text-6xl">
-            {t.heroTituloInicio}{" "}
-            <span className="italic text-brand-600">{t.heroTituloEnfasis}</span>
-            {t.heroTituloFin}
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg text-ink-muted">{t.heroSubtitulo}</p>
+        <div className="relative mx-auto grid w-full max-w-6xl gap-8 px-6 pb-16 pt-12 sm:pt-16 lg:grid-cols-[1.4fr_1fr]">
+          <div className="min-w-0">
+            <p className="inline-flex items-center gap-2 rounded-full bg-brand-100 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-brand-800">
+              <span aria-hidden="true">🇲🇽</span> {t.heroEtiqueta}
+            </p>
+            <h1 className="mt-5 max-w-[16ch] text-4xl font-extrabold leading-[1.08] tracking-tight text-ink sm:text-6xl">
+              {t.heroTituloInicio}{" "}
+              <span className="italic text-brand-600">{t.heroTituloEnfasis}</span>
+              {t.heroTituloFin}
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg text-ink-muted">{t.heroSubtitulo}</p>
 
-          <div className="mt-8 max-w-3xl">
-            <BuscadorPublico ciudades={ciudades} />
-          </div>
-          <p className="mt-4 flex items-center gap-2 text-sm text-ink-muted">
-            <span className="text-brand-600">
-              <Palomita />
-            </span>
-            {t.heroNota}
-          </p>
-
-          {mostrarMetricas ? (
-            <div className="mt-10 flex flex-wrap items-baseline gap-x-8 gap-y-3">
-              <p className="text-lg text-ink">
-                <span className="text-2xl font-extrabold tracking-tight text-brand-700 [font-variant-numeric:tabular-nums]">
-                  {totalClinicas}
-                </span>{" "}
-                <span className="text-ink-muted">{t.metricaClinicas(totalClinicas)}</span>{" "}
-                <span className="text-ink-muted">{t.metricaCiudades(ciudades.length)}</span>
-              </p>
+            <div className="mt-8 max-w-3xl">
+              <BuscadorPublico ciudades={ciudades} />
             </div>
-          ) : null}
+            <p className="mt-4 flex items-center gap-2 text-sm text-ink-muted">
+              <span className="text-brand-600">
+                <Palomita />
+              </span>
+              {t.heroNota}
+            </p>
+
+            {mostrarMetricas ? (
+              <div className="mt-10 flex flex-wrap items-baseline gap-x-8 gap-y-3">
+                <p className="text-lg text-ink">
+                  <span className="text-2xl font-extrabold tracking-tight text-brand-700 [font-variant-numeric:tabular-nums]">
+                    {totalClinicas}
+                  </span>{" "}
+                  <span className="text-ink-muted">{t.metricaClinicas(totalClinicas)}</span>{" "}
+                  <span className="text-ink-muted">{t.metricaCiudades(ciudades.length)}</span>
+                </p>
+              </div>
+            ) : null}
+          </div>
+          <figure className="overflow-hidden rounded-3xl border border-border lg:self-start">
+            <Image
+              src="/images/dogtoralia-clinic-hero.webp"
+              width={1280}
+              height={853}
+              alt={t.heroImagenAlt}
+              priority
+              sizes="(min-width: 1024px) 420px, 100vw"
+              className="h-44 w-full object-cover sm:h-60 lg:h-[32rem]"
+            />
+          </figure>
         </div>
       </section>
 

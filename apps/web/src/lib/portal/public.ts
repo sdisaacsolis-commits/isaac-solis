@@ -8,8 +8,8 @@ import { createClient } from "@/lib/supabase/server";
 /**
  * Lecturas del sitio público (Fase 8). REGLA DURA: las rutas públicas SOLO
  * usan las RPCs curadas (SECURITY DEFINER) con el cliente anon/ssr; jamás
- * `.from()` sobre tablas base. Sin Supabase configurado, todo degrada a
- * estados vacíos (mismo criterio que el resto de la app).
+ * `.from()` sobre tablas base. La búsqueda distingue indisponibilidad de
+ * resultados vacíos; los lectores anteriores conservan su contrato de fallback.
  */
 
 /** Agregado de calificación de una clínica; `average` es null sin opiniones. */
@@ -119,20 +119,40 @@ export interface FiltrosBusquedaPublica {
   offset?: number;
 }
 
+export type ResultadoBusquedaPublica =
+  | { ok: true; clinicas: ClinicaPublicaResumen[] }
+  | { ok: false; codigo: "PUBLIC_SEARCH_UNAVAILABLE" };
+
+/** No confundir un fallo técnico con una búsqueda válida sin coincidencias. */
+export async function buscarClinicasPublicasConEstado(
+  filtros: FiltrosBusquedaPublica,
+): Promise<ResultadoBusquedaPublica> {
+  if (!isSupabaseConfigured()) return { ok: false, codigo: "PUBLIC_SEARCH_UNAVAILABLE" };
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.rpc("search_public_clinics", {
+      p_q: filtros.q,
+      p_city: filtros.ciudad,
+      p_category: filtros.categoria,
+      p_limit: filtros.limit ?? 20,
+      p_offset: filtros.offset ?? 0,
+    });
+    if (error || !Array.isArray(data)) {
+      return { ok: false, codigo: "PUBLIC_SEARCH_UNAVAILABLE" };
+    }
+    return { ok: true, clinicas: data as unknown as ClinicaPublicaResumen[] };
+  } catch {
+    // No exponer errores de infraestructura ni los filtros ingresados.
+    return { ok: false, codigo: "PUBLIC_SEARCH_UNAVAILABLE" };
+  }
+}
+
+/** Compatibilidad con directorios existentes que esperan una lista. */
 export async function buscarClinicasPublicas(
   filtros: FiltrosBusquedaPublica,
 ): Promise<ClinicaPublicaResumen[]> {
-  if (!isSupabaseConfigured()) return [];
-  const supabase = await createClient();
-  const { data, error } = await supabase.rpc("search_public_clinics", {
-    p_q: filtros.q,
-    p_city: filtros.ciudad,
-    p_category: filtros.categoria,
-    p_limit: filtros.limit ?? 20,
-    p_offset: filtros.offset ?? 0,
-  });
-  if (error || !data) return [];
-  return data as unknown as ClinicaPublicaResumen[];
+  const resultado = await buscarClinicasPublicasConEstado(filtros);
+  return resultado.ok ? resultado.clinicas : [];
 }
 
 export async function obtenerClinicaPublica(slug: string): Promise<ClinicaPublica | null> {
@@ -189,16 +209,21 @@ export async function obtenerHuecosPublicos(consulta: {
   to: string;
 }): Promise<HuecoPublico[] | null> {
   if (!isSupabaseConfigured()) return null;
-  const supabase = await createClient();
-  const { data, error } = await supabase.rpc("get_public_available_slots", {
-    p_clinic_slug: consulta.clinicSlug,
-    p_service_id: consulta.serviceId,
-    p_veterinarian_clinic_member_id: consulta.veterinarianMemberId,
-    p_from: consulta.from,
-    p_to: consulta.to,
-  });
-  if (error || !data) return null;
-  return data as unknown as HuecoPublico[];
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.rpc("get_public_available_slots", {
+      p_clinic_slug: consulta.clinicSlug,
+      p_service_id: consulta.serviceId,
+      p_veterinarian_clinic_member_id: consulta.veterinarianMemberId,
+      p_from: consulta.from,
+      p_to: consulta.to,
+    });
+    if (error || !data) return null;
+    return data as unknown as HuecoPublico[];
+  } catch {
+    console.warn("PUBLIC_SLOTS_UNAVAILABLE");
+    return null;
+  }
 }
 
 /** "Ciudad de México" → "ciudad-de-mexico" (URLs SEO de directorios). */

@@ -74,4 +74,25 @@ describe("publicSearchSchema", () => {
     expect(r.success).toBe(true);
     if (r.success) expect(r.data.page).toBe(1);
   });
+
+  it.each(["", "   ", "\t\n"])("normaliza filtros vacíos (%j) como ausentes", (valor) => {
+    expect(publicSearchSchema.parse({ q: valor, ciudad: valor, categoria: valor })).toEqual({
+      q: undefined,
+      ciudad: undefined,
+      categoria: undefined,
+      page: 1,
+    });
+  });
+
+  it("recorta texto y conserva los filtros al elegir todas las categorías", () => {
+    expect(
+      publicSearchSchema.parse({ q: "  Luna  ", ciudad: "  Monterrey  ", categoria: "" }),
+    ).toEqual({ q: "Luna", ciudad: "Monterrey", categoria: undefined, page: 1 });
+  });
+
+  it("rechaza categorías desconocidas y texto demasiado largo", () => {
+    expect(publicSearchSchema.safeParse({ categoria: "inexistente" }).success).toBe(false);
+    expect(publicSearchSchema.safeParse({ q: "a".repeat(121) }).success).toBe(false);
+    expect(publicSearchSchema.safeParse({ ciudad: "a".repeat(121) }).success).toBe(false);
+  });
 });

@@ -7,7 +7,7 @@ import Link from "next/link";
 import { BuscadorPublico } from "@/components/portal/buscador-publico";
 import { ClinicaCard } from "@/components/portal/clinica-card";
 import { mensajes } from "@/lib/i18n/es-mx";
-import { buscarClinicasPublicas, listarCiudadesPublicas } from "@/lib/portal/public";
+import { buscarClinicasPublicasConEstado, listarCiudadesPublicas } from "@/lib/portal/public";
 
 const t = mensajes.portalPublico.buscar;
 const POR_PAGINA = 12;
@@ -29,9 +29,13 @@ export default async function PaginaBuscar({
   const filtros = parsed.success ? parsed.data : publicSearchSchema.parse({});
   const pagina = filtros.page;
 
-  const [ciudades, resultados] = await Promise.all([
-    listarCiudadesPublicas(),
-    buscarClinicasPublicas({
+  const [ciudades, resultado] = await Promise.all([
+    listarCiudadesPublicas().catch(() => {
+      // El selector es opcional: una falla aquí no impide buscar por texto.
+      console.warn("PUBLIC_CITIES_UNAVAILABLE");
+      return [];
+    }),
+    buscarClinicasPublicasConEstado({
       q: filtros.q,
       ciudad: filtros.ciudad,
       categoria: filtros.categoria,
@@ -40,8 +44,10 @@ export default async function PaginaBuscar({
       offset: (pagina - 1) * POR_PAGINA,
     }),
   ]);
+  const resultados = resultado.ok ? resultado.clinicas : [];
   const haySiguiente = resultados.length > POR_PAGINA;
   const visibles = resultados.slice(0, POR_PAGINA);
+  const hayFiltros = Boolean(filtros.q || filtros.ciudad || filtros.categoria || pagina > 1);
 
   const enlacePagina = (destino: number) => {
     const query = new URLSearchParams();
@@ -57,6 +63,11 @@ export default async function PaginaBuscar({
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10">
       <h1 className="text-2xl font-bold tracking-tight text-ink">{t.titulo}</h1>
 
+      {!parsed.success ? (
+        <p role="status" className="text-sm text-ink-muted">
+          {t.parametrosInvalidos}
+        </p>
+      ) : null}
       <BuscadorPublico
         ciudades={ciudades}
         defaultQ={filtros.q ?? ""}
@@ -85,10 +96,25 @@ export default async function PaginaBuscar({
         </Button>
       </form>
 
-      {visibles.length === 0 ? (
-        <p className="rounded-lg border border-border bg-surface-muted px-4 py-6 text-ink-muted">
-          {t.vacio}
-        </p>
+      {!resultado.ok ? (
+        <div
+          role="alert"
+          className="flex flex-col items-start gap-4 rounded-lg border border-border bg-surface-muted px-4 py-6"
+        >
+          <p className="text-ink-muted">{t.errorCarga}</p>
+          <Button asChild variant="outline">
+            <a href={enlacePagina(pagina)}>{t.reintentar}</a>
+          </Button>
+        </div>
+      ) : visibles.length === 0 ? (
+        <div className="flex flex-col items-start gap-4 rounded-lg border border-border bg-surface-muted px-4 py-6">
+          <p className="text-ink-muted">{t.vacio}</p>
+          {hayFiltros ? (
+            <Button asChild variant="outline">
+              <Link href="/buscar">{t.limpiarFiltros}</Link>
+            </Button>
+          ) : null}
+        </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {visibles.map((clinica) => (
@@ -97,7 +123,7 @@ export default async function PaginaBuscar({
         </div>
       )}
 
-      {pagina > 1 || haySiguiente ? (
+      {resultado.ok && (pagina > 1 || haySiguiente) ? (
         <nav aria-label={t.titulo} className="flex items-center justify-between">
           {pagina > 1 ? (
             <Button asChild variant="outline">

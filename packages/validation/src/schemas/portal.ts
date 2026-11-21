@@ -12,9 +12,14 @@ const textoCorto = (max: number) =>
   z.string().trim().max(max, `No puede exceder ${max} caracteres.`).optional();
 
 export const publicSearchSchema = z.object({
-  q: textoCorto(120),
-  ciudad: textoCorto(120),
-  categoria: z.enum(SERVICE_CATEGORIES).optional(),
+  // Un formulario GET envía "" al dejar un filtro vacío. La RPC espera que
+  // los filtros ausentes se omitan, no que se busque una ciudad vacía.
+  q: textoCorto(120).transform((valor) => valor || undefined),
+  ciudad: textoCorto(120).transform((valor) => valor || undefined),
+  categoria: z.preprocess(
+    (valor) => (typeof valor === "string" && valor.trim() === "" ? undefined : valor),
+    z.enum(SERVICE_CATEGORIES).optional(),
+  ),
   page: z.coerce.number().int().min(1).default(1),
 });
 

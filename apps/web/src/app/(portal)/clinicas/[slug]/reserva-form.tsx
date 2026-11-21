@@ -29,6 +29,7 @@ function useRequestId(): string {
 }
 
 interface Props {
+  summary: string;
   clinicSlug: string;
   serviceId: string;
   veterinarianMemberId: string;
@@ -40,13 +41,23 @@ interface Props {
  * Formulario de invitado del widget público (paridad Doctoralia: reservar sin
  * cuenta). La cita entra como `requested` y la clínica la confirma.
  */
-export function ReservaForm({ clinicSlug, serviceId, veterinarianMemberId, slots }: Props) {
+export function ReservaForm({
+  summary,
+  clinicSlug,
+  serviceId,
+  veterinarianMemberId,
+  slots,
+}: Props) {
   const [state, action] = useActionState(solicitarReservaPublica, inicial);
   const requestId = useRequestId();
+  const [selectedSlot, setSelectedSlot] = useState("");
 
   if (state.ok) {
     return (
       <div className="flex flex-col gap-4" aria-live="polite">
+        <p className="text-sm text-ink">
+          {summary} · {slots.find(([value]) => value === selectedSlot)?.[1]}
+        </p>
         <Alert variant="success">
           <span className="font-semibold">{t.exitoTitulo}</span>{" "}
           {state.folio ? (
@@ -66,7 +77,14 @@ export function ReservaForm({ clinicSlug, serviceId, veterinarianMemberId, slots
   }
 
   if (slots.length === 0) {
-    return <p className="text-sm text-ink-muted">{t.sinHorarios}</p>;
+    return (
+      <div role="status" className="flex flex-col gap-3">
+        <p className="text-sm text-ink-muted">{t.sinHorarios}</p>
+        <a className="text-sm font-medium text-brand-700 underline" href="#widget-fecha">
+          {t.cambiarFecha}
+        </a>
+      </div>
+    );
   }
 
   return (
@@ -76,21 +94,27 @@ export function ReservaForm({ clinicSlug, serviceId, veterinarianMemberId, slots
       <input type="hidden" name="veterinarianMemberId" value={veterinarianMemberId} />
       <input type="hidden" name="requestId" value={requestId} suppressHydrationWarning />
       <FormAlerts state={state} />
+      <p className="rounded-lg bg-surface-muted p-3 text-sm text-ink">{summary}</p>
 
       <fieldset className="flex flex-col gap-2 rounded-lg border border-border p-4">
         <legend className="px-1 text-sm font-medium text-ink">{t.horarios}</legend>
-        <div className="grid gap-2 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {slots.map(([valor, etiqueta]) => (
-            <div key={valor} className="flex items-center gap-2">
+            <div key={valor} className="relative flex items-center gap-2">
               <input
                 id={`hueco-${valor}`}
                 type="radio"
                 name="start"
                 value={valor}
                 required
-                className="h-4 w-4 border-border accent-brand-600"
+                checked={selectedSlot === valor}
+                onChange={() => setSelectedSlot(valor)}
+                className="peer sr-only"
               />
-              <label htmlFor={`hueco-${valor}`} className="text-sm text-ink">
+              <label
+                htmlFor={`hueco-${valor}`}
+                className="flex min-h-12 w-full cursor-pointer items-center justify-center rounded-lg border border-border p-3 text-sm font-medium text-ink peer-checked:border-brand-600 peer-checked:bg-brand-100 peer-focus-visible:ring-2 peer-focus-visible:ring-ring"
+              >
                 {etiqueta}
               </label>
             </div>
@@ -169,7 +193,8 @@ export function ReservaForm({ clinicSlug, serviceId, veterinarianMemberId, slots
         <Textarea id="reserva-reason" name="reason" rows={2} maxLength={1000} />
       </FormField>
 
-      <div>
+      <p className="text-sm text-ink-muted">{t.antesEnviar}</p>
+      <div className="[&>button]:min-h-12 [&>button]:w-full">
         <SubmitButton pendingText={t.solicitando}>{t.solicitar}</SubmitButton>
       </div>
     </form>

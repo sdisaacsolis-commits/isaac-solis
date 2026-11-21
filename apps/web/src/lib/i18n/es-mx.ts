@@ -1405,7 +1405,9 @@ export const mensajes = {
       heroTituloFin: ", en un solo lugar.",
       heroSubtitulo:
         "Explora clínicas verificadas por ciudad y servicio, con precios claros y equipo con cédula visible. Reserva en línea aunque no tengas cuenta.",
-      heroNota: "Sin registro para reservar · La clínica confirma · Recordatorios automáticos",
+      heroNota: "Sin cuenta para solicitar · La clínica confirma disponibilidad",
+      heroImagenAlt:
+        "Ilustración editorial de atención veterinaria; no representa una clínica del directorio.",
       // Métricas reales (solo se muestran si hay datos)
       metricaClinicas: (n: number) =>
         n === 1 ? "1 clínica verificada" : `${n} clínicas verificadas`,
@@ -1514,7 +1516,12 @@ export const mensajes = {
       filtroCategoria: "Categoría de servicio",
       todasLasCategorias: "Todas las categorías",
       vacio: "No encontramos clínicas con esos criterios. Prueba con otra ciudad o servicio.",
-      badgeReservacion: "Reservación en línea",
+      errorCarga:
+        "No pudimos consultar las clínicas. Intenta de nuevo; no significa que no haya resultados.",
+      reintentar: "Volver a intentar",
+      limpiarFiltros: "Quitar filtros y ver clínicas",
+      parametrosInvalidos: "No pudimos aplicar esos filtros. Revisa tu búsqueda.",
+      badgeReservacion: "Solicitud en línea",
       desde: (precio: string) => `desde ${precio}`,
       servicios: (n: number) => (n === 1 ? "1 servicio" : `${n} servicios`),
       verClinica: "Ver clínica",
@@ -1568,10 +1575,15 @@ export const mensajes = {
       motivo: "Motivo de la consulta (opcional)",
       solicitar: "Solicitar cita",
       solicitando: "Enviando solicitud…",
-      exitoTitulo: "¡Recibimos tu solicitud!",
+      exitoTitulo: "Solicitud enviada",
+      antesEnviar: "Enviar no confirma la cita. La clínica debe aceptar tu solicitud.",
+      errorHorarios:
+        "No pudimos consultar la disponibilidad. Intenta de nuevo; no significa que no haya horarios.",
+      resumen: "Tu solicitud",
+      cambiarFecha: "Cambiar fecha o profesional",
       folio: "Folio de tu solicitud",
       avisoPendiente:
-        "Tu solicitud quedó pendiente de confirmación por la clínica; recibirás la confirmación en tu correo.",
+        "Tu cita todavía no está confirmada. Conserva tu folio y espera la confirmación de la clínica antes de acudir.",
       nuevaBusqueda: "Buscar otra clínica",
       eligeHorario: "Elige un horario disponible.",
     },

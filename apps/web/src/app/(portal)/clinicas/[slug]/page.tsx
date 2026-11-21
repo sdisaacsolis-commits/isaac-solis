@@ -104,6 +104,7 @@ export default async function PaginaClinicaPublica({ params, searchParams }: Par
 
   let slots: [string, string][] = [];
   let seleccionCompleta = false;
+  let errorHorarios = false;
   if (clinica.accepts_online_booking && servicio && veterinario && fechaValida) {
     const consulta = publicSlotsQuerySchema.safeParse({
       clinicSlug: clinica.slug,
@@ -114,7 +115,9 @@ export default async function PaginaClinicaPublica({ params, searchParams }: Par
     });
     if (consulta.success) {
       seleccionCompleta = true;
-      const huecos = (await obtenerHuecosPublicos(consulta.data)) ?? [];
+      const respuesta = await obtenerHuecosPublicos(consulta.data);
+      errorHorarios = respuesta === null;
+      const huecos = respuesta ?? [];
       slots = huecos.map((hueco) => [
         hueco.slot_start,
         formatearHora(hueco.slot_start, clinica.timezone),
@@ -159,6 +162,11 @@ export default async function PaginaClinicaPublica({ params, searchParams }: Par
         ) : null}
       </div>
 
+      {clinica.accepts_online_booking ? (
+        <Button asChild className="w-full sm:w-fit">
+          <a href="#reservar">{tr.solicitar}</a>
+        </Button>
+      ) : null}
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         <div className="flex flex-col gap-6">
           <Card>
@@ -320,13 +328,23 @@ export default async function PaginaClinicaPublica({ params, searchParams }: Par
               </div>
             </form>
 
-            {seleccionCompleta && servicio && veterinario && fechaValida ? (
+            {errorHorarios ? <Alert variant="destructive">{tr.errorHorarios}</Alert> : null}
+            {!errorHorarios && seleccionCompleta && servicio && veterinario && fechaValida ? (
               <div className="flex flex-col gap-3">
                 <h2 className="text-sm font-semibold capitalize text-ink">
                   {formatearFechaLarga(fechaValida, clinica.timezone)}
                 </h2>
                 <p className="text-sm font-medium text-ink">{tr.pasoDatos}</p>
                 <ReservaForm
+                  key={[servicio.id, veterinario.clinic_member_id, fechaValida].join(":")}
+                  summary={[
+                    clinica.name,
+                    servicio.name,
+                    veterinario.display_name,
+                    formatearFechaLarga(fechaValida, clinica.timezone),
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
                   clinicSlug={clinica.slug}
                   serviceId={servicio.id}
                   veterinarianMemberId={veterinario.clinic_member_id}
