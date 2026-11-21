@@ -7,8 +7,8 @@ import { createClient } from "@/lib/supabase/server";
 /**
  * Consultas de suscripciones para el panel de clínica.
  *
- * `clinic_current_plan` es una RPC STABLE SECURITY DEFINER (grant a
- * authenticated) que solo el personal operativo puede leer; devuelve `jsonb`.
+ * `clinic_current_plan` aplica el aislamiento por clínica de la política RLS
+ * de suscripciones; devuelve `jsonb`.
  * Aquí lo tipamos con una interfaz local y acceso defensivo (sin `any`): si la
  * RPC falla o el jsonb no tiene la forma esperada, devolvemos `null` y la UI
  * simplemente omite la tarjeta. La autoridad de datos vive en la base (RLS).
@@ -27,6 +27,7 @@ export interface PlanDeClinica {
   planCode: string;
   planName: string;
   status: EstadoSuscripcion;
+  currentPeriodEnd: string | null;
   includedVeterinarians: number;
   priceCents: number;
   /** Banderas de funcionalidades del plan; forma libre definida por la base. */
@@ -78,6 +79,7 @@ export async function obtenerPlanDeClinica(clinicId: string): Promise<PlanDeClin
     planCode,
     planName,
     status,
+    currentPeriodEnd: cadena(plan.data, "current_period_end"),
     includedVeterinarians: numero(plan.data, "included_veterinarians"),
     priceCents: numero(plan.data, "price_cents"),
     features,

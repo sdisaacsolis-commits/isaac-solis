@@ -7,7 +7,7 @@ test.describe("Página de inicio", () => {
     await expect(page).toHaveTitle(/Dogtoralia/);
     await expect(
       page.getByRole("heading", {
-        name: "Gestión veterinaria, agenda y cuidado de mascotas en un solo lugar",
+        name: /Encuentra a tu veterinario y agenda con cariño/,
       }),
     ).toBeVisible();
 

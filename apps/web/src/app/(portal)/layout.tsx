@@ -1,6 +1,7 @@
 import { Button } from "@dogtoralia/ui";
 import Link from "next/link";
 
+import { CLINIC_PLAN_PATH, CLINIC_TRIAL_REGISTER_PATH } from "@/lib/clinic-plans/catalog";
 import { mensajes } from "@/lib/i18n/es-mx";
 
 const { marca, inicio, portalPublico } = mensajes;
@@ -14,7 +15,7 @@ export default function PortalPublicoLayout({ children }: Readonly<{ children: R
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-40 border-b border-border bg-surface/80 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-6 py-4">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-3 sm:px-6 sm:py-4">
           <Link
             href="/"
             className="text-xl font-bold tracking-tight text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -22,14 +23,22 @@ export default function PortalPublicoLayout({ children }: Readonly<{ children: R
             <span aria-hidden="true">🐾 </span>
             {marca.nombre}
           </Link>
-          <div className="flex items-center gap-2">
-            <Button asChild variant="ghost">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+            <Button asChild variant="ghost" className="min-h-10 px-2.5 text-xs sm:px-4 sm:text-sm">
               <Link href="/iniciar-sesion">{inicio.entrar}</Link>
             </Button>
-            <Button asChild>
+            <Button asChild className="min-h-10 px-2.5 text-xs sm:px-4 sm:text-sm">
               <Link href="/registro">{inicio.crearCuenta}</Link>
             </Button>
           </div>
+          <nav aria-label={pie.profesionales} className="w-full sm:w-auto">
+            <Link
+              className="inline-flex min-h-10 items-center px-2 text-sm font-semibold text-brand-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              href={CLINIC_PLAN_PATH}
+            >
+              {portalPublico.planes.nav}
+            </Link>
+          </nav>
         </div>
       </header>
 
@@ -48,8 +57,14 @@ export default function PortalPublicoLayout({ children }: Readonly<{ children: R
           </nav>
           <nav aria-label={pie.profesionales} className="flex flex-col gap-2 text-sm">
             <p className="font-semibold text-ink">{pie.profesionales}</p>
-            <Link className="text-ink-muted hover:text-ink hover:underline" href="/registro">
+            <Link
+              className="text-ink-muted hover:text-ink hover:underline"
+              href={CLINIC_TRIAL_REGISTER_PATH}
+            >
               {pie.crearCuentaPro}
+            </Link>
+            <Link className="text-ink-muted hover:text-ink hover:underline" href={CLINIC_PLAN_PATH}>
+              {portalPublico.planes.nav}
             </Link>
             <Link className="text-ink-muted hover:text-ink hover:underline" href="/iniciar-sesion">
               {pie.accesoPanel}

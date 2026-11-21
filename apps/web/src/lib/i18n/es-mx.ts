@@ -82,6 +82,9 @@ export const mensajes = {
       titulo: "Crea tu cuenta",
       descripcion: "Crea tu acceso. Después podrás configurar tu clínica.",
       descripcionInvitacion: "Usa el correo al que llegó la invitación para continuar.",
+      descripcionPrueba: (dias: number) =>
+        `Crea tu cuenta y configura una clínica nueva para iniciar ${dias} días gratis. No necesitas tarjeta.`,
+      volverPlanes: "Volver a planes para clínicas",
       soloCita: "¿Solo buscas una cita?",
       buscarClinica: "Busca una clínica sin crear cuenta",
       mostrarContrasena: "Mostrar",
@@ -196,6 +199,12 @@ export const mensajes = {
     sinClinica: "Aún no tienes una clínica activa.",
     plan: {
       titulo: "Plan",
+      pruebaFinalizada: "Prueba finalizada",
+      pruebaTermina: "Tu prueba termina el",
+      pruebaTermino: "Tu prueba terminó el",
+      pruebaSinCobro: "Sin tarjeta ni renovación automática.",
+      pruebaSinBloqueo:
+        "No se hizo ningún cobro ni se bloqueó tu acceso. Tus datos y citas se conservan.",
       veterinariosIncluidos: (n: number) =>
         n === 1 ? "1 veterinario incluido" : `${n} veterinarios incluidos`,
       sobreLimite: "Has superado los veterinarios incluidos en tu plan.",
@@ -1498,21 +1507,112 @@ export const mensajes = {
           texto: "Consultas cerradas y recetas con folio; correcciones por adenda.",
         },
         {
-          titulo: "Recordatorios que salen solos",
-          texto: "Citas y vacunas, aunque nadie abra el panel.",
+          titulo: "Vacunación y equipo",
+          texto: "Lleva la cartilla de tus pacientes y organiza los roles de tu clínica.",
         },
         {
           titulo: "Datos aislados por clínica",
           texto: "Nadie ve lo que no le toca. Garantizado en la base de datos.",
         },
       ],
-      clinicasCta: "Registra tu clínica",
+      clinicasCta: "Ver planes para clínicas",
       // CTA final
-      ctaTitulo: "¿Tienes una clínica? Publícala en Dogtoralia.",
-      ctaTexto:
-        "Empieza gratis en beta. Agenda, expediente y recordatorios listos desde el primer día.",
-      ctaBotonPro: "Registrar mi clínica",
+      ctaTitulo: "¿Tienes una clínica? Prueba Dogtoralia.",
+      ctaTexto: (dias: number) =>
+        `Prueba la agenda y el expediente de tu nueva clínica por ${dias} días, sin tarjeta ni cobro automático.`,
+      ctaBotonPro: "Empezar mi prueba",
       ctaBotonBuscar: "Buscar veterinario",
+    },
+    planes: {
+      metaTitulo: "Planes para clínicas veterinarias",
+      metaDescripcion:
+        "Conoce la prueba gratuita y los precios mensuales de lanzamiento de Dogtoralia para consultorios, clínicas y redes veterinarias en México.",
+      etiqueta: "Para clínicas veterinarias",
+      nav: "Planes para clínicas",
+      titulo: "Organiza tu clínica con Dogtoralia",
+      descripcion:
+        "Reúne las citas, el expediente de cada mascota y el trabajo de tu equipo en un solo lugar.",
+      pruebaTitulo: (dias: number) => `${dias} días gratis`,
+      pruebaNota:
+        "Para clínicas nuevas. La prueba empieza al crear tu clínica, no al abrir tu cuenta. Sin tarjeta ni cobro automático.",
+      pruebaCta: "Empezar mi prueba",
+      moneda: "MXN",
+      lanzamiento: "Precios de lanzamiento",
+      mensualesTitulo: "Planes mensuales",
+      mensualesNota:
+        "Compara las opciones para tu equipo. La contratación de los planes de pago estará disponible próximamente; no se realizan cargos desde esta página.",
+      porMes: "MXN al mes",
+      iva: "IVA incluido",
+      sedes: (n: number) => (n === 1 ? "1 sede" : `Hasta ${n} sedes`),
+      veterinarios: (n: number) => `Hasta ${n} veterinarios en total`,
+      estadoPago: "Próximamente para contratar",
+      niveles: {
+        consultorio_monthly: {
+          titulo: "Consultorio",
+          descripcion: "Para un consultorio o equipo veterinario pequeño.",
+        },
+        clinica_monthly: {
+          titulo: "Clínica",
+          descripcion: "Para una clínica que coordina a más veterinarios en la misma sede.",
+        },
+        red_monthly: {
+          titulo: "Red",
+          descripcion: "Para un equipo que opera en más de una sede.",
+        },
+      },
+      herramientasTitulo: "Herramientas que puedes probar",
+      herramientas: [
+        {
+          titulo: "Agenda por veterinario",
+          descripcion: "Organiza tus horarios y citas sin traslapes.",
+        },
+        {
+          titulo: "Expediente clínico",
+          descripcion: "Registra consultas y consulta el historial de cada mascota.",
+        },
+        {
+          titulo: "Recetas con folio",
+          descripcion: "Emite y consulta recetas ligadas al expediente de tu paciente.",
+        },
+        {
+          titulo: "Vacunación",
+          descripcion: "Registra dosis aplicadas y consulta la cartilla de vacunación.",
+        },
+        {
+          titulo: "Equipo con roles",
+          descripcion: "Invita a tu personal y asigna acceso según sus funciones.",
+        },
+        {
+          titulo: "Perfil y reservas públicas",
+          descripcion:
+            "Configura la ficha y los servicios de tu clínica. La publicación del perfil y las reservas en línea están sujetas a revisión y aprobación.",
+        },
+      ],
+      pasosTitulo: "Cómo empezar",
+      pasos: [
+        "Crea tu cuenta y confirma tu correo.",
+        "Completa tu perfil y registra tu organización.",
+        "Crea tu primera clínica para iniciar la prueba.",
+      ],
+      preguntasTitulo: "Preguntas frecuentes",
+      preguntas: [
+        {
+          titulo: "¿Me van a cobrar al terminar la prueba?",
+          respuesta:
+            "No. No se pide tarjeta y la prueba no se convierte en una suscripción de pago de forma automática.",
+        },
+        {
+          titulo: "¿Crear mi clínica la publica de inmediato?",
+          respuesta:
+            "No. Puedes configurar tu clínica y trabajar en el panel. La ficha y el agendamiento públicos requieren aprobación.",
+        },
+        {
+          titulo: "¿Necesito un plan si solo quiero agendar para mi mascota?",
+          respuesta:
+            "No. Estos planes son para clínicas. Puedes buscar una clínica y solicitar una cita pública sin contratar un plan ni crear una cuenta.",
+        },
+      ],
+      buscar: "Buscar una clínica para mi mascota",
     },
     footer: {
       duenos: "Dueños de mascotas",

@@ -70,6 +70,11 @@ export default async function PaginaInicioPanel({
     : [null, null];
   const resenas = clinica ? await metricasResenas(clinica.id) : null;
   const plan = clinica ? await obtenerPlanDeClinica(clinica.id) : null;
+  const isTrial = plan?.planCode === "trial_30d";
+  const trialEnd = plan?.currentPeriodEnd;
+  const trialEndMs = trialEnd ? Date.parse(trialEnd) : NaN;
+  const hasTrialDate = isTrial && Number.isFinite(trialEndMs);
+  const trialExpired = hasTrialDate && trialEndMs <= Date.now();
 
   return (
     <div className="flex flex-col gap-6">
@@ -145,19 +150,39 @@ export default async function PaginaInicioPanel({
               {plan.planName}
               <Badge
                 variant={
-                  plan.status === "active" || plan.status === "trialing" ? "success" : "warning"
+                  !trialExpired && (plan.status === "active" || plan.status === "trialing")
+                    ? "success"
+                    : "warning"
                 }
               >
-                {t.plan.estados[plan.status] ?? plan.status}
+                {trialExpired
+                  ? t.plan.pruebaFinalizada
+                  : (t.plan.estados[plan.status] ?? plan.status)}
               </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
-            <p className="text-sm text-ink-muted">
-              {t.plan.veterinariosIncluidos(plan.includedVeterinarians)}
-            </p>
-            {plan.withinVeterinarianLimit ? null : (
-              <p className="text-sm text-destructive">{t.plan.sobreLimite}</p>
+            {isTrial ? (
+              <>
+                {trialEnd && hasTrialDate ? (
+                  <p className="text-sm text-ink-muted">
+                    {trialExpired ? t.plan.pruebaTermino : t.plan.pruebaTermina}{" "}
+                    {formatearFechaHora(trialEnd, clinica?.timezone)}.
+                  </p>
+                ) : null}
+                <p className="text-sm text-ink-muted">
+                  {trialExpired ? t.plan.pruebaSinBloqueo : t.plan.pruebaSinCobro}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-ink-muted">
+                  {t.plan.veterinariosIncluidos(plan.includedVeterinarians)}
+                </p>
+                {plan.withinVeterinarianLimit ? null : (
+                  <p className="text-sm text-destructive">{t.plan.sobreLimite}</p>
+                )}
+              </>
             )}
           </CardContent>
         </Card>

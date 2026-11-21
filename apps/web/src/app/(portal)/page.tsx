@@ -6,6 +6,11 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { BuscadorPublico } from "@/components/portal/buscador-publico";
+import {
+  CLINIC_PLAN_PATH,
+  CLINIC_TRIAL,
+  CLINIC_TRIAL_REGISTER_PATH,
+} from "@/lib/clinic-plans/catalog";
 import { mensajes } from "@/lib/i18n/es-mx";
 import { listarCiudadesPublicas, slugificarCiudad } from "@/lib/portal/public";
 import { datosOrganizacionYSitio, JsonLd } from "@/lib/seo/jsonld";
@@ -436,7 +441,7 @@ export default async function PaginaInicio() {
             </ul>
             <div className="mt-8">
               <Button asChild size="lg" variant="secondary">
-                <Link href="/registro">{t.clinicasCta}</Link>
+                <Link href={CLINIC_PLAN_PATH}>{t.clinicasCta}</Link>
               </Button>
             </div>
           </div>
@@ -462,11 +467,11 @@ export default async function PaginaInicio() {
               >
                 {t.ctaTitulo}
               </h2>
-              <p className="mt-2 max-w-md text-brand-100">{t.ctaTexto}</p>
+              <p className="mt-2 max-w-md text-brand-100">{t.ctaTexto(CLINIC_TRIAL.days)}</p>
             </div>
             <div className="flex flex-none flex-wrap gap-3">
               <Button asChild size="lg" variant="secondary">
-                <Link href="/registro">{t.ctaBotonPro}</Link>
+                <Link href={CLINIC_TRIAL_REGISTER_PATH}>{t.ctaBotonPro}</Link>
               </Button>
               <Button asChild size="lg" className="bg-accent-500 text-ink hover:bg-accent-400">
                 <Link href="/buscar">{t.ctaBotonBuscar}</Link>
