@@ -1419,6 +1419,10 @@ export const mensajes = {
       heroNota: "Sin cuenta para solicitar · La clínica confirma disponibilidad",
       heroImagenAlt:
         "Ilustración editorial de atención veterinaria; no representa una clínica del directorio.",
+      imagenEditorialNota: "Imagen ilustrativa. No corresponde a una clínica del directorio.",
+      bienvenidaImagenAlt: "Un hombre con su perro saluda en una recepción veterinaria.",
+      equipoImagenAlt:
+        "Dos profesionales veterinarios atienden a un perro y conversan con su dueña.",
       // Métricas reales (solo se muestran si hay datos)
       metricaClinicas: (n: number) =>
         n === 1 ? "1 clínica verificada" : `${n} clínicas verificadas`,

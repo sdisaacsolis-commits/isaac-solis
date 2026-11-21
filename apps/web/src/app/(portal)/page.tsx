@@ -126,6 +126,17 @@ function Palomita({ className = "h-4 w-4" }: { className?: string }) {
 
 const CATEGORIAS_DESTACADAS = SERVICE_CATEGORIES.filter((c) => c !== "other");
 
+function ImagenEditorial({ src, alt, sizes }: { src: string; alt: string; sizes: string }) {
+  return (
+    <figure className="min-w-0">
+      <div className="relative aspect-[3/2] overflow-hidden rounded-3xl border border-border bg-brand-50">
+        <Image src={src} alt={alt} fill sizes={sizes} loading="lazy" className="object-cover" />
+      </div>
+      <figcaption className="mt-2 text-xs text-ink-muted">{t.imagenEditorialNota}</figcaption>
+    </figure>
+  );
+}
+
 export default async function PaginaInicio() {
   const ciudades = await listarCiudadesPublicas();
   const totalClinicas = ciudades.reduce((acc, ciudad) => acc + (ciudad.clinics ?? 0), 0);
@@ -213,16 +224,25 @@ export default async function PaginaInicio() {
 
       {/* ============================ CÓMO FUNCIONA ============================ */}
       <section aria-labelledby="como-title" className="mx-auto w-full max-w-6xl px-6 py-20">
-        <p className="text-xs font-bold uppercase tracking-wider text-brand-700">
-          {t.pasosEtiqueta}
-        </p>
-        <h2
-          id="como-title"
-          className="mt-3 max-w-[20ch] text-3xl font-bold tracking-tight text-ink sm:text-4xl"
-        >
-          {t.pasosTitulo}
-        </h2>
-        <p className="mt-3 max-w-2xl text-lg text-ink-muted">{t.pasosSubtitulo}</p>
+        <div className="grid gap-6 lg:grid-cols-2 lg:items-center lg:gap-10">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-brand-700">
+              {t.pasosEtiqueta}
+            </p>
+            <h2
+              id="como-title"
+              className="mt-3 max-w-[20ch] text-3xl font-bold tracking-tight text-ink sm:text-4xl"
+            >
+              {t.pasosTitulo}
+            </h2>
+            <p className="mt-3 max-w-2xl text-lg text-ink-muted">{t.pasosSubtitulo}</p>
+          </div>
+          <ImagenEditorial
+            src="/images/dogtoralia-welcome-editorial.webp"
+            alt={t.bienvenidaImagenAlt}
+            sizes="(min-width: 1152px) 532px, (min-width: 1024px) calc((100vw - 88px) / 2), calc(100vw - 48px)"
+          />
+        </div>
         <ol className="mt-10 grid gap-4 sm:grid-cols-3">
           {t.pasos.map((paso, i) => (
             <li
@@ -339,22 +359,27 @@ export default async function PaginaInicio() {
                 </li>
               ))}
             </ul>
-          </div>
-          <div className="rounded-card border border-border bg-surface p-8 shadow-md">
-            <div className="flex gap-1 text-accent-500" aria-hidden="true">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <svg key={i} viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
-                  <path d="m12 3 2.6 5.3 5.9.9-4.3 4.2 1 5.9L12 16.9 6.8 19.3l1-5.9L3.5 9.2l5.9-.9L12 3Z" />
-                </svg>
-              ))}
+            <div className="mt-6 rounded-card border border-border bg-surface p-6 shadow-sm sm:p-8">
+              <div className="flex gap-1 text-accent-500" aria-hidden="true">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <svg key={i} viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
+                    <path d="m12 3 2.6 5.3 5.9.9-4.3 4.2 1 5.9L12 16.9 6.8 19.3l1-5.9L3.5 9.2l5.9-.9L12 3Z" />
+                  </svg>
+                ))}
+              </div>
+              <p className="mt-4 text-2xl font-medium italic leading-snug tracking-tight text-ink">
+                “Solo las personas que asistieron a una cita pueden opinar.”
+              </p>
+              <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand-100 px-3 py-1.5 text-sm font-semibold text-brand-800">
+                <Palomita className="h-4 w-4" /> {t.opinionesEtiqueta}
+              </p>
             </div>
-            <p className="mt-4 text-2xl font-medium italic leading-snug tracking-tight text-ink">
-              “Solo las personas que asistieron a una cita pueden opinar.”
-            </p>
-            <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand-100 px-3 py-1.5 text-sm font-semibold text-brand-800">
-              <Palomita className="h-4 w-4" /> {t.opinionesEtiqueta}
-            </p>
           </div>
+          <ImagenEditorial
+            src="/images/dogtoralia-care-team-editorial.webp"
+            alt={t.equipoImagenAlt}
+            sizes="(min-width: 1152px) 532px, (min-width: 1024px) calc((100vw - 88px) / 2), calc(100vw - 48px)"
+          />
         </div>
       </section>
 
