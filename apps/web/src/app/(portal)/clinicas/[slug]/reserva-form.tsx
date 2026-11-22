@@ -8,6 +8,7 @@ import { useActionState, useState } from "react";
 import { FormAlerts, primerError } from "@/components/forms/form-alerts";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { mensajes } from "@/lib/i18n/es-mx";
+import { privacidadReserva } from "@/lib/legal/reserva-privacidad";
 import { etiquetasEspecie } from "@/lib/pets/format";
 import { type ReservaPublicaState, solicitarReservaPublica } from "@/lib/portal/actions";
 
@@ -95,6 +96,26 @@ export function ReservaForm({
       <input type="hidden" name="requestId" value={requestId} suppressHydrationWarning />
       <FormAlerts state={state} />
       <p className="rounded-lg bg-surface-muted p-3 text-sm text-ink">{summary}</p>
+
+      <aside
+        aria-labelledby="reserva-privacidad-titulo"
+        className="space-y-2 rounded-lg border border-border p-4 text-sm text-ink-muted"
+      >
+        <p className="font-medium text-ink" id="reserva-privacidad-titulo">
+          {privacidadReserva.titulo}
+        </p>
+        <p>{privacidadReserva.responsable}</p>
+        <p>{privacidadReserva.finalidad}</p>
+        <p>{privacidadReserva.limitacion}</p>
+        <p className="flex flex-wrap gap-x-4 gap-y-2">
+          <Link className="text-brand-700 underline" href="/aviso-de-privacidad">
+            {privacidadReserva.aviso}
+          </Link>
+          <Link className="text-brand-700 underline" href="/terminos">
+            {privacidadReserva.terminos}
+          </Link>
+        </p>
+      </aside>
 
       <fieldset className="flex flex-col gap-2 rounded-lg border border-border p-4">
         <legend className="px-1 text-sm font-medium text-ink">{t.horarios}</legend>
@@ -190,7 +211,16 @@ export function ReservaForm({
         </FormField>
       </div>
       <FormField htmlFor="reserva-reason" label={t.motivo} error={primerError(state, "reason")}>
-        <Textarea id="reserva-reason" name="reason" rows={2} maxLength={1000} />
+        <Textarea
+          id="reserva-reason"
+          name="reason"
+          rows={2}
+          maxLength={1000}
+          aria-describedby="reserva-reason-privacy"
+        />
+        <span className="text-xs text-ink-muted" id="reserva-reason-privacy">
+          {privacidadReserva.motivo}
+        </span>
       </FormField>
 
       <p className="text-sm text-ink-muted">{t.antesEnviar}</p>
