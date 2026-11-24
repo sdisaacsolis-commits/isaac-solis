@@ -139,10 +139,15 @@ export default async function PaginaFacturacion({
                 ) : null}
                 {p.billingInterval === "year" ? <p>{t.ahorroAnual}</p> : null}
                 {puedeAdministrar ? (
-                  <form action={iniciarCheckout} className="mt-2">
+                  <form action={iniciarCheckout} className="mt-2 flex flex-wrap gap-2">
                     <input type="hidden" name="clinicId" value={clinica.id} />
                     <input type="hidden" name="planCode" value={p.code} />
-                    <Button type="submit">{t.pagar}</Button>
+                    <Button type="submit" name="proveedor" value="stripe">
+                      {t.pagarTarjeta}
+                    </Button>
+                    <Button type="submit" name="proveedor" value="paypal" variant="outline">
+                      {t.pagarPaypal}
+                    </Button>
                   </form>
                 ) : null}
               </CardContent>

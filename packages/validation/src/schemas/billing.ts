@@ -17,10 +17,20 @@ export const planCodeSchema = z.enum(PLAN_CODES, {
 
 export type PlanCode = z.infer<typeof planCodeSchema>;
 
-/** Entrada de la Server Action que inicia una sesión de Stripe Checkout. */
+/** Proveedores de pago habilitados (Fase 14: Stripe tarjetas + PayPal). */
+export const PAYMENT_PROVIDERS = ["stripe", "paypal"] as const;
+
+export const proveedorPagoSchema = z.enum(PAYMENT_PROVIDERS, {
+  errorMap: () => ({ message: "Selecciona un método de pago válido." }),
+});
+
+export type ProveedorPago = z.infer<typeof proveedorPagoSchema>;
+
+/** Entrada de la Server Action que inicia el checkout del proveedor elegido. */
 export const iniciarCheckoutSchema = z.object({
   clinicId: z.string().uuid("Identificador inválido."),
   planCode: planCodeSchema,
+  proveedor: proveedorPagoSchema.default("stripe"),
 });
 
 export type IniciarCheckoutInput = z.infer<typeof iniciarCheckoutSchema>;

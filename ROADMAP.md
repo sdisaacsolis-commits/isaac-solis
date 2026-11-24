@@ -298,6 +298,24 @@ LOCKED`) y anulación que cancela recordatorios; cartilla consolidada dinámica 
 - **Criterio de salida**: catálogo público visible; alta en prueba de 14 días; escrituras
   bloqueadas al vencer sin tocar datos; reactivación restaura la operación. ✅
 
+## Fase 14 — PayPal como segundo proveedor de pagos ✅ (2026-11-24)
+
+- La membresía puede pagarse con **PayPal** (cuenta Business de AniMALL) además de Stripe:
+  `proveedorPaypal` tras la misma interfaz `ProveedorDePagos` (REST por `fetch`, sin SDK),
+  selector de método en `/app/facturacion` y validación Zod del proveedor.
+- Catálogo idempotente en PayPal (`scripts/paypal/setup-precios.mjs`): producto
+  `DOGTORALIA-MEMBRESIA`, planes `profesional_mensual`/`profesional_anual` en MXN con IVA 16 %
+  exclusivo, y webhook con su `PAYPAL_WEBHOOK_ID`. Veterinarios adicionales por **override de
+  precio por suscripción**; la clínica viaja en `custom_id`.
+- Edge Function `paypal-webhook` (verificación oficial `verify-webhook-signature`, flag
+  `COBRO_ACTIVO`): ACTIVATED/UPDATED→active, SUSPENDED/PAYMENT.FAILED→past_due,
+  CANCELLED/EXPIRED→canceled; `PAYMENT.SALE.COMPLETED` refresca el fin del periodo.
+- BD: `subscriptions.payment_provider` (stripe|paypal, CHECK) y `paypal_subscription_id`
+  (único parcial), con backfill de las de Stripe. Migración `20261124500001`; suite pgTAP 20
+  nueva (**596 aserciones totales**). ADR 0006; runbook en `docs/subscriptions/billing.md`.
+- **Criterio de salida**: checkout de PayPal aprueba y el webhook deja la suscripción
+  `active` con proveedor e id vinculados; la batería pgTAP en verde. ✅
+
 ## Post-MVP (backlog priorizado — decisiones 1 y 2 ya confirmadas por producto)
 
 1. Recordatorios y confirmación de citas por **WhatsApp** — proveedor confirmado:

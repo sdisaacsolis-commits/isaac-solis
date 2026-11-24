@@ -3523,6 +3523,8 @@ export type Database = {
           current_period_start: string
           id: string
           organization_id: string
+          payment_provider: string | null
+          paypal_subscription_id: string | null
           plan_id: string
           status: Database["public"]["Enums"]["subscription_status"]
           stripe_customer_id: string | null
@@ -3536,6 +3538,8 @@ export type Database = {
           current_period_start?: string
           id?: string
           organization_id: string
+          payment_provider?: string | null
+          paypal_subscription_id?: string | null
           plan_id: string
           status?: Database["public"]["Enums"]["subscription_status"]
           stripe_customer_id?: string | null
@@ -3549,6 +3553,8 @@ export type Database = {
           current_period_start?: string
           id?: string
           organization_id?: string
+          payment_provider?: string | null
+          paypal_subscription_id?: string | null
           plan_id?: string
           status?: Database["public"]["Enums"]["subscription_status"]
           stripe_customer_id?: string | null
