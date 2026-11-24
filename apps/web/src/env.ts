@@ -23,6 +23,11 @@ export const env = createEnv({
     // Llave secreta de Stripe (sk_…): SOLO servidor, para crear sesiones de
     // Checkout. El webhook vive en una Edge Function con su propio secreto.
     STRIPE_SECRET_KEY: z.string().min(1).optional(),
+    // PayPal (cuenta Business): credenciales REST de la app, SOLO servidor,
+    // para crear suscripciones. "live" cobra de verdad; "sandbox" para pruebas.
+    PAYPAL_CLIENT_ID: z.string().min(1).optional(),
+    PAYPAL_CLIENT_SECRET: z.string().min(1).optional(),
+    PAYPAL_MODE: z.enum(["live", "sandbox"]).default("live"),
     // Secreto para el procesador programado de recordatorios (Edge Function /
     // cron; reservado, ver docs/appointments/notifications.md). Sin valor, el
     // outbox se procesa de forma oportunista desde el panel.
@@ -47,6 +52,9 @@ export const env = createEnv({
     EMAIL_REPLY_TO: process.env.EMAIL_REPLY_TO,
     EMAIL_MODE: process.env.EMAIL_MODE,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
+    PAYPAL_CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET,
+    PAYPAL_MODE: process.env.PAYPAL_MODE,
     CRON_SECRET: process.env.CRON_SECRET,
     PET_PHOTO_SIGNED_URL_SECONDS: process.env.PET_PHOTO_SIGNED_URL_SECONDS,
     CLINICAL_FILE_MAX_MB: process.env.CLINICAL_FILE_MAX_MB,

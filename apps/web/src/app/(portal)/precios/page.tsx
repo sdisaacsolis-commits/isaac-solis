@@ -49,6 +49,7 @@ export default async function PaginaPrecios() {
         </h1>
         <p className="max-w-2xl text-ink-muted">{t.heroTexto}</p>
         <Badge variant="brand">{t.prueba}</Badge>
+        <p className="text-sm text-ink-muted">{t.metodos}</p>
       </header>
 
       <section aria-label={t.metaTitulo} className="grid gap-6 sm:grid-cols-2">

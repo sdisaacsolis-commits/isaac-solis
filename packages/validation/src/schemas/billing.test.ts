@@ -38,4 +38,28 @@ describe("iniciarCheckoutSchema", () => {
     });
     expect(resultado.success).toBe(false);
   });
+
+  it("acepta PayPal como proveedor y usa Stripe por defecto", () => {
+    const conPaypal = iniciarCheckoutSchema.parse({
+      clinicId: "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      planCode: "profesional",
+      proveedor: "paypal",
+    });
+    expect(conPaypal.proveedor).toBe("paypal");
+
+    const porDefecto = iniciarCheckoutSchema.parse({
+      clinicId: "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      planCode: "profesional",
+    });
+    expect(porDefecto.proveedor).toBe("stripe");
+  });
+
+  it("rechaza proveedores fuera del catálogo", () => {
+    const resultado = iniciarCheckoutSchema.safeParse({
+      clinicId: "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      planCode: "profesional",
+      proveedor: "mercadopago",
+    });
+    expect(resultado.success).toBe(false);
+  });
 });

@@ -49,6 +49,45 @@ tocan). Decisiones y diseño: `docs/adr/0005-cobro-de-membresia.md`.
    tarjeta `4242 4242 4242 4242` y verificar que `subscriptions` quede `active` con
    `stripe_customer_id`/`stripe_subscription_id` poblados y periodo futuro.
 
+## PayPal (Fase 14 — cuenta Business de AniMALL)
+
+La membresía también puede pagarse con PayPal; el panel muestra ambos botones por plan. Diseño:
+`docs/adr/0006-paypal-segundo-proveedor.md`. Activación (independiente de Stripe):
+
+1. **Credenciales REST**: en [developer.paypal.com](https://developer.paypal.com) con la cuenta
+   Business de AniMALL → Apps & Credentials → **Live** → Create App. Anotar `Client ID` y
+   `Secret`.
+2. **Crear catálogo y webhook** (idempotente; también imprime el `PAYPAL_WEBHOOK_ID`):
+
+   ```bash
+   PAYPAL_CLIENT_ID=... PAYPAL_CLIENT_SECRET=... node scripts/paypal/setup-precios.mjs
+   ```
+
+   Crea el producto `DOGTORALIA-MEMBRESIA`, los planes `profesional_mensual` ($599 MXN/mes) y
+   `profesional_anual` ($5,990/año) con IVA 16 % exclusivo, y el webhook apuntando a
+   `https://izixhghxlmsfjwsbohxt.functions.supabase.co/paypal-webhook`.
+
+3. **Secretos de la Edge Function**:
+
+   ```bash
+   supabase secrets set PAYPAL_CLIENT_ID=... PAYPAL_CLIENT_SECRET=... \
+     PAYPAL_WEBHOOK_ID=... COBRO_ACTIVO=true --project-ref izixhghxlmsfjwsbohxt
+   ```
+
+4. **Variables del servidor web** (Vercel, solo servidor): `PAYPAL_CLIENT_ID`,
+   `PAYPAL_CLIENT_SECRET` (y `PAYPAL_MODE=sandbox` solo para probar) + redeploy.
+5. **Probar en sandbox primero**: repetir 1-4 con una app Sandbox y `PAYPAL_MODE=sandbox`
+   en web y función; pagar con una cuenta personal de sandbox y verificar que `subscriptions`
+   quede `active` con `payment_provider='paypal'` y `paypal_subscription_id` poblado.
+
+Notas de operación de PayPal:
+
+- Los **veterinarios adicionales** se cobran sobrescribiendo el precio del ciclo por
+  suscripción (base + $399/vet al mes o $3,990/vet al año); el plan del catálogo no cambia.
+- Si cambia el número de veterinarios de una clínica ya suscrita, el ajuste del monto se hace
+  en PayPal (revisar la suscripción) — pendiente de automatizar **[Propuesta]**.
+- El fin del periodo se sincroniza con `billing_info.next_billing_time` en cada pago.
+
 ## Operación
 
 - **Vigencia** (`clinic_subscription_is_current`): `trialing`/`active` con periodo no vencido,

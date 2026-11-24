@@ -226,6 +226,8 @@ export const mensajes = {
             ? "Se cobrará el plan base más 1 veterinario adicional."
             : `Se cobrará el plan base más ${extra} veterinarios adicionales.`,
       pagar: "Contratar este plan",
+      pagarTarjeta: "Contratar con tarjeta",
+      pagarPaypal: "Contratar con PayPal",
       soloAdmins: "Solo quien administra la clínica puede contratar o cambiar el plan.",
       checkoutExito:
         "¡Listo! Tu pago se está procesando; el estado de la membresía se actualizará en unos momentos.",
@@ -1747,6 +1749,7 @@ export const mensajes = {
       heroTexto:
         "Todo Dogtoralia — agenda, expediente clínico, recetas, vacunación, recordatorios y tu perfil público — en un solo plan por clínica, no por computadora.",
       prueba: "14 días de prueba gratis. Sin tarjeta.",
+      metodos: "Paga con tarjeta o con PayPal.",
       porClinica: "por clínica",
       masIva: "+ IVA",
       porMes: "al mes",

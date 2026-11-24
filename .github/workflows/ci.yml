@@ -131,6 +131,7 @@ jobs:
         funcion:
           - send-reminders
           - stripe-webhook
+          - paypal-webhook
     steps:
       - name: Checkout
         uses: actions/checkout@v4

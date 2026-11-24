@@ -10,7 +10,14 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 import { requireTenancyContext } from "@/lib/tenancy/queries";
 
+import { proveedorPaypal } from "./paypal-provider";
 import { proveedorStripe } from "./stripe-provider";
+import type { ProveedorDePagos } from "./types";
+
+const PROVEEDORES: Record<"stripe" | "paypal", ProveedorDePagos> = {
+  stripe: proveedorStripe,
+  paypal: proveedorPaypal,
+};
 
 /**
  * Inicia una sesión de Stripe Checkout para la clínica. DELGADA a propósito:
@@ -23,6 +30,7 @@ export async function iniciarCheckout(formData: FormData): Promise<void> {
   const parsed = iniciarCheckoutSchema.safeParse({
     clinicId: formData.get("clinicId"),
     planCode: formData.get("planCode"),
+    proveedor: formData.get("proveedor") ?? undefined,
   });
   if (!parsed.success) redirect("/app/facturacion?estado=error");
 
@@ -47,7 +55,7 @@ export async function iniciarCheckout(formData: FormData): Promise<void> {
   const base = env.NEXT_PUBLIC_APP_URL;
   let urlCheckout: string;
   try {
-    const sesion = await proveedorStripe.crearSesionCheckout({
+    const sesion = await PROVEEDORES[parsed.data.proveedor].crearSesionCheckout({
       planCode: parsed.data.planCode,
       clinicId: clinica.id,
       veterinariosAdicionales: adicionales,

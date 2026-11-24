@@ -30,9 +30,12 @@ export {
 export {
   type IniciarCheckoutInput,
   iniciarCheckoutSchema,
+  PAYMENT_PROVIDERS,
   PLAN_CODES,
   type PlanCode,
   planCodeSchema,
+  type ProveedorPago,
+  proveedorPagoSchema,
 } from "./schemas/billing";
 export {
   addendumSchema,
